@@ -4,13 +4,14 @@
 
 \usepackage[latin2]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{graphicx}
 
 \author{Bartosz Marcinkowski}
 
 \nralbumu{319476}
 
-\title{Przetwarzanie strumieniowe i analiza w czasie rzeczywistym}
-\tytulang{Stream processing and realtime analytics}
+\title{Sztuczna inteligencja dla gry Quoridor}
+\tytulang{Artificial intelligence for the Quoridor game}
 
 \kierunek{Informatyka}
 
@@ -21,14 +22,12 @@
 \dziedzina{11.3 Informatyka}
 
 \klasyfikacja{
-H. Information Systems \\
-  H.2. Database Managment \\
-  H.2.4. Systems}
+I. Computing Methodologies \\
+  I.2. Artificial intelligence \\
+  I.2.1. Applications and Expert Systems}
 
 \keywords{
-	strumienie danych,
-	systemy czasu rzeczywistegom,
-	narzêdzia do analizy danych
+	sztuczna inteligencja, gry planszowe
 }
 
 % Tu jest dobre miejsce na Twoje w³asne makra i~¶rodowiska:
@@ -40,28 +39,54 @@ H. Information Systems \\
 \maketitle
 
 \begin{abstract}
-Konieczno¶æ przetwarzania szybko nap³ywaj±cych danych wymusi³a powstanie systemów przetwarzania strumieniowego, które s± w stanie obs³ugiwaæ je w czasie rzeczywistym. W odró¿nieniu od np. relacyjnych baz danych, nie s± to systemy o ustandaryzowanym interfejsie ani architekturze, brakuje te¿ podstawowych narzêdzi dla korzystaj±cego z nich analityka. Pierwszym celem tej pracy jest przegl±d istniej±cych systemów do przetwarzania strumieni danych, analiza architektury rozwi±zañ dostêpnych na zasadach Open Source oraz porównanie ich. Drugim celem jest zaproponowanie mo¿liwie uniwersalnego rozwi±zania umo¿liwiaj±cego interaktywn± pracê ze strumieniem, tzn. definiowanie agregat i ogl±danie ich dynamiczne zmieniaj±cych siê wyników w krótkich cyklach.
+TODO
 \end{abstract}
 
 \tableofcontents
 %\listoffigures
 %\listoftables
 
-\chapter*{Wprowadzenie}
-\addcontentsline{toc}{chapter}{Wprowadzenie}
 
-TODO
+\chapter{Wprowadzenie}
 
-\chapter{Podstawowe pojêcia}\label{r:pojecia}
+W pracy zajmê siê sztuczn± inteligencj± dla gry Quoridor. W dalszej czê¶ci pierwszego rozdzia³u opiszê zasady gry w wersji oryginalnego wydawcy i wska¿ê istniej±ce niedoskona³o¶ci, okre¶lê za³o¿enia i oczekiwania wobec tej pracy i dokonam przegl±du istniej±cych rozwi±zañ, aby uzasadniæ podjêcie tematu. W drugim rozdziale rozstrzygnê kwestiê zasad gry. W trzecim opiszê i uzasadniê wybór technologii u¿ytych do implementacji i porównywania rozwa¿anych pó¼niej algorytmów. W czwartym rozdziale opiszê proces rozwijania kolejnych algorytmów, a¿ w koñcu w pi±tym podsumujê efekty swojej pracy.
 
-TODO
+\section{Quoridor - oryginalne zasady gry}
 
-\section{Definicje}
+Gra rozgrywa siê na planszy przy pomocy 4 pionków i 20 ogrodzeñ, nazywanych te¿ ¶cianami. Na planszy znajduje siê siatka szczelin wyznaczaj±ca 81 kwadratowych pól tworz±cych uk³ad 9~x~9. Ka¿dy pionek ma unikalny kolor, mie¶ci siê na jednym polu planszy i nie mo¿e go dzieliæ z innym. Ogrodzenia s± identyczne i daj± siê umieszczaæ w szczelinach miêdzy polami planszy. Ograodzenie jest dwukrotnie d³u¿sze od boku pola, wiêc (poprawnie umieszczone) s±siaduje z dwoma polami z ka¿dej strony, zajmuje ca³± szeroko¶æ szczeliny i jedno skrzy¿owanie szczelin.
 
-TODO
-\begin{defi}\label{strumieñ}
-  TODO
-\end{defi}
+W grze mo¿e wzi±æ udzia³ dwóch lub czterech graczy. W obu przypadkach otrzymuj± po jednym pionku, dziel± siê po równo ogrodzeniami i przypisuj± siê do ró¿nych boków planszy; je¿eli jest ich dwóch, musz± to byæ boki przeciwleg³e.
+
+Na pocz±tku gry na planszy nie ma ogrodzeñ (stanowi± zasoby graczy), a pionek ka¿dego gracza umieszcza siê na polu przy ¶rodku boku, do którego jest przypisany.
+Nastêpnie gracze w dowolnej, ale ustalonej kolejno¶ci wykonuj± swój ruch. Celem gry jest dotarcie swoim pionkiem do boku planszy przeciwleg³ego wobec boku, do którego jest siê przypisanym. Gra koñczy siê w momencie, w którym jednemu z graczy siê to uda.
+
+Ka¿dy ruch mo¿e polegaæ na ustawieniu jednego ze swoich nieu¿ytych ogrodzeñ na planszy albo przesuniêciu pionka. Ogrodzenie trzeba ustawiaæ tak, by nie kolidowa³a z ¿adnym innym oraz by ka¿dy przeciwnik mia³ mo¿liwo¶æ dotrzeæ do celu. Ruch pionkiem polega na przesuniêciu go na puste, s±siadnie pole (s±siedztwo wyznacza wspólny bok).
+
+Je¿eli na pewnym s±siednim, nieodgrodzonym polu znajduje siê ju¿ pionek przeciwnika, mo¿na wykonaæ skok na pole za tym pionkiem, o ile jest ono puste i nieodgrodzone. Je¿eli taki skok nie jest mo¿liwy, mo¿na wykonaæ skok na jedno z dwóch pozosta³ych pól s±siaduj±cych z przeciwnikiem, znów o ile jest puste i nieodgrodzone.
+
+\section{Niedoskona³o¶æ oryginalnych zasad}
+
+Dla pewnych stanów gry oryginalne zasady nie odpowiadaj± jednoznacznie na pytanie o legalne ruchy albo daj± odpowied¼ nieoczekiwan±, wygl±daj±c± na efekt niedopatrzenia. Mo¿liwe, ¿e autorzy i wydawcy gry ¶wiadomie woleli pozostawiæ ma³o prawdopodobne sytuacje do rozs±dzenia graczom ni¿ wyd³u¿aæ instrukcjê analizami kolejnych przypadków, jednak w przypadku tej pracy takie podej¶cie jest niedopuszczalne. Automatyczne testowanie algorytmów sztucznej inteligencji zwiêksza prawdopodobieñstwo natrafienia na problematyczne stany gry, co mo¿e zaburzyæ wynik pracy. W tym miejscu zarysujê tylko problem przyk³adem, odk³adaj±c rozwa¿ania nad mo¿liwymi rozwi±zaniami na dalsz± czê¶æ pracy.
+
+\subsection*{Brak legalnych ruchów}
+
+Niech pionki czarny i zielony s±siaduj± z pionkiem czerwonym. Dalej, niech pionek czarny bêdzie odgrodzony od wszystkich s±siednich pól oprócz tego, na którym stoi czerwony i niech czerwony bêdzie odgrodzony od tych pól, na których nie stoj± czarny ani zielony. Teraz, je¿eli w³a¶ciciel pionka czarnego nie ma ju¿ ogrodzeñ, nie mo¿e wykonaæ ruchu.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=120mm]{img/no-move.png}
+\caption{Brak legalnych ruchów \label{overflow}}
+\end{figure}
+
+\section{Cele i za³o¿enia}
+
+Opracowywanie graczy sterowanych komputerowo do gier planszowych mo¿e mieæ ró¿ne za³o¿enia i cele. Pe³ne rozwi±zanie gier z du¿± ilo¶ci± stanów wymaga mocy obliczeniowej przekraczaj±cej mo¿liwo¶ci komputera osobistego, a nawet je¶li uzyska siê je na superkomputerze, to wynikowa tablica optymalnych ruchów nie nadaje siê do dystrybucji wraz z gr±. Celem tej pracy jest opracowanie jak najlepszych algorytmów sztucznej inteligencji dla gry Quoridor i utworzenie oprogramowania open-source, ³atwego w dystrybucji i nadaj±cego siê do u¿ycia na komputerze osobistym, które bêdzie umo¿liwa³o grê cz³owieka przeciwko ró¿nym algorytmom, obserwowanie rozgrywek miêdzy graczami komputerowymi oraz porównywanie graczy komputerowych poprzez przeprowadzanie automatycznych turniejów (w tym ostatnim przypadku bez interfejsu dla u¿ytkownika).
+
+Dodatkowo chcia³bym rozwi±zaæ problem responsywno¶ci gracza komputerowego, który pojawia siê w wielu aplikacjach. Mianowicie chcia³bym unikn±æ rozwi±zañ, w których czas dzia³ania algorytmu jest regulowany parametrem specyficznym dla danego algorytmu sztucznej inteligencji, np. g³êboko¶ci± przeszukiwania drzewa stanów gry, i dopiero po wykonaniu ca³ego algorytmu zwracany jest wynik. Takie rozwi±zania nie gwarantuj± w rzeczywisto¶ci ¿adnego ograniczenia na czas w jakim komputer wykona ruch. Zamiast tego, chcia³bym zaprojektowaæ algorytmy w taki sposób, ¿eby w mo¿na by³o przerwaæ ruch gracza komputerowego w dowolnym momencie, uzyskuj±c decyzjê o ruchu, który wydawa³ siê optymalny w podczas przerwania obliczeñ, i jednocze¶nie nie uzyskaæ algorytmu silnie uzale¿nionego od czynników losowych, jak np. kolejno¶æ rozpatrywania dopuszczalnych ruchów.
+
+\section{Istniej±ce rozwi±zania}
+
+W¶ród projektów open-source dotycz±cych gry Quoridor, które znalaz³em, ¿aden nie zawiera zadowalaj±cego algorytmu sztucznej inteligencji. S± to albo serwery gry, zajmuj±ce siê wy³±cznie przestrzeganiem zasad gry i pozostawiaj±ce wybór ruchu poza zakresem projektu, albo aplikacje pozwalaj±ce graæ z naiwnym graczem komputerowym. Nie widaæ te¿ w prób rozwi±zania problemu responsywno¶ci.
 
 \begin{thebibliography}{99}
 \addcontentsline{toc}{chapter}{Bibliografia}
