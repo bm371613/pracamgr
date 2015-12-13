@@ -10,7 +10,7 @@
 
 \nralbumu{319476}
 
-\title{Sztuczna inteligencja dla gry Quoridor}
+\title{Sztuczna inteligencja na przykladzie gry Quoridor}
 \tytulang{Artificial intelligence for the Quoridor game}
 
 \kierunek{Informatyka}
@@ -49,16 +49,16 @@ TODO
 
 \chapter{Wprowadzenie}
 
-W pracy zajmê siê sztuczn± inteligencj± dla gry Quoridor. W dalszej czê¶ci pierwszego rozdzia³u opiszê zasady gry w wersji oryginalnego wydawcy i wska¿ê istniej±ce niedoskona³o¶ci, okre¶lê za³o¿enia i oczekiwania wobec tej pracy i dokonam przegl±du istniej±cych rozwi±zañ, aby uzasadniæ podjêcie tematu. W drugim rozdziale rozstrzygnê kwestiê zasad gry. W trzecim opiszê i uzasadniê wybór technologii u¿ytych do implementacji i porównywania rozwa¿anych pó¼niej algorytmów. W czwartym rozdziale opiszê proces rozwijania kolejnych algorytmów, a¿ w koñcu w pi±tym podsumujê efekty swojej pracy.
+W pracy zajmiemy siê sztuczn± inteligencj± dla gry Quoridor. W dalszej czê¶ci pierwszego rozdzia³u opiszemy zasady gry w wersji oryginalnego wydawcy i wska¿emy istniej±ce niedoskona³o¶ci, okre¶limy za³o¿enia i oczekiwania wobec tej pracy i dokonamy przegl±du istniej±cych rozwi±zañ, aby uzasadniæ podjêcie tematu. W drugim rodziale dokonamy przegl±du ogólnych metod szcztucznej inteligencji u¿ywanych do implementacji graczy komputerowych. W trzecim rozdziale rozstrzygniemy kwestiê zasad gry. W czwartym opiszemy i uzasadnimy wybór technologii u¿ytych do implementacji i porównywania rozwa¿anych pó¼niej algorytmów. W pi±tym rozdziale opiszemy proces rozwijania kolejnych algorytmów, a¿ w koñcu w szóstym podsumujemy efekty naszej pracy.
 
 \section{Quoridor - oryginalne zasady gry}
 
-Gra rozgrywa siê na planszy przy pomocy 4 pionków i 20 ogrodzeñ, nazywanych te¿ ¶cianami. Na planszy znajduje siê siatka szczelin wyznaczaj±ca 81 kwadratowych pól, tworz±cych uk³ad 9~x~9. Ka¿dy pionek ma unikalny kolor, mie¶ci siê na jednym polu planszy i nie mo¿e go dzieliæ z innym. Ogrodzenia s± identyczne i daj± siê umieszczaæ w szczelinach miêdzy polami planszy. Ograodzenie jest dwukrotnie d³u¿sze od boku pola, wiêc (poprawnie umieszczone) s±siaduje z dwoma polami z ka¿dej strony, zajmuje ca³± szeroko¶æ szczeliny i jedno skrzy¿owanie szczelin.
+Gra rozgrywa siê na planszy za pomoc± 4 pionków i 20 ogrodzeñ, nazywanych te¿ ¶cianami. Na planszy znajduje siê siatka szczelin wyznaczaj±ca 81 kwadratowych pól, tworz±cych uk³ad 9~x~9. Ka¿dy pionek ma unikatowy kolor, mie¶ci siê na jednym polu planszy i nie mo¿e go dzieliæ z innym. Ogrodzenia s± identyczne i daj± siê umieszczaæ w szczelinach miêdzy polami planszy. Ogrodzenie jest dwukrotnie d³u¿sze od boku pola, wiêc (poprawnie umieszczone) s±siaduje z dwoma polami z ka¿dej strony, zajmuje ca³± szeroko¶æ szczeliny i jedno skrzy¿owanie szczelin.
 
 W grze mo¿e wzi±æ udzia³ dwóch lub czterech graczy. W obu przypadkach otrzymuj± po jednym pionku, dziel± siê po równo ogrodzeniami i przypisuj± siê do ró¿nych boków planszy; je¿eli jest ich dwóch, musz± to byæ boki przeciwleg³e.
 
 Na pocz±tku gry na planszy nie ma ogrodzeñ (stanowi± zasoby graczy), a pionek ka¿dego gracza umieszcza siê na polu przy ¶rodku boku, do którego jest przypisany.
-Nastêpnie gracze w dowolnej, ale ustalonej kolejno¶ci wykonuj± swój ruch. Celem gry jest dotarcie swoim pionkiem do boku planszy przeciwleg³ego wobec boku, do którego jest siê przypisanym. Gra koñczy siê w momencie, w którym jednemu z graczy siê to uda.
+Nastêpnie gracze wykonuj± kolejno swoje ruchy. Celem gry jest dotarcie swoim pionkiem do boku planszy przeciwleg³ego wobec boku, do którego jest siê przypisanym. Gra koñczy siê w momencie, w którym jednemu z graczy siê to uda.
 
 Ka¿dy ruch mo¿e polegaæ na ustawieniu jednego ze swoich nieu¿ytych ogrodzeñ na planszy albo przesuniêciu pionka. Ogrodzenie nie mo¿e kolidowaæ z ¿adnym innym i nie mo¿e odci±æ ¿adnemu graczowi wszystkich dróg do celu. Ruch pionkiem polega na przesuniêciu go na puste, s±siadnie pole (s±siedztwo wyznacza wspólny bok).
 
@@ -66,7 +66,7 @@ Je¿eli na pewnym s±siednim, nieodgrodzonym polu znajduje siê ju¿ pionek przeciwn
 
 \section{Niedoskona³o¶æ oryginalnych zasad}
 
-Dla pewnych stanów gry oryginalne zasady nie odpowiadaj± jednoznacznie na pytanie o legalne ruchy albo daj± odpowied¼ nieoczekiwan±, wygl±daj±c± na efekt niedopatrzenia. Mo¿liwe, ¿e autorzy i wydawcy gry ¶wiadomie woleli pozostawiæ ma³o prawdopodobne sytuacje do rozs±dzenia graczom ni¿ wyd³u¿aæ instrukcjê analizami kolejnych przypadków, jednak w przypadku tej pracy takie podej¶cie jest niedopuszczalne. Automatyczne testowanie algorytmów sztucznej inteligencji zwiêksza prawdopodobieñstwo natrafienia na problematyczne stany gry, co mo¿e zaburzyæ wynik pracy. W tym miejscu zarysujê tylko problem przyk³adem, odk³adaj±c rozwa¿ania nad mo¿liwymi rozwi±zaniami na dalsz± czê¶æ pracy.
+Dla pewnych stanów gry oryginalne zasady nie odpowiadaj± jednoznacznie na pytanie o legalne ruchy albo daj± odpowied¼ nieoczekiwan±, wygl±daj±c± na efekt niedopatrzenia. Mo¿liwe, ¿e autorzy i wydawcy gry ¶wiadomie woleli pozostawiæ ma³o prawdopodobne sytuacje do rozs±dzenia graczom ni¿ wyd³u¿aæ instrukcjê analizami kolejnych przypadków, jednak w przypadku tej pracy takie podej¶cie jest niedopuszczalne. Automatyczne testowanie algorytmów sztucznej inteligencji zwiêksza prawdopodobieñstwo natrafienia na problematyczne stany gry, co mo¿e zaburzyæ wynik pracy. W tym miejscu zarysujemy tylko problem przyk³adem, odk³adaj±c rozwa¿ania nad mo¿liwymi rozwi±zaniami na dalsz± czê¶æ pracy.
 
 \subsection*{Brak legalnych ruchów}
 
@@ -82,11 +82,11 @@ Niech pionki czarny i zielony s±siaduj± z pionkiem czerwonym. Dalej, niech pione
 
 Opracowywanie graczy sterowanych komputerowo do gier planszowych mo¿e mieæ ró¿ne za³o¿enia i cele. Pe³ne rozwi±zanie gier z du¿± ilo¶ci± stanów wymaga mocy obliczeniowej przekraczaj±cej mo¿liwo¶ci komputera osobistego, a nawet je¶li uzyska siê je na superkomputerze, to wynikowa tablica optymalnych ruchów nie nadaje siê do dystrybucji wraz z gr±. Celem tej pracy jest opracowanie jak najlepszych algorytmów sztucznej inteligencji dla gry Quoridor i utworzenie oprogramowania open-source, ³atwego w dystrybucji i nadaj±cego siê do u¿ycia na komputerze osobistym, które bêdzie umo¿liwa³o grê cz³owieka przeciwko ró¿nym algorytmom, obserwowanie rozgrywek miêdzy graczami komputerowymi oraz porównywanie graczy komputerowych poprzez przeprowadzanie automatycznych turniejów (w tym ostatnim przypadku bez interfejsu dla u¿ytkownika).
 
-Dodatkowo chcia³bym rozwi±zaæ problem responsywno¶ci gracza komputerowego, który pojawia siê w wielu aplikacjach. Mianowicie chcia³bym unikn±æ rozwi±zañ, w których czas dzia³ania algorytmu jest regulowany parametrem specyficznym dla danego algorytmu sztucznej inteligencji, np. g³êboko¶ci± przeszukiwania drzewa stanów gry, i dopiero po wykonaniu ca³ego algorytmu zwracany jest wynik. Takie rozwi±zania nie gwarantuj± w rzeczywisto¶ci ¿adnego ograniczenia na czas w jakim komputer wykona ruch. Zamiast tego, chcia³bym zaprojektowaæ algorytmy w taki sposób, ¿eby w mo¿na by³o przerwaæ ruch gracza komputerowego w dowolnym momencie, uzyskuj±c decyzjê o ruchu, który wydawa³ siê optymalny w podczas przerwania obliczeñ, i jednocze¶nie nie uzyskaæ algorytmu silnie uzale¿nionego od czynników losowych, jak np. kolejno¶æ rozpatrywania dopuszczalnych ruchów.
+Dodatkowo chcieliby¶my rozwi±zaæ problem responsywno¶ci gracza komputerowego, który pojawia siê w wielu aplikacjach. Mianowicie chcieliby¶my unikn±æ rozwi±zañ, w których czas dzia³ania algorytmu jest regulowany parametrem specyficznym dla danego algorytmu sztucznej inteligencji, np. g³êboko¶ci± przeszukiwania drzewa stanów gry, i dopiero po wykonaniu ca³ego algorytmu zwracany jest wynik. Takie rozwi±zania nie gwarantuj± w rzeczywisto¶ci ¿adnego ograniczenia na czas w jakim komputer wykona ruch. Zamiast tego, chcieliby¶my zaprojektowaæ algorytmy w taki sposób, ¿eby w mo¿na by³o przerwaæ ruch gracza komputerowego w dowolnym momencie, uzyskuj±c decyzjê o ruchu, który wydawa³ siê optymalny w podczas przerwania obliczeñ, i jednocze¶nie nie uzyskaæ algorytmu silnie uzale¿nionego od czynników losowych, jak np. kolejno¶æ rozpatrywania dopuszczalnych ruchów.
 
 \section{Istniej±ce rozwi±zania}
 
-W¶ród projektów open-source dotycz±cych gry Quoridor, które znalaz³em, ¿aden nie zawiera zadowalaj±cego algorytmu sztucznej inteligencji. S± to albo serwery gry, zajmuj±ce siê wy³±cznie przestrzeganiem zasad gry i pozostawiaj±ce wybór ruchu poza zakresem projektu, albo aplikacje pozwalaj±ce graæ z naiwnym graczem komputerowym. Nie widaæ te¿ w prób rozwi±zania problemu responsywno¶ci.
+W¶ród projektów open-source dotycz±cych gry Quoridor, które znale¼li¶my, ¿aden nie zawiera zadowalaj±cego algorytmu sztucznej inteligencji. S± to albo serwery gry, zajmuj±ce siê wy³±cznie przestrzeganiem zasad gry i pozostawiaj±ce wybór ruchu poza zakresem projektu, albo aplikacje pozwalaj±ce graæ z naiwnym graczem komputerowym. Nie widaæ te¿ w prób rozwi±zania problemu responsywno¶ci.
 
 \begin{thebibliography}{99}
 \addcontentsline{toc}{chapter}{Bibliografia}
