@@ -1,0 +1,22 @@
+\begin{tikzpicture}[->,>=stealth',level/.style={sibling distance = 5cm/#1,
+  level distance = 1.5cm}]
+\node {max(5, min(4, x))}
+    child{ node {5}
+    	child{ node {6}
+            child{ node {5}}
+            child{ node {6}}
+        }
+		child{ node {5}
+            child{ node {4}}
+            child{ node {5}}
+        }
+    }
+    child{ node {min(4, x)}
+        child{ node {4}
+            child{ node {3}}
+            child{ node {4}}
+        }
+        child{ node {x}}
+    }
+;
+\end{tikzpicture}

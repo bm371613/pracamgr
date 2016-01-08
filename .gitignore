@@ -6,3 +6,5 @@ pracamgr.lot
 pracamgr.pdf
 pracamgr.synctex.gz
 pracamgr.toc
+
+lib/*.log

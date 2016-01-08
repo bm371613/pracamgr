@@ -4,14 +4,15 @@
 
 \usepackage[latin2]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{amsmath}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
+\usepackage{amsmath}
 \usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{verbatim}
 
-\makeatletter
-\def\BState{\State\hskip-\ALG@thistlm}
-\makeatother
+\usetikzlibrary{arrows}
+
 
 \author{Bartosz Marcinkowski}
 
@@ -117,7 +118,7 @@ Kolejnym pojêciem pojawiaj±cym siê w tych algorytmach jest funkcja oceniaj±ca. J
 
 Algorytm Minimax nazywa graczy \(min\) i \(max\) oraz rozpatruje w drzewie gry tylko poddrzewo bie¿±cego stanu gry do ustalonej g³êboko¶ci. W tak uzyskanym drzewie li¶ciom przypisana jest warto¶æ funkcji oceniaj±cej dla gracza \(max\). Pozosta³e wierzcho³ki bêd± mia³y przypisywane warto¶ci na podstawie warto¶ci synów.
 
-Z definicji funkcji oceniaj±cej oczekujemy, ¿e gracz \(max\) zawsze wybierze ruch prowadz±cy do syna o najwiêkszej warto¶ci, wiêc w grze o sumie zerowej gracz \(min\) bêdzie wybiera³ najmniejsze warto¶ci. Zatem warto¶ci \("minimax"\) dla wszystkich wierzcho³ków mo¿emy obliczyæ nastêpuj±co:
+Wobec definicji funkcji oceniaj±cej oczekujemy, ¿e gracz \(max\) zawsze wybierze ruch prowadz±cy do syna o najwiêkszej warto¶ci, wiêc w grze o sumie zerowej gracz \(min\) bêdzie wybiera³ najmniejsze warto¶ci. Zatem warto¶ci \("minimax"\) dla wszystkich wierzcho³ków mo¿emy obliczyæ nastêpuj±co:
 
 \begin{algorithm}
 \caption{minimax}\label{minimax}
@@ -138,6 +139,12 @@ Z definicji funkcji oceniaj±cej oczekujemy, ¿e gracz \(max\) zawsze wybierze ruc
 Znaj±c warto¶ci \(minimax\) dla synów korzenia, mo¿emy wybraæ najkorzystniejszy ruch w obecnym stanie gry.
 
 \subsection{Alfa-Beta}
+
+Algorytm Alfa-Beta jest ulepszeniem algorytmu minimax. Opiera siê na nastêpuj±cej obserwacji: warto¶ci \(minimax\) niektórych wierzcho³ków mog± byæ ustalone bez obliczania ich dla wszystkich potomków a¿ do li¶ci, a wiêc niektóre obliczenia poprzedniego algorytmu s± zbêdne. Oszczêdzaj±c w ten sposób czas mo¿na zwiêkszyæ g³êboko¶æ przeszukiwanego drzewa, a wiêc podj±æ lepsz± decyzjê.
+
+Poni¿sze drzewo ilustruje sytuacjê, w której po obliczeniu warto¶ci \(minimax\) dla czê¶ci wierzcho³ków drzewa mo¿na stwierdziæ jaka jest warto¶æ korzenia.
+
+\begin{center}\input{lib/alfa-beta.tikz}\end{center}
 
 \subsection{Dalsze ulepszenia}
 
