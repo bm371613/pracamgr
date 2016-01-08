@@ -4,7 +4,14 @@
 
 \usepackage[latin2]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
 \usepackage{graphicx}
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
 
 \author{Bartosz Marcinkowski}
 
@@ -80,13 +87,69 @@ Niech pionki czarny i zielony s±siaduj± z pionkiem czerwonym. Dalej, niech pione
 
 \section{Cele i za³o¿enia}
 
-Opracowywanie graczy sterowanych komputerowo do gier planszowych mo¿e mieæ ró¿ne za³o¿enia i cele. Pe³ne rozwi±zanie gier z du¿± ilo¶ci± stanów wymaga mocy obliczeniowej przekraczaj±cej mo¿liwo¶ci komputera osobistego, a nawet je¶li uzyska siê je na superkomputerze, to wynikowa tablica optymalnych ruchów nie nadaje siê do dystrybucji wraz z gr±. Celem tej pracy jest opracowanie jak najlepszych algorytmów sztucznej inteligencji dla gry Quoridor i utworzenie oprogramowania open-source, ³atwego w dystrybucji i nadaj±cego siê do u¿ycia na komputerze osobistym, które bêdzie umo¿liwa³o grê cz³owieka przeciwko ró¿nym algorytmom, obserwowanie rozgrywek miêdzy graczami komputerowymi oraz porównywanie graczy komputerowych poprzez przeprowadzanie automatycznych turniejów (w tym ostatnim przypadku bez interfejsu dla u¿ytkownika).
+Opracowywanie graczy sterowanych komputerowo do gier planszowych mo¿e mieæ ró¿ne za³o¿enia i cele. Pe³ne rozwi±zanie gier z du¿± ilo¶ci± stanów wymaga mocy obliczeniowej przekraczaj±cej mo¿liwo¶ci komputera osobistego, a nawet je¶li uzyska siê je na superkomputerze, to wynikowa tablica optymalnych ruchów nie nadaje siê do dystrybucji wraz z gr±. Celem tej pracy jest opracowanie algorytmów sztucznej inteligencji dla gry Quoridor i utworzenie oprogramowania open-source, ³atwego w dystrybucji i nadaj±cego siê do u¿ycia na komputerze osobistym lub urz±dzeniu przeno¶nym, które bêdzie umo¿liwa³o grê cz³owieka przeciwko ró¿nym algorytmom, obserwowanie rozgrywek miêdzy graczami komputerowymi oraz porównywanie graczy komputerowych poprzez przeprowadzanie automatycznych turniejów (w tym ostatnim przypadku bez interfejsu dla u¿ytkownika).
 
 Dodatkowo chcieliby¶my rozwi±zaæ problem responsywno¶ci gracza komputerowego, który pojawia siê w wielu aplikacjach. Mianowicie chcieliby¶my unikn±æ rozwi±zañ, w których czas dzia³ania algorytmu jest regulowany parametrem specyficznym dla danego algorytmu sztucznej inteligencji, np. g³êboko¶ci± przeszukiwania drzewa stanów gry, i dopiero po wykonaniu ca³ego algorytmu zwracany jest wynik. Takie rozwi±zania nie gwarantuj± w rzeczywisto¶ci ¿adnego ograniczenia na czas w jakim komputer wykona ruch. Zamiast tego, chcieliby¶my zaprojektowaæ algorytmy w taki sposób, ¿eby w mo¿na by³o przerwaæ ruch gracza komputerowego w dowolnym momencie, uzyskuj±c decyzjê o ruchu, który wydawa³ siê optymalny w podczas przerwania obliczeñ, i jednocze¶nie nie uzyskaæ algorytmu silnie uzale¿nionego od czynników losowych, jak np. kolejno¶æ rozpatrywania dopuszczalnych ruchów.
 
 \section{Istniej±ce rozwi±zania}
 
 W¶ród projektów open-source dotycz±cych gry Quoridor, które znale¼li¶my, ¿aden nie zawiera zadowalaj±cego algorytmu sztucznej inteligencji. S± to albo serwery gry, zajmuj±ce siê wy³±cznie przestrzeganiem zasad gry i pozostawiaj±ce wybór ruchu poza zakresem projektu, albo aplikacje pozwalaj±ce graæ z naiwnym graczem komputerowym. Nie widaæ te¿ w prób rozwi±zania problemu responsywno¶ci.
+
+\chapter{Podstawowe metody sztucznej inteligencji dla gier}
+
+Istniej± standardowe, ogólne metody tworzenia algorytmów sztucznej inteligencji graczy komputerowych, które korzystaj± z podobnych za³o¿eñ i abstrakcji. W tym rozdziale opiszemy te za³o¿enia i metody, a pó¼niej odniesiemy je do gry Quoridor i przyjêtych wcze¶niej za³o¿eñ.
+
+\section{Podstawowe pojêcia}
+
+Algorytmy, które tu przedstawimy, dotycz± deterministycznych gier dla dwóch graczy, o sumie zerowej, z pe³n± informacj± o stanie gry, w których gracze wykonuj± ruchy na zmianê. Suma zerowa oznacza, ¿e wygrana jednego gracza oznacza przegran± drugiego.
+
+Podstawow± abstrakcj± u¿ywan± do reprezentacji gry jest graf skierowany, w którym wierzcho³ki reprezentuj± stany gry, a krawêdzie reprezentuj± legalne ruchy. Rozgrywka jest reprezentowana przez ¶cie¿kê, byæ mo¿e zawieraj±c± cykle, od wierzcho³ka reprezentuj±cego stan pocz±tkowy do jednego z wierzcho³ków reprezentuj±cych stan koñcowy.
+
+Na potrzeby algorytmów sztucznej inteligencji czêsto wygodniej jest u¿yæ drzewa gry, w którym wiele wierzcho³ków mo¿e reprezentowaæ ten sam stan gry. Stan pocz±tkowy jest reprezentowany korzeniem, stany koñcowe li¶æmi a rozgrywka ¶cie¿k± od korzenia do li¶cia.
+
+W dalszej czê¶ci pracy bêdziemy zamiennie u¿ywaæ pojêæ stan i wierzcho³ek, ruch i krawêd¼ itd. o ile nie bêdzie powodowaæ to nieporozumieñ.
+
+Kolejnym pojêciem pojawiaj±cym siê w tych algorytmach jest funkcja oceniaj±ca. Jest to funkcja przypisuj±ca stanowi gry liczbê ca³kowit±, która ma oceniaæ jak bardzo po¿±dany jest ten stan dla dangego gracza. Powinna przyjmowaæ skrajne warto¶ci dla stanów koñcowych (najwiêksz± dla wygrywaj±cych, a najmniejsz± dla przegrywaj±cych).
+
+\section{Minimax i Alfa-Beta}
+
+\subsection{Minimax}
+
+Algorytm Minimax nazywa graczy \(min\) i \(max\) oraz rozpatruje w drzewie gry tylko poddrzewo bie¿±cego stanu gry do ustalonej g³êboko¶ci. W tak uzyskanym drzewie li¶ciom przypisana jest warto¶æ funkcji oceniaj±cej dla gracza \(max\). Pozosta³e wierzcho³ki bêd± mia³y przypisywane warto¶ci na podstawie warto¶ci synów.
+
+Z definicji funkcji oceniaj±cej oczekujemy, ¿e gracz \(max\) zawsze wybierze ruch prowadz±cy do syna o najwiêkszej warto¶ci, wiêc w grze o sumie zerowej gracz \(min\) bêdzie wybiera³ najmniejsze warto¶ci. Zatem warto¶ci \("minimax"\) dla wszystkich wierzcho³ków mo¿emy obliczyæ nastêpuj±co:
+
+\begin{algorithm}
+\caption{minimax}\label{minimax}
+\begin{algorithmic}[1]
+\Function{minimax}{$v$}
+\If {$jestLisciem(v)$}
+	\State \Return $funkcjaOceniajacaDlaGraczaMax(v)$
+\EndIf
+\If {$aktualyGracz(s) == graczMax$}
+	\State \Return $max$($minimax(s) | s \in synowie(v))$
+\Else
+	\State \Return $max$($minimax(s) | s \in synowie(v))$
+\EndIf
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+Znaj±c warto¶ci \(minimax\) dla synów korzenia, mo¿emy wybraæ najkorzystniejszy ruch w obecnym stanie gry.
+
+\subsection{Alfa-Beta}
+
+\subsection{Dalsze ulepszenia}
+
+TODO tablica transpozycji, MTD-f, NegaScout, PVS
+
+\section{Metody Monte Carlo}
+
+TODO
+
+\section{Odniesienie przedstawionych metod do tej pracy}
+
+TODO
 
 \begin{thebibliography}{99}
 \addcontentsline{toc}{chapter}{Bibliografia}
