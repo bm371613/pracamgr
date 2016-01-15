@@ -2,7 +2,7 @@
 
 \usepackage{polski}
 
-\usepackage[latin2]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
@@ -38,7 +38,7 @@ I. Computing Methodologies \\
 	sztuczna inteligencja, gry planszowe
 }
 
-% Tu jest dobre miejsce na Twoje w³asne makra i~¶rodowiska:
+% Tu jest dobre miejsce na Twoje wÅ‚asne makra i~Å›rodowiska:
 \newtheorem{defi}{Definicja}[section]
 
 % koniec definicji
@@ -57,68 +57,68 @@ TODO
 
 \chapter{Wprowadzenie}
 
-W pracy zajmiemy siê sztuczn± inteligencj± dla gry Quoridor. W dalszej czê¶ci pierwszego rozdzia³u opiszemy zasady gry w wersji oryginalnego wydawcy i wska¿emy istniej±ce niedoskona³o¶ci, okre¶limy za³o¿enia i oczekiwania wobec tej pracy i dokonamy przegl±du istniej±cych rozwi±zañ, aby uzasadniæ podjêcie tematu. W drugim rodziale dokonamy przegl±du ogólnych metod szcztucznej inteligencji u¿ywanych do implementacji graczy komputerowych. W trzecim rozdziale rozstrzygniemy kwestiê zasad gry. W czwartym opiszemy i uzasadnimy wybór technologii u¿ytych do implementacji i porównywania rozwa¿anych pó¼niej algorytmów. W pi±tym rozdziale opiszemy proces rozwijania kolejnych algorytmów, a¿ w koñcu w szóstym podsumujemy efekty naszej pracy.
+W pracy zajmiemy siÄ™ sztucznÄ… inteligencjÄ… dla gry Quoridor. W dalszej czÄ™Å›ci pierwszego rozdziaÅ‚u opiszemy zasady gry w wersji oryginalnego wydawcy i wskaÅ¼emy istniejÄ…ce niedoskonaÅ‚oÅ›ci, okreÅ›limy zaÅ‚oÅ¼enia i oczekiwania wobec tej pracy i dokonamy przeglÄ…du istniejÄ…cych rozwiÄ…zaÅ„, aby uzasadniÄ‡ podjÄ™cie tematu. W drugim rodziale dokonamy przeglÄ…du ogÃ³lnych metod szcztucznej inteligencji uÅ¼ywanych do implementacji graczy komputerowych. W trzecim rozdziale rozstrzygniemy kwestiÄ™ zasad gry. W czwartym opiszemy i uzasadnimy wybÃ³r technologii uÅ¼ytych do implementacji i porÃ³wnywania rozwaÅ¼anych pÃ³Åºniej algorytmÃ³w. W piÄ…tym rozdziale opiszemy proces rozwijania kolejnych algorytmÃ³w, aÅ¼ w koÅ„cu w szÃ³stym podsumujemy efekty naszej pracy.
 
 \section{Quoridor - oryginalne zasady gry}
 
-Gra rozgrywa siê na planszy za pomoc± 4 pionków i 20 ogrodzeñ, nazywanych te¿ ¶cianami. Na planszy znajduje siê siatka szczelin wyznaczaj±ca 81 kwadratowych pól, tworz±cych uk³ad 9~x~9. Ka¿dy pionek ma unikatowy kolor, mie¶ci siê na jednym polu planszy i nie mo¿e go dzieliæ z innym. Ogrodzenia s± identyczne i daj± siê umieszczaæ w szczelinach miêdzy polami planszy. Ogrodzenie jest dwukrotnie d³u¿sze od boku pola, wiêc (poprawnie umieszczone) s±siaduje z dwoma polami z ka¿dej strony, zajmuje ca³± szeroko¶æ szczeliny i jedno skrzy¿owanie szczelin.
+Gra rozgrywa siÄ™ na planszy za pomocÄ… 4 pionkÃ³w i 20 ogrodzeÅ„, nazywanych teÅ¼ Å›cianami. Na planszy znajduje siÄ™ siatka szczelin wyznaczajÄ…ca 81 kwadratowych pÃ³l, tworzÄ…cych ukÅ‚ad 9~x~9. KaÅ¼dy pionek ma unikatowy kolor, mieÅ›ci siÄ™ na jednym polu planszy i nie moÅ¼e go dzieliÄ‡ z innym. Ogrodzenia sÄ… identyczne i dajÄ… siÄ™ umieszczaÄ‡ w szczelinach miÄ™dzy polami planszy. Ogrodzenie jest dwukrotnie dÅ‚uÅ¼sze od boku pola, wiÄ™c (poprawnie umieszczone) sÄ…siaduje z dwoma polami z kaÅ¼dej strony, zajmuje caÅ‚Ä… szerokoÅ›Ä‡ szczeliny i jedno skrzyÅ¼owanie szczelin.
 
-W grze mo¿e wzi±æ udzia³ dwóch lub czterech graczy. W obu przypadkach otrzymuj± po jednym pionku, dziel± siê po równo ogrodzeniami i przypisuj± siê do ró¿nych boków planszy; je¿eli jest ich dwóch, musz± to byæ boki przeciwleg³e.
+W grze moÅ¼e wziÄ…Ä‡ udziaÅ‚ dwÃ³ch lub czterech graczy. W obu przypadkach otrzymujÄ… po jednym pionku, dzielÄ… siÄ™ po rÃ³wno ogrodzeniami i przypisujÄ… siÄ™ do rÃ³Å¼nych bokÃ³w planszy; jeÅ¼eli jest ich dwÃ³ch, muszÄ… to byÄ‡ boki przeciwlegÅ‚e.
 
-Na pocz±tku gry na planszy nie ma ogrodzeñ (stanowi± zasoby graczy), a pionek ka¿dego gracza umieszcza siê na polu przy ¶rodku boku, do którego jest przypisany.
-Nastêpnie gracze wykonuj± kolejno swoje ruchy. Celem gry jest dotarcie swoim pionkiem do boku planszy przeciwleg³ego wobec boku, do którego jest siê przypisanym. Gra koñczy siê w momencie, w którym jednemu z graczy siê to uda.
+Na poczÄ…tku gry na planszy nie ma ogrodzeÅ„ (stanowiÄ… zasoby graczy), a pionek kaÅ¼dego gracza umieszcza siÄ™ na polu przy Å›rodku boku, do ktÃ³rego jest przypisany.
+NastÄ™pnie gracze wykonujÄ… kolejno swoje ruchy. Celem gry jest dotarcie swoim pionkiem do boku planszy przeciwlegÅ‚ego wobec boku, do ktÃ³rego jest siÄ™ przypisanym. Gra koÅ„czy siÄ™ w momencie, w ktÃ³rym jednemu z graczy siÄ™ to uda.
 
-Ka¿dy ruch mo¿e polegaæ na ustawieniu jednego ze swoich nieu¿ytych ogrodzeñ na planszy albo przesuniêciu pionka. Ogrodzenie nie mo¿e kolidowaæ z ¿adnym innym i nie mo¿e odci±æ ¿adnemu graczowi wszystkich dróg do celu. Ruch pionkiem polega na przesuniêciu go na puste, s±siadnie pole (s±siedztwo wyznacza wspólny bok).
+KaÅ¼dy ruch moÅ¼e polegaÄ‡ na ustawieniu jednego ze swoich nieuÅ¼ytych ogrodzeÅ„ na planszy albo przesuniÄ™ciu pionka. Ogrodzenie nie moÅ¼e kolidowaÄ‡ z Å¼adnym innym i nie moÅ¼e odciÄ…Ä‡ Å¼adnemu graczowi wszystkich drÃ³g do celu. Ruch pionkiem polega na przesuniÄ™ciu go na puste, sÄ…siadnie pole (sÄ…siedztwo wyznacza wspÃ³lny bok).
 
-Je¿eli na pewnym s±siednim, nieodgrodzonym polu znajduje siê ju¿ pionek przeciwnika, mo¿na wykonaæ skok na pole za tym pionkiem, o ile jest ono puste i nieodgrodzone. Je¿eli taki skok nie jest mo¿liwy, mo¿na wykonaæ skok na jedno z dwóch pozosta³ych pól s±siaduj±cych z przeciwnikiem, znów o ile jest puste i nieodgrodzone.
+JeÅ¼eli na pewnym sÄ…siednim, nieodgrodzonym polu znajduje siÄ™ juÅ¼ pionek przeciwnika, moÅ¼na wykonaÄ‡ skok na pole za tym pionkiem, o ile jest ono puste i nieodgrodzone. JeÅ¼eli taki skok nie jest moÅ¼liwy, moÅ¼na wykonaÄ‡ skok na jedno z dwÃ³ch pozostaÅ‚ych pÃ³l sÄ…siadujÄ…cych z przeciwnikiem, znÃ³w o ile jest puste i nieodgrodzone.
 
-\section{Niedoskona³o¶æ oryginalnych zasad}
+\section{NiedoskonaÅ‚oÅ›Ä‡ oryginalnych zasad}
 
-Dla pewnych stanów gry oryginalne zasady nie odpowiadaj± jednoznacznie na pytanie o legalne ruchy albo daj± odpowied¼ nieoczekiwan±, wygl±daj±c± na efekt niedopatrzenia. Mo¿liwe, ¿e autorzy i wydawcy gry ¶wiadomie woleli pozostawiæ ma³o prawdopodobne sytuacje do rozs±dzenia graczom ni¿ wyd³u¿aæ instrukcjê analizami kolejnych przypadków, jednak w przypadku tej pracy takie podej¶cie jest niedopuszczalne. Automatyczne testowanie algorytmów sztucznej inteligencji zwiêksza prawdopodobieñstwo natrafienia na problematyczne stany gry, co mo¿e zaburzyæ wynik pracy. W tym miejscu zarysujemy tylko problem przyk³adem, odk³adaj±c rozwa¿ania nad mo¿liwymi rozwi±zaniami na dalsz± czê¶æ pracy.
+Dla pewnych stanÃ³w gry oryginalne zasady nie odpowiadajÄ… jednoznacznie na pytanie o legalne ruchy albo dajÄ… odpowiedÅº nieoczekiwanÄ…, wyglÄ…dajÄ…cÄ… na efekt niedopatrzenia. MoÅ¼liwe, Å¼e autorzy i wydawcy gry Å›wiadomie woleli pozostawiÄ‡ maÅ‚o prawdopodobne sytuacje do rozsÄ…dzenia graczom niÅ¼ wydÅ‚uÅ¼aÄ‡ instrukcjÄ™ analizami kolejnych przypadkÃ³w, jednak w przypadku tej pracy takie podejÅ›cie jest niedopuszczalne. Automatyczne testowanie algorytmÃ³w sztucznej inteligencji zwiÄ™ksza prawdopodobieÅ„stwo natrafienia na problematyczne stany gry, co moÅ¼e zaburzyÄ‡ wynik pracy. W tym miejscu zarysujemy tylko problem przykÅ‚adem, odkÅ‚adajÄ…c rozwaÅ¼ania nad moÅ¼liwymi rozwiÄ…zaniami na dalszÄ… czÄ™Å›Ä‡ pracy.
 
-\subsection*{Brak legalnych ruchów}
+\subsection*{Brak legalnych ruchÃ³w}
 
-Niech pionki czarny i zielony s±siaduj± z pionkiem czerwonym. Dalej, niech pionek czarny bêdzie odgrodzony od wszystkich s±siednich pól oprócz tego, na którym stoi czerwony i niech czerwony bêdzie odgrodzony od tych pól, na których nie stoj± czarny ani zielony. Teraz, je¿eli w³a¶ciciel pionka czarnego nie ma ju¿ ogrodzeñ, nie mo¿e wykonaæ ruchu.
+Niech pionki czarny i zielony sÄ…siadujÄ… z pionkiem czerwonym. Dalej, niech pionek czarny bÄ™dzie odgrodzony od wszystkich sÄ…siednich pÃ³l oprÃ³cz tego, na ktÃ³rym stoi czerwony i niech czerwony bÄ™dzie odgrodzony od tych pÃ³l, na ktÃ³rych nie stojÄ… czarny ani zielony. Teraz, jeÅ¼eli wÅ‚aÅ›ciciel pionka czarnego nie ma juÅ¼ ogrodzeÅ„, nie moÅ¼e wykonaÄ‡ ruchu.
 
 \begin{figure}[ht!]
 \centering
 \includegraphics[width=120mm]{img/no-move.png}
-\caption{Brak legalnych ruchów \label{overflow}}
+\caption{Brak legalnych ruchÃ³w \label{overflow}}
 \end{figure}
 
-\section{Cele i za³o¿enia}
+\section{Cele i zaÅ‚oÅ¼enia}
 
-Opracowywanie graczy sterowanych komputerowo do gier planszowych mo¿e mieæ ró¿ne za³o¿enia i cele. Pe³ne rozwi±zanie gier z du¿± ilo¶ci± stanów wymaga mocy obliczeniowej przekraczaj±cej mo¿liwo¶ci komputera osobistego, a nawet je¶li uzyska siê je na superkomputerze, to wynikowa tablica optymalnych ruchów nie nadaje siê do dystrybucji wraz z gr±. Celem tej pracy jest opracowanie algorytmów sztucznej inteligencji dla gry Quoridor i utworzenie oprogramowania open-source, ³atwego w dystrybucji i nadaj±cego siê do u¿ycia na komputerze osobistym lub urz±dzeniu przeno¶nym, które bêdzie umo¿liwa³o grê cz³owieka przeciwko ró¿nym algorytmom, obserwowanie rozgrywek miêdzy graczami komputerowymi oraz porównywanie graczy komputerowych poprzez przeprowadzanie automatycznych turniejów (w tym ostatnim przypadku bez interfejsu dla u¿ytkownika).
+Opracowywanie graczy sterowanych komputerowo do gier planszowych moÅ¼e mieÄ‡ rÃ³Å¼ne zaÅ‚oÅ¼enia i cele. PeÅ‚ne rozwiÄ…zanie gier z duÅ¼Ä… iloÅ›ciÄ… stanÃ³w wymaga mocy obliczeniowej przekraczajÄ…cej moÅ¼liwoÅ›ci komputera osobistego, a nawet jeÅ›li uzyska siÄ™ je na superkomputerze, to wynikowa tablica optymalnych ruchÃ³w nie nadaje siÄ™ do dystrybucji wraz z grÄ…. Celem tej pracy jest opracowanie algorytmÃ³w sztucznej inteligencji dla gry Quoridor i utworzenie oprogramowania open-source, Å‚atwego w dystrybucji i nadajÄ…cego siÄ™ do uÅ¼ycia na komputerze osobistym lub urzÄ…dzeniu przenoÅ›nym, ktÃ³re bÄ™dzie umoÅ¼liwaÅ‚o grÄ™ czÅ‚owieka przeciwko rÃ³Å¼nym algorytmom, obserwowanie rozgrywek miÄ™dzy graczami komputerowymi oraz porÃ³wnywanie graczy komputerowych poprzez przeprowadzanie automatycznych turniejÃ³w (w tym ostatnim przypadku bez interfejsu dla uÅ¼ytkownika).
 
-Dodatkowo chcieliby¶my rozwi±zaæ problem responsywno¶ci gracza komputerowego, który pojawia siê w wielu aplikacjach. Mianowicie chcieliby¶my unikn±æ rozwi±zañ, w których czas dzia³ania algorytmu jest regulowany parametrem specyficznym dla danego algorytmu sztucznej inteligencji, np. g³êboko¶ci± przeszukiwania drzewa stanów gry, i dopiero po wykonaniu ca³ego algorytmu zwracany jest wynik. Takie rozwi±zania nie gwarantuj± w rzeczywisto¶ci ¿adnego ograniczenia na czas w jakim komputer wykona ruch. Zamiast tego, chcieliby¶my zaprojektowaæ algorytmy w taki sposób, ¿eby w mo¿na by³o przerwaæ ruch gracza komputerowego w dowolnym momencie, uzyskuj±c decyzjê o ruchu, który wydawa³ siê optymalny w podczas przerwania obliczeñ, i jednocze¶nie nie uzyskaæ algorytmu silnie uzale¿nionego od czynników losowych, jak np. kolejno¶æ rozpatrywania dopuszczalnych ruchów.
+Dodatkowo chcielibyÅ›my rozwiÄ…zaÄ‡ problem responsywnoÅ›ci gracza komputerowego, ktÃ³ry pojawia siÄ™ w wielu aplikacjach. Mianowicie chcielibyÅ›my uniknÄ…Ä‡ rozwiÄ…zaÅ„, w ktÃ³rych czas dziaÅ‚ania algorytmu jest regulowany parametrem specyficznym dla danego algorytmu sztucznej inteligencji, np. gÅ‚Ä™bokoÅ›ciÄ… przeszukiwania drzewa stanÃ³w gry, i dopiero po wykonaniu caÅ‚ego algorytmu zwracany jest wynik. Takie rozwiÄ…zania nie gwarantujÄ… w rzeczywistoÅ›ci Å¼adnego ograniczenia na czas w jakim komputer wykona ruch. Zamiast tego, chcielibyÅ›my zaprojektowaÄ‡ algorytmy w taki sposÃ³b, Å¼eby w moÅ¼na byÅ‚o przerwaÄ‡ ruch gracza komputerowego w dowolnym momencie, uzyskujÄ…c decyzjÄ™ o ruchu, ktÃ³ry wydawaÅ‚ siÄ™ optymalny w podczas przerwania obliczeÅ„, i jednoczeÅ›nie nie uzyskaÄ‡ algorytmu silnie uzaleÅ¼nionego od czynnikÃ³w losowych, jak np. kolejnoÅ›Ä‡ rozpatrywania dopuszczalnych ruchÃ³w.
 
-\section{Istniej±ce rozwi±zania}
+\section{IstniejÄ…ce rozwiÄ…zania}
 
-W¶ród projektów open-source dotycz±cych gry Quoridor, które znale¼li¶my, ¿aden nie zawiera zadowalaj±cego algorytmu sztucznej inteligencji. S± to albo serwery gry, zajmuj±ce siê wy³±cznie przestrzeganiem zasad gry i pozostawiaj±ce wybór ruchu poza zakresem projektu, albo aplikacje pozwalaj±ce graæ z naiwnym graczem komputerowym. Nie widaæ te¿ w prób rozwi±zania problemu responsywno¶ci.
+WÅ›rÃ³d projektÃ³w open-source dotyczÄ…cych gry Quoridor, ktÃ³re znaleÅºliÅ›my, Å¼aden nie zawiera zadowalajÄ…cego algorytmu sztucznej inteligencji. SÄ… to albo serwery gry, zajmujÄ…ce siÄ™ wyÅ‚Ä…cznie przestrzeganiem zasad gry i pozostawiajÄ…ce wybÃ³r ruchu poza zakresem projektu, albo aplikacje pozwalajÄ…ce graÄ‡ z naiwnym graczem komputerowym. Nie widaÄ‡ teÅ¼ w prÃ³b rozwiÄ…zania problemu responsywnoÅ›ci.
 
 \chapter{Podstawowe metody sztucznej inteligencji dla gier}
 
-Istniej± standardowe, ogólne metody tworzenia algorytmów sztucznej inteligencji graczy komputerowych, które korzystaj± z podobnych za³o¿eñ i abstrakcji. W tym rozdziale opiszemy te za³o¿enia i metody, a pó¼niej odniesiemy je do gry Quoridor i przyjêtych wcze¶niej za³o¿eñ.
+IstniejÄ… standardowe, ogÃ³lne metody tworzenia algorytmÃ³w sztucznej inteligencji graczy komputerowych, ktÃ³re korzystajÄ… z podobnych zaÅ‚oÅ¼eÅ„ i abstrakcji. W tym rozdziale opiszemy te zaÅ‚oÅ¼enia i metody, a pÃ³Åºniej odniesiemy je do gry Quoridor i przyjÄ™tych wczeÅ›niej zaÅ‚oÅ¼eÅ„.
 
-\section{Podstawowe pojêcia}
+\section{Podstawowe pojÄ™cia}
 
-Algorytmy, które tu przedstawimy, dotycz± deterministycznych gier dla dwóch graczy, o sumie zerowej, z pe³n± informacj± o stanie gry, w których gracze wykonuj± ruchy na zmianê. Suma zerowa oznacza, ¿e wygrana jednego gracza oznacza przegran± drugiego.
+Algorytmy, ktÃ³re tu przedstawimy, dotyczÄ… deterministycznych gier dla dwÃ³ch graczy, o sumie zerowej, z peÅ‚nÄ… informacjÄ… o stanie gry, w ktÃ³rych gracze wykonujÄ… ruchy na zmianÄ™. Suma zerowa oznacza, Å¼e wygrana jednego gracza oznacza przegranÄ… drugiego.
 
-Podstawow± abstrakcj± u¿ywan± do reprezentacji gry jest graf skierowany, w którym wierzcho³ki reprezentuj± stany gry, a krawêdzie reprezentuj± legalne ruchy. Rozgrywka jest reprezentowana przez ¶cie¿kê, byæ mo¿e zawieraj±c± cykle, od wierzcho³ka reprezentuj±cego stan pocz±tkowy do jednego z wierzcho³ków reprezentuj±cych stan koñcowy.
+PodstawowÄ… abstrakcjÄ… uÅ¼ywanÄ… do reprezentacji gry jest graf skierowany, w ktÃ³rym wierzchoÅ‚ki reprezentujÄ… stany gry, a krawÄ™dzie reprezentujÄ… legalne ruchy. Rozgrywka jest reprezentowana przez Å›cieÅ¼kÄ™, byÄ‡ moÅ¼e zawierajÄ…cÄ… cykle, od wierzchoÅ‚ka reprezentujÄ…cego stan poczÄ…tkowy do jednego z wierzchoÅ‚kÃ³w reprezentujÄ…cych stan koÅ„cowy.
 
-Na potrzeby algorytmów sztucznej inteligencji czêsto wygodniej jest u¿yæ drzewa gry, w którym wiele wierzcho³ków mo¿e reprezentowaæ ten sam stan gry. Stan pocz±tkowy jest reprezentowany korzeniem, stany koñcowe li¶æmi a rozgrywka ¶cie¿k± od korzenia do li¶cia.
+Na potrzeby algorytmÃ³w sztucznej inteligencji czÄ™sto wygodniej jest uÅ¼yÄ‡ drzewa gry, w ktÃ³rym wiele wierzchoÅ‚kÃ³w moÅ¼e reprezentowaÄ‡ ten sam stan gry. Stan poczÄ…tkowy jest reprezentowany korzeniem, stany koÅ„cowe liÅ›Ä‡mi a rozgrywka Å›cieÅ¼kÄ… od korzenia do liÅ›cia.
 
-W dalszej czê¶ci pracy bêdziemy zamiennie u¿ywaæ pojêæ stan i wierzcho³ek, ruch i krawêd¼ itd. o ile nie bêdzie powodowaæ to nieporozumieñ.
+W dalszej czÄ™Å›ci pracy bÄ™dziemy zamiennie uÅ¼ywaÄ‡ pojÄ™Ä‡ stan i wierzchoÅ‚ek, ruch i krawÄ™dÅº itd. o ile nie bÄ™dzie powodowaÄ‡ to nieporozumieÅ„.
 
-Kolejnym pojêciem pojawiaj±cym siê w tych algorytmach jest funkcja oceniaj±ca. Jest to funkcja przypisuj±ca stanowi gry liczbê ca³kowit±, która ma oceniaæ jak bardzo po¿±dany jest ten stan dla dangego gracza. Powinna przyjmowaæ skrajne warto¶ci dla stanów koñcowych (najwiêksz± dla wygrywaj±cych, a najmniejsz± dla przegrywaj±cych).
+Kolejnym pojÄ™ciem pojawiajÄ…cym siÄ™ w tych algorytmach jest funkcja oceniajÄ…ca. Jest to funkcja przypisujÄ…ca stanowi gry liczbÄ™ caÅ‚kowitÄ…, ktÃ³ra ma oceniaÄ‡ jak bardzo poÅ¼Ä…dany jest ten stan dla dangego gracza. Powinna przyjmowaÄ‡ skrajne wartoÅ›ci dla stanÃ³w koÅ„cowych (najwiÄ™kszÄ… dla wygrywajÄ…cych, a najmniejszÄ… dla przegrywajÄ…cych).
 
 \section{Minimax i Alfa-Beta}
 
 \subsection{Minimax}
 
-Algorytm Minimax nazywa graczy \(min\) i \(max\) oraz rozpatruje w drzewie gry tylko poddrzewo bie¿±cego stanu gry do ustalonej g³êboko¶ci. W tak uzyskanym drzewie li¶ciom przypisana jest warto¶æ funkcji oceniaj±cej dla gracza \(max\). Pozosta³e wierzcho³ki bêd± mia³y przypisywane warto¶ci na podstawie warto¶ci synów.
+Algorytm Minimax nazywa graczy \(min\) i \(max\) oraz rozpatruje w drzewie gry tylko poddrzewo bieÅ¼Ä…cego stanu gry do ustalonej gÅ‚Ä™bokoÅ›ci. W tak uzyskanym drzewie liÅ›ciom przypisana jest wartoÅ›Ä‡ funkcji oceniajÄ…cej dla gracza \(max\). PozostaÅ‚e wierzchoÅ‚ki bÄ™dÄ… miaÅ‚y przypisywane wartoÅ›ci na podstawie wartoÅ›ci synÃ³w.
 
-Wobec definicji funkcji oceniaj±cej oczekujemy, ¿e gracz \(max\) zawsze wybierze ruch prowadz±cy do syna o najwiêkszej warto¶ci, wiêc w grze o sumie zerowej gracz \(min\) bêdzie wybiera³ najmniejsze warto¶ci. Zatem warto¶ci \("minimax"\) dla wszystkich wierzcho³ków mo¿emy obliczyæ nastêpuj±co:
+Wobec definicji funkcji oceniajÄ…cej oczekujemy, Å¼e gracz \(max\) zawsze wybierze ruch prowadzÄ…cy do syna o najwiÄ™kszej wartoÅ›ci, wiÄ™c w grze o sumie zerowej gracz \(min\) bÄ™dzie wybieraÅ‚ najmniejsze wartoÅ›ci. Zatem wartoÅ›ci \("minimax"\) dla wszystkich wierzchoÅ‚kÃ³w moÅ¼emy obliczyÄ‡ nastÄ™pujÄ…co:
 
 \begin{algorithm}
 \caption{minimax}\label{minimax}
@@ -136,13 +136,13 @@ Wobec definicji funkcji oceniaj±cej oczekujemy, ¿e gracz \(max\) zawsze wybierze
 \end{algorithmic}
 \end{algorithm}
 
-Znaj±c warto¶ci \(minimax\) dla synów korzenia, mo¿emy wybraæ najkorzystniejszy ruch w obecnym stanie gry.
+ZnajÄ…c wartoÅ›ci \(minimax\) dla synÃ³w korzenia, moÅ¼emy wybraÄ‡ najkorzystniejszy ruch w obecnym stanie gry.
 
 \subsection{Alfa-Beta}
 
-Algorytm Alfa-Beta jest ulepszeniem algorytmu minimax. Opiera siê na nastêpuj±cej obserwacji: warto¶ci \(minimax\) niektórych wierzcho³ków mog± byæ ustalone bez obliczania ich dla wszystkich potomków a¿ do li¶ci, a wiêc niektóre obliczenia poprzedniego algorytmu s± zbêdne. Oszczêdzaj±c w ten sposób czas mo¿na zwiêkszyæ g³êboko¶æ przeszukiwanego drzewa, a wiêc podj±æ lepsz± decyzjê.
+Algorytm Alfa-Beta jest ulepszeniem algorytmu minimax. Opiera siÄ™ na nastÄ™pujÄ…cej obserwacji: wartoÅ›ci \(minimax\) niektÃ³rych wierzchoÅ‚kÃ³w mogÄ… byÄ‡ ustalone bez obliczania ich dla wszystkich potomkÃ³w aÅ¼ do liÅ›ci, a wiÄ™c niektÃ³re obliczenia poprzedniego algorytmu sÄ… zbÄ™dne. OszczÄ™dzajÄ…c w ten sposÃ³b czas moÅ¼na zwiÄ™kszyÄ‡ gÅ‚Ä™bokoÅ›Ä‡ przeszukiwanego drzewa, a wiÄ™c podjÄ…Ä‡ lepszÄ… decyzjÄ™.
 
-Poni¿sze drzewo ilustruje sytuacjê, w której po obliczeniu warto¶ci \(minimax\) dla czê¶ci wierzcho³ków drzewa mo¿na stwierdziæ jaka jest warto¶æ korzenia.
+PoniÅ¼sze drzewo ilustruje sytuacjÄ™, w ktÃ³rej po obliczeniu wartoÅ›ci \(minimax\) dla czÄ™Å›ci wierzchoÅ‚kÃ³w drzewa moÅ¼na stwierdziÄ‡ jaka jest wartoÅ›Ä‡ korzenia.
 
 \begin{center}\input{lib/alfa-beta.tikz}\end{center}
 
@@ -168,5 +168,5 @@ TODO
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: t
-%%% coding: latin-2
+%%% coding: utf-8
 %%% End:
