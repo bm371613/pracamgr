@@ -1,0 +1,9 @@
+- zasady (przeskakiwanie)
+- "poddawanie się" - częściowe rozwiązanie (minimax i pochodne)
+- "niespieszne zwycięstwo"
+- problem min-maxa z trzema drogami (stoi w miejscu)
+- optymalizacja dla odcięć - iterator legalnych ruchów
+- głupota jednego gracza
+- 3 prowadzi w wyścigu, trzeci ma ściany i nikt się nie chce ruszyć
+- optymalizacja: stablicowanie Position
+- optymalizacja: minimalizowanie kopiowania (mutables, WallStateAfterMove)
