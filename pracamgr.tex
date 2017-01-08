@@ -18,7 +18,7 @@
 
 \nralbumu{319476}
 
-\title{Sztuczna inteligencja na przykladzie gry Quoridor}
+\title{Sztuczna inteligencja dla gry Quoridor}
 \tytulang{Artificial intelligence for the Quoridor game}
 
 \kierunek{Informatyka}
@@ -57,7 +57,10 @@ TODO
 
 \chapter{Wprowadzenie}
 
-W pracy zajmiemy się sztuczną inteligencją dla gry Quoridor. W dalszej części pierwszego rozdziału opiszemy zasady gry w wersji oryginalnego wydawcy i wskażemy istniejące niedoskonałości, określimy założenia i oczekiwania wobec tej pracy i dokonamy przeglądu istniejących rozwiązań, aby uzasadnić podjęcie tematu. W drugim rodziale dokonamy przeglądu ogólnych metod szcztucznej inteligencji używanych do implementacji graczy komputerowych. W trzecim rozdziale rozstrzygniemy kwestię zasad gry. W czwartym opiszemy i uzasadnimy wybór technologii użytych do implementacji i porównywania rozważanych później algorytmów. W piątym rozdziale opiszemy proces rozwijania kolejnych algorytmów, aż w końcu w szóstym podsumujemy efekty naszej pracy.
+W pracy zajmiemy się sztuczną inteligencją na potrzeby tworzonej aplikacji grającej w Quoridor. W dalszej części pierwszego rozdziału opiszemy planszową wersję Quoridor, która była inspiracją do pracy nad aplikacją. Dalej, opiszemy obrane cele i dokonamy przeglądu istniejących rozwiązań, uzasadniając podjęcie tematu.
+W drugim rozdziale sklasyfikujemy Quoridor i opiszemy standardowe metody sztucznej inteligencji, właściwe dla szerszej klasy gier, w której umieścimy Quoridor.
+W trzecim rozdziale opiszemy tworzoną aplikację, skupiając się na aspektach istotnych dla graczy komputerowych (dalej "botów"). Tak więc doprecyzujemy zasady gry, określimy używane technologie i zdefiniujemy interfejs bota.
+W czwartym rozdziale opiszemy proces rozwijania kolejnych algorytmów, aż w końcu w piątym podsumujemy efekty naszej pracy.
 
 \section{Quoridor - oryginalne zasady gry}
 
@@ -72,37 +75,43 @@ Każdy ruch może polegać na ustawieniu jednego ze swoich nieużytych ogrodzeń
 
 Jeżeli na pewnym sąsiednim, nieodgrodzonym polu znajduje się już pionek przeciwnika, można wykonać skok na pole za tym pionkiem, o ile jest ono puste i nieodgrodzone. Jeżeli taki skok nie jest możliwy, można wykonać skok na jedno z dwóch pozostałych pól sąsiadujących z przeciwnikiem, znów o ile jest puste i nieodgrodzone.
 
-\section{Niedoskonałość oryginalnych zasad}
-
-Dla pewnych stanów gry oryginalne zasady nie odpowiadają jednoznacznie na pytanie o legalne ruchy albo dają odpowiedź nieoczekiwaną, wyglądającą na efekt niedopatrzenia. Możliwe, że autorzy i wydawcy gry świadomie woleli pozostawić mało prawdopodobne sytuacje do rozsądzenia graczom niż wydłużać instrukcję analizami kolejnych przypadków, jednak w przypadku tej pracy takie podejście jest niedopuszczalne. Automatyczne testowanie algorytmów sztucznej inteligencji zwiększa prawdopodobieństwo natrafienia na problematyczne stany gry, co może zaburzyć wynik pracy. W tym miejscu zarysujemy tylko problem przykładem, odkładając rozważania nad możliwymi rozwiązaniami na dalszą część pracy.
-
-\subsection*{Brak legalnych ruchów}
-
-Niech pionki czarny i zielony sąsiadują z pionkiem czerwonym. Dalej, niech pionek czarny będzie odgrodzony od wszystkich sąsiednich pól oprócz tego, na którym stoi czerwony i niech czerwony będzie odgrodzony od tych pól, na których nie stoją czarny ani zielony. Teraz, jeżeli właściciel pionka czarnego nie ma już ogrodzeń, nie może wykonać ruchu.
-
-\begin{figure}[ht!]
-\centering
-\includegraphics[width=120mm]{img/no-move.png}
-\caption{Brak legalnych ruchów \label{overflow}}
-\end{figure}
-
 \section{Cele i założenia}
 
-Opracowywanie graczy sterowanych komputerowo do gier planszowych może mieć różne założenia i cele. Pełne rozwiązanie gier z dużą ilością stanów wymaga mocy obliczeniowej przekraczającej możliwości komputera osobistego, a nawet jeśli uzyska się je na superkomputerze, to wynikowa tablica optymalnych ruchów nie nadaje się do dystrybucji wraz z grą. Celem tej pracy jest opracowanie algorytmów sztucznej inteligencji dla gry Quoridor i utworzenie oprogramowania open-source, łatwego w dystrybucji i nadającego się do użycia na komputerze osobistym lub urządzeniu przenośnym, które będzie umożliwało grę człowieka przeciwko różnym algorytmom, obserwowanie rozgrywek między graczami komputerowymi oraz porównywanie graczy komputerowych poprzez przeprowadzanie automatycznych turniejów (w tym ostatnim przypadku bez interfejsu dla użytkownika).
-
-Dodatkowo chcielibyśmy rozwiązać problem responsywności gracza komputerowego, który pojawia się w wielu aplikacjach. Mianowicie chcielibyśmy uniknąć rozwiązań, w których czas działania algorytmu jest regulowany parametrem specyficznym dla danego algorytmu sztucznej inteligencji, np. głębokością przeszukiwania drzewa stanów gry, i dopiero po wykonaniu całego algorytmu zwracany jest wynik. Takie rozwiązania nie gwarantują w rzeczywistości żadnego ograniczenia na czas w jakim komputer wykona ruch. Zamiast tego, chcielibyśmy zaprojektować algorytmy w taki sposób, żeby w można było przerwać ruch gracza komputerowego w dowolnym momencie, uzyskując decyzję o ruchu, który wydawał się optymalny w podczas przerwania obliczeń, i jednocześnie nie uzyskać algorytmu silnie uzależnionego od czynników losowych, jak np. kolejność rozpatrywania dopuszczalnych ruchów.
+Opracowywanie graczy sterowanych komputerowo do gier planszowych może mieć różne założenia i cele. Pełne rozwiązanie gier z dużą ilością stanów wymaga mocy obliczeniowej przekraczającej możliwości komputera osobistego, a nawet jeśli uzyska się je na superkomputerze, to wynikowa tablica optymalnych ruchów nie nadaje się do dystrybucji wraz z grą. Celem tej pracy jest opracowanie algorytmów sztucznej inteligencji dla gry Quoridor i utworzenie prototypu oprogramowania open-source, łatwego w dystrybucji i nadającego się do użycia na komputerze osobistym lub urządzeniu przenośnym, które będzie umożliwało grę w obu wariantach gry (dla 2 i 4 graczy), przy czy każdy gracz może być człowiekiem albo graczem komputerowym sterowanym przez jeden z dostępnych algorytmów sztucznej inteligencji.
 
 \section{Istniejące rozwiązania}
 
-Wśród projektów open-source dotyczących gry Quoridor, które znaleźliśmy, żaden nie zawiera zadowalającego algorytmu sztucznej inteligencji. Są to albo serwery gry, zajmujące się wyłącznie przestrzeganiem zasad gry i pozostawiające wybór ruchu poza zakresem projektu, albo aplikacje pozwalające grać z naiwnym graczem komputerowym. Nie widać też w prób rozwiązania problemu responsywności.
+Dostępnych jest już kilka programów grających w Quoridor. Są to aplikacje działające w przeglądarce internetowej. Żadna z nich nie osiąga celów, jakie postawiliśmy tworzonemu przez nas oprogramowaniu.
+Tylko w jednym przypadku\footnote{http://danielborowski.com/quoridor-ai/v2/display.html} udostępniony jest kod źródłowy.
+Inna aplikacja\footnote{https://play.google.com/store/apps/details?id=com.codestare.corridor}, wciąż w trakcie rozwoju, jest jedyną implementująca oba warianty gry.
+Spośród pozostałych aplikacji (zamkniętoźródłowych, z tylko jednym wariantem gry) na wzmiankę zasługuje jeszcze Zaborr\footnote{https://play.google.com/store/apps/details?id=ru.caviarpancakes.zaborr.android}, która wyróżnia się, subiektywanie ocenianą, jakością sztucznej inteligencji.
 
-\chapter{Podstawowe metody sztucznej inteligencji dla gier}
+\chapter{Standardowe metody dla tej klasy gier}
 
-Istnieją standardowe, ogólne metody tworzenia algorytmów sztucznej inteligencji graczy komputerowych, które korzystają z podobnych założeń i abstrakcji. W tym rozdziale opiszemy te założenia i metody, a później odniesiemy je do gry Quoridor i przyjętych wcześniej założeń.
+\section{Klasyfikacja Quoridor}
+
+Żeby poznać stan wiedzy na temat sztucznej inteligencji w grach takich jak Quoridor, musimy najpierw określić tę klasę gier.
+Cechy gry mające decydujący wpływ na algorytmy sterujące botami to:
+
+ - podział na tury lub ciągłe wykonywanie ruchów,
+
+ - pełna lub niepełna informacja o stanie gry,
+
+ - istnienie elementów losowości,
+
+ - podział zysku,
+
+ - ilość graczy.
+
+Na wyjaśnienie zasługuje tu "podział zysku". Ta cecha gry określa sposób, w jaki nagradzani są gracze, w szczególności decyduje o tym, czy opłacalna jest kooperacja. I tak na przykład szachy są grą o sumie stałej, tzn. korzyść przeciwnika jest jednoznaczna ze stratą. Inaczej bywa w grach ekonomicznych, gdzie współpraca między graczami może zwiększyć wypłatę nagrody dla obu graczy.
+
+Quoridor jest grą z podziałem na tury, z pełną informacją o stanie gry, bez losowości i jest grą o sumie stałej. A więc w wariancie dla dwóch graczy znajduje się w tej samej klasie gier co szachy, warcaby, go i wiele innych klasycznych gier, którymi informatyka zajmuje się od dziesięcioleci. Wiele z metod dla tej klasy gier zasłużyło już na miano standardowych i opiszemy je w dalszej części tego rozdziału.
+
+Wariant dla czterech graczy wciąż pozostaje pod wieloma względami podobny do gier klasycznych. Nie ma osobnego zestawu standardowych metod dla tego przypadku, który moglibyśmy tu przedstawić. Stosuje się, o ile to możliwe, specjalne warianty algorytmów używanych dla dwóch graczy. Wyniki naukowe w tej dziedzinie wraz z własnymi próbami adaptacji metod standardowych dla większej ilości graczy przedstawimy w dalszej częsci pracy.
+
+Dalsza część rozdziału dotyczy gier dla dwóch graczy, o sumie zerowej, z pełną informacją o stanie gry, w których gracze wykonują ruchy na zmianę.
 
 \section{Podstawowe pojęcia}
-
-Algorytmy, które tu przedstawimy, dotyczą deterministycznych gier dla dwóch graczy, o sumie zerowej, z pełną informacją o stanie gry, w których gracze wykonują ruchy na zmianę. Suma zerowa oznacza, że wygrana jednego gracza oznacza przegraną drugiego.
 
 Podstawową abstrakcją używaną do reprezentacji gry jest graf skierowany, w którym wierzchołki reprezentują stany gry, a krawędzie reprezentują legalne ruchy. Rozgrywka jest reprezentowana przez ścieżkę, być może zawierającą cykle, od wierzchołka reprezentującego stan początkowy do jednego z wierzchołków reprezentujących stan końcowy.
 
@@ -154,9 +163,29 @@ TODO tablica transpozycji, MTD-f, NegaScout, PVS
 
 TODO
 
-\section{Odniesienie przedstawionych metod do tej pracy}
+\chapter{Środowisko bota: tworzona aplikacja}
+
+\section{Doprecyzowanie zasad}
+
+Dla pewnych stanów gry oryginalne zasady nie odpowiadają jednoznacznie na pytanie o legalne ruchy albo dają odpowiedź nieoczekiwaną, wyglądającą na efekt niedopatrzenia. Możliwe, że autorzy i wydawcy gry świadomie woleli pozostawić mało prawdopodobne sytuacje do rozsądzenia graczom niż wydłużać instrukcję analizami kolejnych przypadków, jednak w przypadku tej pracy takie podejście jest niedopuszczalne. Automatyczne testowanie algorytmów sztucznej inteligencji zwiększa prawdopodobieństwo natrafienia na problematyczne stany gry, co może zaburzyć wynik pracy.
+
+\subsection*{Brak legalnych ruchów}
+
+Niech pionki czarny i zielony sąsiadują z pionkiem czerwonym. Dalej, niech pionek czarny będzie odgrodzony od wszystkich sąsiednich pól oprócz tego, na którym stoi czerwony i niech czerwony będzie odgrodzony od tych pól, na których nie stoją czarny ani zielony. Teraz, jeżeli właściciel pionka czarnego nie ma już ogrodzeń, nie może wykonać ruchu.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=120mm]{img/no-move.png}
+\caption{Brak legalnych ruchów \label{overflow}}
+\end{figure}
+
+\subsection*{Rozwiązanie problemu braku legalnych ruchów}
 
 TODO
+
+\chapter{Rozwijanie botów}
+
+\chapter{Podsumowanie}
 
 \begin{thebibliography}{99}
 \addcontentsline{toc}{chapter}{Bibliografia}
