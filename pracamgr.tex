@@ -84,7 +84,6 @@ Opracowywanie graczy sterowanych komputerowo do gier planszowych może mieć ró
 Dostępnych jest już kilka programów grających w Quoridor. Są to aplikacje działające w przeglądarce internetowej. Żadna z nich nie osiąga celów, jakie postawiliśmy tworzonemu przez nas oprogramowaniu.
 Tylko w jednym przypadku\footnote{http://danielborowski.com/quoridor-ai/v2/display.html} udostępniony jest kod źródłowy.
 Inna aplikacja\footnote{https://play.google.com/store/apps/details?id=com.codestare.corridor}, wciąż w trakcie rozwoju, jest jedyną implementująca oba warianty gry.
-Spośród pozostałych aplikacji (zamkniętoźródłowych, z tylko jednym wariantem gry) na wzmiankę zasługuje jeszcze Zaborr\footnote{https://play.google.com/store/apps/details?id=ru.caviarpancakes.zaborr.android}, która wyróżnia się, subiektywanie ocenianą, jakością sztucznej inteligencji.
 
 \chapter{Standardowe metody dla tej klasy gier}
 
@@ -119,33 +118,31 @@ Na potrzeby algorytmów sztucznej inteligencji często wygodniej jest użyć drz
 
 W dalszej części pracy będziemy zamiennie używać pojęć stan i wierzchołek, ruch i krawędź itd. o ile nie będzie powodować to nieporozumień.
 
-Kolejnym pojęciem pojawiającym się w tych algorytmach jest funkcja oceniająca. Jest to funkcja przypisująca stanowi gry liczbę całkowitą, która ma oceniać jak bardzo pożądany jest ten stan dla dangego gracza. Powinna przyjmować skrajne wartości dla stanów końcowych (największą dla wygrywających, a najmniejszą dla przegrywających).
+Kolejnym pojęciem pojawiającym się w tych algorytmach jest funkcja oceniająca. Jest to funkcja przypisująca stanowi gry liczbę całkowitą, która ma oceniać jak bardzo pożądany jest ten stan dla danego gracza. Powinna przyjmować skrajne wartości dla stanów końcowych (największą dla wygrywających, a najmniejszą dla przegrywających). W grze dwuosobowej o sumie zerowej przyjmujemy, że dla każdego stanu funkcja oceniająca jednego gracza przyjmie wartość przeciwną do funkcji oceniającej drugiego gracza. A więc można wybrać jedną z tych funkcji oceniających jako jedyną interesującą. Gracz, którego funkcja została wyróżniona nazywany jest wtedy \(max\), a jego przeciwnik \(min\). Zgodnie z intuicją, gracz \(max\) wybiera stany maksymalizujące wartość wyróżnionej funkcji, a gracz \(min\) minimalizujące.
 
 \section{Minimax i Alfa-Beta}
 
 \subsection{Minimax}
 
-Algorytm Minimax nazywa graczy \(min\) i \(max\) oraz rozpatruje w drzewie gry tylko poddrzewo bieżącego stanu gry do ustalonej głębokości. W tak uzyskanym drzewie liściom przypisana jest wartość funkcji oceniającej dla gracza \(max\). Pozostałe wierzchołki będą miały przypisywane wartości na podstawie wartości synów.
-
-Wobec definicji funkcji oceniającej oczekujemy, że gracz \(max\) zawsze wybierze ruch prowadzący do syna o największej wartości, więc w grze o sumie zerowej gracz \(min\) będzie wybierał najmniejsze wartości. Zatem wartości \("minimax"\) dla wszystkich wierzchołków możemy obliczyć następująco:
+Algorytm Minimax rozpatruje w drzewie gry tylko poddrzewo bieżącego stanu gry do ustalonej głębokości. W tak uzyskanym drzewie liściom przypisana jest wartość funkcji oceniającej. Pozostałe wierzchołki będą miały przypisywane wartości na podstawie wartości synów:
 
 \begin{algorithm}
 \caption{minimax}\label{minimax}
 \begin{algorithmic}[1]
 \Function{minimax}{$v$}
-\If {$jestLisciem(v)$}
-	\State \Return $funkcjaOceniajacaDlaGraczaMax(v)$
+\If {$\texttt{\(v\) jest liściem}$}
+	\State \Return $funkcjaOceniajaca(v)$
 \EndIf
-\If {$aktualyGracz(s) == graczMax$}
-	\State \Return $max$($minimax(s) | s \in synowie(v))$
+\If {$\texttt{ruch wykonuje gracz \(max\)}$}
+    \State \Return $max$($minimax(w) | \texttt{\(w\) jest synem \(v\)})$
 \Else
-	\State \Return $max$($minimax(s) | s \in synowie(v))$
+    \State \Return $min$($minimax(w) | \texttt{\(w\) jest synem \(v\)})$
 \EndIf
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
 
-Znając wartości \(minimax\) dla synów korzenia, możemy wybrać najkorzystniejszy ruch w obecnym stanie gry.
+Znając wartości \(minimax\) dla synów korzenia, możemy wybrać najkorzystniejszy ruch dla obecnego gracza.
 
 \subsection{Alfa-Beta}
 
@@ -154,6 +151,50 @@ Algorytm Alfa-Beta jest ulepszeniem algorytmu minimax. Opiera się na następuj�
 Poniższe drzewo ilustruje sytuację, w której po obliczeniu wartości \(minimax\) dla części wierzchołków drzewa można stwierdzić jaka jest wartość korzenia.
 
 \begin{center}\input{lib/alfa-beta.tikz}\end{center}
+
+Algorytm Alfa-Beta wprowadza pomocniczą funkcję \(alfabeta\):
+
+\[
+  \begin{cases}
+    alfabeta(v, alfa, beta) \leq alfa    & \quad \text{if } minmax(v) \leq alfa\\
+    alfabeta(v, alfa, beta) = minimax(v) & \quad \text{if } alfa < minmax(v) < beta \\
+    alfabeta(v, alfa, beta) \geq beta    & \quad \text{if } minmax(v) \geq beta \\
+  \end{cases}
+\]
+
+Przedział \((alfa, beta)\) nazywany jest oknem przeszukiwania - wartość wewnątrz niego to dokładnie obliczona wartosć \(minimax\).
+Dla korzenia za okno przeszukiwania przyjmuje się przedział \((-\infty, \infty)\), a więc oblicza się dokładną wartość \(minimax\).
+Znaczenie okna przeszukiwania można wyrazić następującą intuicją: jeżeli wartość obliczana dla danego wierzchołka jest większa niż \(beta\), to końcowy wynik obliczeń nie zmieni się, jeżeli za wartość bieżącego wierzchołka przyjmiemy \(beta\) lub dowolną większą liczbę; gracz \(min\) nie dopuści do rozpatrywanego stanu, ponieważ ma lepszą alternatywę (analogicznie gdy wartość jest mniejsza niż \(alfa\) dla gracza \(max\)).
+Sam algorytm wygląda następująco:
+
+\begin{algorithm}
+\caption{alfabeta}\label{alfabeta}
+\begin{algorithmic}[1]
+\Function{alfabeta}{$v, alfa, beta$}
+\If {$\texttt{\(v\) jest liściem}$}
+	\State \Return $funkcjaOceniajaca(v)$
+\EndIf
+    \If {\texttt{ruch wykonuje gracz \(max\)}}
+    \ForAll {\texttt{\(w\) jest synem \(v\)}}
+        \State $alfa \gets max(alfa, alfabeta(w, alfa, beta))$
+        \If {$ alfa \geq beta$}
+            \State \textbf{break}
+        \EndIf
+    \EndFor
+	\State \Return $alfa$
+\Else
+    \ForAll {\texttt{\(w\) jest synem \(v\)}}
+        \State $beta \gets min(beta, alfabeta(w, alfa, beta))$
+        \If {$ alfa \geq beta$}
+            \State \textbf{break}
+        \EndIf
+    \EndFor
+	\State \Return $beta$
+\EndIf
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
 
 \subsection{Dalsze ulepszenia}
 
