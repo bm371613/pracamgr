@@ -216,7 +216,12 @@ Taki wpis nie zawsze pozwala natychmiast zwrócić wynik, ale może zawęzić ok
 
 \subsection{Dalsze ulepszenia}
 
-TODO MTD-f, NegaScout, PVS
+Istnieją dalsze ulepszenia algorytmu Alfa-Beta (NegaScout, MTD-f), które opierają się na zawężaniu okna przeszukiwania.
+Ten zabieg skraca czas działania, ale nie musi zwrócić przydatnego wyniku.
+Na przykład, zamiast obliczać wartość \(alfabeta(w, alfa, beta)\) oblicza się \(alfabeta(w, alfa, beta')\), gdzie \(alfa < beta' < beta\).
+Otrzymana wartość jest poprawnym wynikiem \(alfabeta(w, alfa, beta)\), o ile jest mniejsza od \(beta'\).
+Choć obliczanie nieużytecznych wyników spowalnia algorytm, powinno zdarzać się rzadko.
+Ostatecznie, skuteczność tych technik sprawdza się eksperymentalnie.
 
 \section{Metody Monte Carlo}
 
