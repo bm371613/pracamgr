@@ -195,10 +195,28 @@ Sam algorytm wygląda następująco:
 \end{algorithmic}
 \end{algorithm}
 
+\subsection{Tablica transpozycji}
+
+Ponieważ algorytmy Minimax i Alfa-Beta traktują graf gry jako drzewo, ten sam wierzchołek może być odwiedzony kilkukronie, o ile prowadzą do niego różne ścieżki.
+Ta obserwacja jest podstawą techniki tablicy transpozycji, która pozwala na wykorzystanie wyników wcześniejszych obliczeń w trakcie działania algorytmu i przyspieszenie, dzięki któremu można zwiększyć głębokość przeszukiwania.
+
+Zastosowanie tablicy transpozycji wymaga użycia funkcji haszującej \(h\), która umożliwi przypisanie każdemu stanowi gry liczbę całkowitą, ograniczoną z góry przez ustaloną wartość.
+Należy też ustalić wielkość tablicy \(R\), która będzie musiała zmieścić się w pamięci dostępnej botowi.
+Wtedy, po obliczeniu wartości wierzchołka \(w\), pod indeksem \(h(w)\ \textrm{mod}\ R\) tablicy haszującej umieszcza się wpis zawierający \(h(w)\), odległość wierzhołka \(w\) od korzenia w przeszukiwanym drzewie (wysokość) oraz specyficzne dla algorytmu wartości przydatne przy ponownym odwiedzeniu wierzchołka \(w\).
+Zapisana wartość \(h(w)\), podczas odwiedzania wierzchołka \(v\) takiego, że \(h(w) \equiv h(v) (\textrm{mod}\ R)\), pozwala rozpoznać kolizję.
+Zapisana wysokość wierzchołka \(w\) określa jakość wpisu.
+Wysokość równa głębokości przeszukiwania oznacza, że wierzchołek był odwiedzony jako liść i zapisana wartość jest wprost wartością funkcji oceniającej dla tego wierzchołka.
+Taką wartość uznajemy za gorszą od obliczonej dla wysokości o jeden mniejszej, kiedy rozpatrzone zostały wszystkie możliwe kolejne ruchy.
+A zatem odnaleziony w tablicy transpozycji wpis może zostać użyty tylko wtedy, gdy zgadzają się wartości funkcji haszującej oraz wysokość zapisana we wpisie jest nie większa niż bieżąca.
+
+W przypadku algorymu Minimimax dodatkowym polem wpisu jest to po prostu obliczona wartość wierzchołka, która może zostać zwrócona po spełnieniu wcześniej wymienionych warunków.
+
+W przypadku algorytmu Alfa-Beta, wpis zawiera ograniczenie dolne i górne na wartość \(minimaks\) wierzchołka (równe sobie, jeżeli znana jest dokładna wartość).
+Taki wpis nie zawsze pozwala natychmiast zwrócić wynik, ale może zawęzić okno przeszukiwania i skrócić czas działania algorytmu.
 
 \subsection{Dalsze ulepszenia}
 
-TODO tablica transpozycji, MTD-f, NegaScout, PVS
+TODO MTD-f, NegaScout, PVS
 
 \section{Metody Monte Carlo}
 
