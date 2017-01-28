@@ -225,7 +225,30 @@ Ostatecznie, skuteczność tych technik sprawdza się eksperymentalnie.
 
 \section{Metody Monte Carlo}
 
-TODO
+Metoda Monte Carlo nie opiera się w żaden sposób na Minimax i w ogóle nie wymaga użycia funkcji oceniającej wartość wierzchołka.
+Do jej zastosowania wystarczy znajomość zasad gry, to znaczy możliwych ruchów dla każdego stanu oraz stanów końcowych wraz z wynikiem rozgrywki.
+Ruchy oceniane są na podstawie wyników losowych symulacji; w najprostszym algorytmie, od synów danego wierzchołka moglibyśmy rozpocząć równą ilość losowych rozgrywek i wybrać tego, który najczęściej doprowadził do zwycięstwa.
+
+\subsection{Monte Carlo Tree Search}
+
+W praktyce prosta metoda Monte Carlo nie sprawdza się i należy w trakcie przeprowadzania symulacji niektóre wierzchołki początkowe porzucać jako mało obiecujące, a inne rozwijać, tzn. w ich miejsce wstawić wszystkich synów jako samodzielne wierzchołki początkowe symulacji.
+Tak działa Monte Carlo Tree Search (MCTS).
+
+Algorytm ten utrzymuje drzewo, zakorzenione w wierzchołku dla którego wybiera ruch i początkowo posiadające ponad to wyłącznie liść dla każdego możliwego kolejnego stanu gry.
+Każdy wierzchołek tego drzewa utrzymuje statystyki symulacji: liczbę symulacji i liczbę symulacji zakończonych zwycięstwem, które rozpoczęły się w poddrzewie danego wierzchołka.
+Tak długo jak pozwalają na to limity czasu i pamięci, algorytm przechodzi od korzenia do pewnego liścia wybierając zawsze najbardziej obiecującego syna w zależności od wcześniej zebranych statystyk. Na podstawie statystyk liścia podejmuje decyzję o rozwinięciu go (dodaniu możliwych kolejnych stanów gry do drzewa ze statystykami) i jeśli to zrobi, wybiera jednego z dodanych synów, aby ostatecznie zawsze wybrać liść.
+Dalej rozpoczyna od liścia losową rozgrywkę aż do poznania zwycięzcy, po czym aktualizuje statystyki wierzchołków na ścieżce od korzenia do liścia, z którego rozpoczęła się symulacja.
+Najlepszy ruch z korzenia wyznacza jego syn, w którego statystykach stosunek zwycięstw do przeprowadzonych symulacji jest najkorzystniejszy.
+
+W opisie algorytmu widać pewne luki: sposób wybierania najbardziej obiecującego syna i kryteria decyzji o rozwinięciu liścia.
+
+Przy wybieraniu nabardziej obiecującego syna używa się metody granicy ufności.
+Ma ona zapobiec sytuacji, w której po niewielkiej liczbie symulacji (nawet tylko jednej) liść jest porzucany, co ma miejsce gdy porównuje się wyłącznie stosunek liczby zwycięstw do liczby symulacji.
+W tym celu to tego ilorazu dodawany jest tzw. współczynnik ufności, tym wyższy im mniejszą częścią symulacji rodzica są symulacje danego syna. Jako współczynnik ufności przymuje się \(\sqrt{\frac{\sqrt{n_p}}{n_s}}\) lub \(\sqrt{\frac{\log{n_p}}{n_s}}\), gdzie \(n_s\) to liczba symulacji w poddrzewie syna, a \(n_p\) to liczba symulacji w poddrzewie rodzica.
+
+Decyzję o rozwinięciu liścia podejmuje się na podstawie liczby symulacji, jakie zostały z niego rozpoczęte. Jeżeli przekroczy ustalony próg, zwykle zbliżony do liczby ruchów możliwych w jednym stanie gry, liść zostaje rozwinięty.
+
+Oba parametry, tzn. wariant granicy ufności i próg rozwinięcia liścia, ustala się eksperymentalnie.
 
 \chapter{Środowisko bota: tworzona aplikacja}
 
