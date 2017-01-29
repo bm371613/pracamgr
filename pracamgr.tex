@@ -110,7 +110,9 @@ Quoridor jest grą z podziałem na tury, z pełną informacją o stanie gry, bez
 
 Wariant dla czterech graczy wciąż pozostaje pod wieloma względami podobny do gier klasycznych. Nie ma osobnego zestawu standardowych metod dla tego przypadku, który moglibyśmy tu przedstawić. Stosuje się, o ile to możliwe, specjalne warianty algorytmów używanych dla dwóch graczy. Wyniki naukowe w tej dziedzinie wraz z własnymi próbami adaptacji metod standardowych dla większej ilości graczy przedstawimy w dalszej częsci pracy.
 
-Dalsza część rozdziału dotyczy gier dla dwóch graczy, o sumie zerowej, z pełną informacją o stanie gry, w których gracze wykonują ruchy na zmianę (na podstawie~\cite{pawlewicz}).
+Dalsza część rozdziału dotyczy gier o sumie zerowej, z pełną informacją o stanie gry, w których gracze wykonują ruchy na zmianę.
+Po wprowadzeniu podstawowych pojęć, zaprezentujemy metody standardowe (na podstawie~\cite{pawlewicz}), napierw specyficzne dla gier dwuosobowych (Minimax i Alfa-Beta), później niezależne od liczby graczy (Monte Carlo).
+Na końcu przestawimy metody dostosowania algorytmów typowych dla gier dwuosobowych do gier z większą liczbą graczy.
 
 \section{Podstawowe pojęcia}
 
@@ -120,9 +122,17 @@ Na potrzeby algorytmów sztucznej inteligencji często wygodniej jest użyć drz
 
 W dalszej części pracy będziemy zamiennie używać pojęć stan i wierzchołek, ruch i krawędź itd. o ile nie będzie powodować to nieporozumień.
 
-Kolejnym pojęciem pojawiającym się w tych algorytmach jest funkcja oceniająca. Jest to funkcja przypisująca stanowi gry liczbę całkowitą, która ma oceniać jak bardzo pożądany jest ten stan dla danego gracza. Powinna przyjmować skrajne wartości dla stanów końcowych (największą dla wygrywających, a najmniejszą dla przegrywających). W grze dwuosobowej o sumie zerowej przyjmujemy, że dla każdego stanu funkcja oceniająca jednego gracza przyjmie wartość przeciwną do funkcji oceniającej drugiego gracza. A więc można wybrać jedną z tych funkcji oceniających jako jedyną interesującą. Gracz, którego funkcja została wyróżniona nazywany jest wtedy \(max\), a jego przeciwnik \(min\). Zgodnie z intuicją, gracz \(max\) wybiera stany maksymalizujące wartość wyróżnionej funkcji, a gracz \(min\) minimalizujące.
+Kolejnym pojęciem pojawiającym się w tych algorytmach jest funkcja oceniająca.
+Jest to funkcja przypisująca stanowi gry liczbę całkowitą, która ma oceniać jak bardzo pożądany jest ten stan dla danego gracza.
+Powinna przyjmować skrajne wartości dla stanów końcowych (największą dla wygrywających, a najmniejszą dla przegrywających).
 
 \section{Minimax i Alfa-Beta}
+
+Algorytmy Minimax i Alfa-Beta zostały zaprojektowany z myślą o grach dwuosobowych.
+W grze dwuosobowej o sumie zerowej przyjmujemy, że dla każdego stanu funkcja oceniająca jednego gracza przyjmie wartość przeciwną do funkcji oceniającej drugiego gracza.
+A więc można wybrać jedną z tych funkcji oceniających jako jedyną interesującą.
+Gracz, którego funkcja została wyróżniona nazywany jest wtedy \(max\), a jego przeciwnik \(min\).
+Zgodnie z intuicją, gracz \(max\) wybiera stany maksymalizujące wartość wyróżnionej funkcji, a gracz \(min\) minimalizujące.
 
 \subsection{Minimax}
 
@@ -251,6 +261,10 @@ W tym celu to tego ilorazu dodawany jest tzw. współczynnik ufności, tym wyżs
 Decyzję o rozwinięciu liścia podejmuje się na podstawie liczby symulacji, jakie zostały z niego rozpoczęte. Jeżeli przekroczy ustalony próg, zwykle zbliżony do liczby ruchów możliwych w jednym stanie gry, liść zostaje rozwinięty.
 
 Oba parametry, tzn. wariant granicy ufności i próg rozwinięcia liścia, ustala się eksperymentalnie.
+
+\section{Minimax i Alfa-Beta dla wielu graczy}
+
+TODO
 
 \chapter{Środowisko bota: tworzona aplikacja}
 
