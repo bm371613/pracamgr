@@ -262,9 +262,24 @@ Decyzję o rozwinięciu liścia podejmuje się na podstawie liczby symulacji, ja
 
 Oba parametry, tzn. wariant granicy ufności i próg rozwinięcia liścia, ustala się eksperymentalnie.
 
-\section{Minimax i Alfa-Beta dla wielu graczy}
+\section{Minimax dla wielu graczy}
 
-TODO
+Próby zastosowania algorytmu Minmax do gier wieloosobowych zostały podjęte na dwa sposoby.
+Pierwszym było sprowadzenie gry wielosobowej do gry dwuosobowej, czego efektem jest algorytm Paranoid.
+Drugim było osłabienie założeń i uogólnienie, czego efektem jest algorytm Max\textsuperscript{n}.
+W przypadku obu algorytmów, zastosowanie dla dwóch graczy daje algorytm Minimax.
+
+\subsection{Paranoid}
+
+Redukcja gry wieloosobowej do gry dwuosobowej, jaka stoi za algorytmem Paranoid, jest następująca: gracz realizujący algorytm uznaje, że wszyscy przeciwnicy są w zmowie i jest im obojętne który z nich wygra.
+Zależy im jedynie na zminimalizowaniu wyniku wyłączonego ze zmowy gracza.
+Dzięki temu wszystkich przeciwników można traktować zbiorczo jako jednego i, zgodnie z założeniami Minimax, minimalizuje on wartości tej samej funkcji, którą gracz maksymalizuje.
+Fakt, że ten zbiorczy przeciwnik może wykonywać więcej niż jeden ruch pod rząd i w jednym ruchu używa innego pionka niż w drugim, nie wpływa w żaden sposób na algorytm Minimax.
+
+Redukcja do dwuosobowego algorytmu Minimax pozwala zastosować wprost wszystkie ulepszenia, jakie dla niego opracowano.
+Niestety, zastosowane uproszczenie prowadzi do niekorzystnych decyzji, jeżeli przeciwnicy wcale nie są w zmowie\cite{sturtevant}.
+
+\subsection{Max\textsuperscript{n}}
 
 \chapter{Środowisko bota: tworzona aplikacja}
 
@@ -352,6 +367,7 @@ Jednak nasza aplikacja ma działać na współczesnym komputerze osobistym (któ
 
 \bibitem[1]{pawlewicz} Jakub Pawlewicz, \textit{Techniki sztucznej inteligencji
     w programach grających}, 2010
+\bibitem[2]{sturtevant} Nathan Reed Sturtevant, \textit{Multi-Player Games: Algorithms and Approaches}, 2003
 
 \end{thebibliography}
 
