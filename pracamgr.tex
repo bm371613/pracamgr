@@ -139,7 +139,7 @@ Zgodnie z intuicją, gracz \(max\) wybiera stany maksymalizujące wartość wyr�
 Algorytm Minimax rozpatruje w drzewie gry tylko poddrzewo bieżącego stanu gry do ustalonej głębokości. W tak uzyskanym drzewie liściom przypisana jest wartość funkcji oceniającej. Pozostałe wierzchołki będą miały przypisywane wartości na podstawie wartości synów:
 
 \begin{algorithm}
-\caption{minimax}\label{minimax}
+\caption{Minimax}\label{minimax}
 \begin{algorithmic}[1]
 \Function{minimax}{$v$}
 \If {$\texttt{\(v\) jest liściem}$}
@@ -180,7 +180,7 @@ Znaczenie okna przeszukiwania można wyrazić następującą intuicją: jeżeli 
 Sam algorytm wygląda następująco:
 
 \begin{algorithm}
-\caption{alfabeta}\label{alfabeta}
+\caption{Alfa-Beta}\label{alfabeta}
 \begin{algorithmic}[1]
 \Function{alfabeta}{$v, alfa, beta$}
 \If {$\texttt{\(v\) jest liściem}$}
@@ -281,6 +281,24 @@ Niestety, zastosowane uproszczenie prowadzi do niekorzystnych decyzji, jeżeli p
 
 \subsection{Max\textsuperscript{n}}
 
+Algorytm Max\textsuperscript{n} porzuca próby przypisywania każdemu stanowi pojedynczej liczby i zastępuje ją wektorem, w którym każdemu graczowi odpowiada dokładnie jedna liczba pod ustalonym inseksem.
+Dla liści wektor jest tworzony przez obliczenie wartości funkcji oceniającej; wartość tej funkcji dla wybranego gracza znajdzie się pod przypisanym mu indeksem.
+Wartością dla każdego innego wierzchołka jest ten wektor spośród wektorów-wartości jego synów, który ma największą wartość pod indeksem gracza wykonującego ruch.
+
+Ten algorytm nie popełnia błędu algorymu Paranoid i zakłada, że każdy gracz próbuje zmaksymalizować własne szanse na zwycięstwo.
+Niestety, nie da się wobec niego zastosować wprost ulepszeń Minimaksa, tzn. Alfy-Bety i manipulowania oknem przeszukiwań.
+
+\subsection*{Ulepszenie Alfa-Beta dla algorytmu Max\textsuperscript{n}}
+
+Da się jednak zastosować wobec algorytmu Max\textsuperscript{n} ulepszenie analogiczne do Alfy-Bety wobec Minimaksa\cite{korf}, o ile dysponuje się ograniczeniem górnym na sumę (po graczach) wartości funkcji oceniajacej \(sum\).
+Przedział \((alfa, beta)\) zastępuje tu jedna liczba, \(bound\).
+Analogicznie do Alfy-Bety: jeżeli w trakcie obliczania wartości wierzchołka jest jasne, że gracz wykonujący ruch może uzyskać (pod przypisanym sobie indeksem wynikowego wektora) co najmniej \(bound\), dalsze obliczanie może zostać porzucone; do rozpatrywanego stanu nie dojdzie.
+Jako wartość \(bound\) przekazuje się \(sum\) zmniejszone o największą wartość pod indeksem wykonującego ruch gracza spośród wartości-wektorów rozpatrzonych już synów.
+
+Obsługiwanie \(bound\) jest wyraźnie mniej złożone niż w przypadku \((alfa, beta)\).
+Można się stąd słusznie domyślić, że ten algorytm zastosowany do gry dwuosobowej jest mniej efektywny (wykonuje mniej odcięć) niż Alfa-Beta.
+Jest on jednak maksymalnie efektywny w ogólnym przypadku, tzn. odcina wszystkie poddrzewa bez których można dokładnie obliczyć wartość Max\textsuperscript{n}\cite{korf}.
+
 \chapter{Środowisko bota: tworzona aplikacja}
 
 \section{Wybór technologii}
@@ -368,6 +386,7 @@ Jednak nasza aplikacja ma działać na współczesnym komputerze osobistym (któ
 \bibitem[1]{pawlewicz} Jakub Pawlewicz, \textit{Techniki sztucznej inteligencji
     w programach grających}, 2010
 \bibitem[2]{sturtevant} Nathan Reed Sturtevant, \textit{Multi-Player Games: Algorithms and Approaches}, 2003
+\bibitem[3]{korf} Richard Korf, \textit{Multi-player alpha-beta pruning}, 1991
 
 \end{thebibliography}
 
