@@ -74,14 +74,16 @@ W pracy dokonujemy przeglądu algorytmów sztucznej inteligencji dla gier plansz
 
 \chapter{Wprowadzenie}
 
-W pracy zajmiemy się sztuczną inteligencją na potrzeby tworzonej aplikacji grającej w Quoridor. W dalszej części pierwszego rozdziału opiszemy planszową wersję Quoridor, która była inspiracją do pracy nad aplikacją. Dalej, opiszemy obrane cele i dokonamy przeglądu istniejących rozwiązań, uzasadniając podjęcie tematu.
-W drugim rozdziale sklasyfikujemy Quoridor i opiszemy standardowe metody sztucznej inteligencji, właściwe dla szerszej klasy gier, w której umieścimy Quoridor.
-W trzecim rozdziale opiszemy tworzoną aplikację, skupiając się na aspektach istotnych dla graczy komputerowych (dalej "botów"). Tak więc doprecyzujemy zasady gry, określimy używane technologie i zdefiniujemy interfejs bota.
-W czwartym rozdziale opiszemy proces rozwijania kolejnych algorytmów, aż w końcu w piątym podsumujemy efekty naszej pracy.
+\section{Tematyka pracy}
+
+W pracy zajmiemy się algorytmami sztucznej inteligencji na potrzeby wytwarzanego oprogramowania --- komputerowej wersji gry planszowej Quoridor.
+Aplikacja ta będzie umożliwiać wybór algorytmu sterującego każdym z uczestników gry albo pozostawienie tej roli samemu użytkownikowi.
+Opiszemy powszechnie stosowane podejścia do problematyki oraz nasze próby ich wykorzystania.
+Spróbujemy ocenić efekty swojej pracy i wyciągnąć wnioski przydatne w dalszej pracy nad sztuczną inteligencją w tej lub podobnych aplikacjach.
 
 \section{Quoridor --- oryginalne zasady gry}
 
-Gra rozgrywa się na planszy za pomocą 4 pionków i 20 ogrodzeń, nazywanych też ścianami. Na planszy znajduje się siatka szczelin wyznaczająca 81 kwadratowych pól, tworzących układ 9~x~9. Każdy pionek ma unikatowy kolor, mieści się na jednym polu planszy i nie może go dzielić z innym. Ogrodzenia są identyczne i dają się umieszczać w szczelinach między polami planszy. Ogrodzenie jest dwukrotnie dłuższe od boku pola, więc (poprawnie umieszczone) sąsiaduje z dwoma polami z każdej strony, zajmuje całą szerokość szczeliny i jedno skrzyżowanie szczelin.
+Gra rozgrywa się na planszy za pomocą 4 pionków i 20 ogrodzeń, nazywanych też \emph{ścianami}. Na planszy znajduje się siatka szczelin wyznaczająca 81 kwadratowych pól, tworzących układ 9~x~9. Każdy pionek ma unikatowy kolor, mieści się na jednym polu planszy i nie może go dzielić z innym. Ogrodzenia są identyczne i dają się umieszczać w szczelinach między polami planszy. Ogrodzenie jest dwukrotnie dłuższe od boku pola, więc (poprawnie umieszczone) sąsiaduje z dwoma polami z każdej strony, zajmuje całą szerokość szczeliny i jedno skrzyżowanie szczelin.
 
 W grze może wziąć udział dwóch lub czterech graczy. W obu przypadkach otrzymują po jednym pionku, dzielą się po równo ogrodzeniami i przypisują się do różnych boków planszy; jeżeli jest ich dwóch, muszą to być boki przeciwległe.
 
@@ -94,13 +96,29 @@ Jeżeli na pewnym sąsiednim, nieodgrodzonym polu znajduje się już pionek prze
 
 \section{Cele i założenia}
 
-Opracowywanie graczy sterowanych komputerowo do gier planszowych może mieć różne założenia i cele. Pełne rozwiązanie gier z dużą ilością stanów wymaga mocy obliczeniowej przekraczającej możliwości komputera osobistego, a nawet jeśli uzyska się je na superkomputerze, to wynikowa tablica optymalnych ruchów nie nadaje się do dystrybucji wraz z grą. Celem tej pracy jest opracowanie algorytmów sztucznej inteligencji dla gry Quoridor i utworzenie prototypu oprogramowania open-source, łatwego w dystrybucji i nadającego się do użycia na komputerze osobistym lub urządzeniu przenośnym, które będzie umożliwało grę w obu wariantach gry (dla 2 i 4 graczy), przy czy każdy gracz może być człowiekiem albo graczem komputerowym sterowanym przez jeden z dostępnych algorytmów sztucznej inteligencji.
+Opracowywanie sztucznej inteligencji do gier planszowych może mieć różne założenia i cele.
+Pełne rozwiązanie gier z dużą liczbą stanów wymaga mocy obliczeniowej przekraczającej możliwości komputera osobistego, a nawet jeśli uzyska się je na superkomputerze, to wynikowa tablica optymalnych ruchów nie nadaje się do dystrybucji wraz z grą.
+Celem tej pracy jest opracowanie algorytmów sztucznej inteligencji dla gry Quoridor i utworzenie prototypu oprogramowania otwartoźródłowego, łatwego w dystrybucji i nadającego się do użycia na komputerze osobistym lub urządzeniu przenośnym, które będzie umożliwało grę w obu wariantach gry (dla 2 i 4 graczy), przy czy każdy gracz może być człowiekiem albo graczem komputerowym sterowanym przez jeden z dostępnych algorytmów sztucznej inteligencji.
 
 \section{Istniejące rozwiązania}
 
 Dostępnych jest już kilka programów grających w Quoridor. Są to aplikacje działające w przeglądarce internetowej. Żadna z nich nie osiąga celów, jakie postawiliśmy tworzonemu przez nas oprogramowaniu.
 Tylko w jednym przypadku\footnote{http://danielborowski.com/quoridor-ai/v2/display.html} udostępniony jest kod źródłowy.
 Inna aplikacja\footnote{https://play.google.com/store/apps/details?id=com.codestare.corridor}, wciąż w trakcie rozwoju, jest jedyną implementująca oba warianty gry.
+
+\section{Struktura pracy}
+
+W drugim rozdziale określimy szerszą klasę gier, w której znajduje się Quoridor.
+Wprowadzimy pojęcia używane do ich opisu i algorytmy sztucznej inteligencji, które są wobec nich standardowo stosowane.
+
+W trzecim rozdziale określimy te aspekty aplikacji, którę są istotne dla graczy komputerowych (dalej "botów").
+Tak więc doprecyzujemy zasady gry, wybierzemy technologie, zdefiniujemy interfejs bota, ograniczenia wykorzystania zasobów i oczekiwany czas działania.
+
+W czwartym rozdziale opiszemy proces rozwijania kolejnych algorytmów.
+Uzasadnimy wybór tych, które zaimplementujemy, wymienimy napotykane problemy oraz przedstawimy nasze rozwiązania.
+
+W piątym rozdziale podsumujemy efekty naszej pracy.
+Wskażemy kierunki dalszego ulepszania stworzonych botów i spróbujemy wyciągnąć wnioski przydatne przy implentacji komputerowych wersji innych gier.
 
 \chapter{Standardowe metody dla tej klasy gier}
 
@@ -117,15 +135,19 @@ Cechy gry mające decydujący wpływ na algorytmy sterujące botami to:
 
  - podział zysku,
 
- - ilość graczy.
+ - liczba graczy.
 
 Na wyjaśnienie zasługuje tu "podział zysku". Ta cecha gry określa sposób, w jaki nagradzani są gracze, w szczególności decyduje o tym, czy opłacalna jest kooperacja. I tak na przykład szachy są grą o sumie stałej, tzn. korzyść przeciwnika jest jednoznaczna ze stratą. Inaczej bywa w grach ekonomicznych, gdzie współpraca między graczami może zwiększyć wypłatę nagrody dla obu graczy.
 
-Quoridor jest grą z podziałem na tury, z pełną informacją o stanie gry, bez losowości i jest grą o sumie stałej. A więc w wariancie dla dwóch graczy znajduje się w tej samej klasie gier co szachy, warcaby, go i wiele innych klasycznych gier, którymi informatyka zajmuje się od dziesięcioleci. Wiele z metod dla tej klasy gier zasłużyło już na miano standardowych i opiszemy je w dalszej części tego rozdziału.
+Quoridor jest grą z podziałem na tury, z pełną informacją o stanie gry, bez losowości i jest grą o sumie stałej.
+A więc w wariancie dla dwóch graczy znajduje się w tej samej klasie gier co szachy, warcaby, go i wiele innych klasycznych gier, którymi informatyka zajmuje się od dziesięcioleci.
+Wiele z metod dla tej klasy gier zasłużyło już na miano standardowych.
 
-Wariant dla czterech graczy wciąż pozostaje pod wieloma względami podobny do gier klasycznych. Nie ma osobnego zestawu standardowych metod dla tego przypadku, który moglibyśmy tu przedstawić. Stosuje się, o ile to możliwe, specjalne warianty algorytmów używanych dla dwóch graczy. Wyniki naukowe w tej dziedzinie wraz z własnymi próbami adaptacji metod standardowych dla większej ilości graczy przedstawimy w dalszej częsci pracy.
+Wariant dla czterech graczy wciąż pozostaje pod wieloma względami podobny do gier klasycznych.
+Nie ma osobnego zestawu standardowych metod dla tego przypadku, który moglibyśmy tu przedstawić.
+Stosuje się, o ile to możliwe, specjalne warianty algorytmów używanych dla dwóch graczy.
 
-Dalsza część rozdziału dotyczy gier o sumie zerowej, z pełną informacją o stanie gry, w których gracze wykonują ruchy na zmianę.
+Od tej pory będziemy mówić wyłącznie o grach o sumie zerowej, z pełną informacją o stanie gry, w których gracze wykonują ruchy na zmianę.
 Po wprowadzeniu podstawowych pojęć, zaprezentujemy metody standardowe (na podstawie~\cite{pawlewicz}), napierw specyficzne dla gier dwuosobowych (Minimax i Alfa-Beta), później niezależne od liczby graczy (Monte Carlo).
 Na końcu przestawimy metody dostosowania algorytmów typowych dla gier dwuosobowych do gier z większą liczbą graczy.
 
@@ -254,7 +276,7 @@ Ostatecznie, skuteczność tych technik sprawdza się eksperymentalnie.
 
 Metoda Monte Carlo nie opiera się w żaden sposób na Minimax i w ogóle nie wymaga użycia funkcji oceniającej wartość wierzchołka.
 Do jej zastosowania wystarczy znajomość zasad gry, to znaczy możliwych ruchów dla każdego stanu oraz stanów końcowych wraz z wynikiem rozgrywki.
-Ruchy oceniane są na podstawie wyników losowych symulacji; w najprostszym algorytmie, od synów danego wierzchołka moglibyśmy rozpocząć równą ilość losowych rozgrywek i wybrać tego, który najczęściej doprowadził do zwycięstwa.
+Ruchy oceniane są na podstawie wyników losowych symulacji; w najprostszym algorytmie, od synów danego wierzchołka moglibyśmy rozpocząć równą liczbę losowych rozgrywek i wybrać tego, który najczęściej doprowadził do zwycięstwa.
 
 \subsection{Monte Carlo Tree Search}
 
