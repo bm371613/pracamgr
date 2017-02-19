@@ -11,6 +11,21 @@
 \usepackage{tikz}
 \usepackage{verbatim}
 \usepackage{enumitem}
+\usepackage[title,titletoc]{appendix}
+
+
+% version header
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead{}
+\fancyhead[C]{wersja 2}
+
+\fancypagestyle{plain}{%
+}
+\fancypagestyle{empty}{%
+}
+%%% version head
+
 
 \usetikzlibrary{arrows}
 
@@ -27,7 +42,7 @@
 
 \opiekun{prof. Jana Madeya}
 
-\date{Maj 2016}
+\date{Maj 2017}
 
 \dziedzina{11.3 Informatyka}
 
@@ -37,7 +52,7 @@ I. Computing Methodologies \\
   I.2.1. Applications and Expert Systems}
 
 \keywords{
-	sztuczna inteligencja, gry planszowe
+	sztuczna inteligencja, gry planszowe, minimax
 }
 
 % Tu jest dobre miejsce na Twoje własne makra i~środowiska:
@@ -49,7 +64,7 @@ I. Computing Methodologies \\
 \maketitle
 
 \begin{abstract}
-TODO
+W pracy dokonujemy przeglądu algorytmów sztucznej inteligencji dla gier planszowych i opisujemy ich wykorzystanie na potrzeby aplikacji grającej w Quoridor.
 \end{abstract}
 
 \tableofcontents
@@ -380,7 +395,7 @@ Jednak nasza aplikacja ma działać na współczesnym komputerze osobistym (któ
 
 \chapter{Podsumowanie}
 
-\begin{thebibliography}{99}
+\begin{thebibliography}{98}
 \addcontentsline{toc}{chapter}{Bibliografia}
 
 \bibitem[1]{pawlewicz} Jakub Pawlewicz, \textit{Techniki sztucznej inteligencji
@@ -389,6 +404,13 @@ Jednak nasza aplikacja ma działać na współczesnym komputerze osobistym (któ
 \bibitem[3]{korf} Richard Korf, \textit{Multi-player alpha-beta pruning}, 1991
 
 \end{thebibliography}
+
+\begin{appendices}
+
+\chapter{Kod źródłowy aplikacji}
+Na dołączonej płycie znajduje się kod źródłowy.
+
+\end{appendices}
 
 \end{document}
 
