@@ -79,7 +79,7 @@ W drugim rozdziale sklasyfikujemy Quoridor i opiszemy standardowe metody sztuczn
 W trzecim rozdziale opiszemy tworzoną aplikację, skupiając się na aspektach istotnych dla graczy komputerowych (dalej "botów"). Tak więc doprecyzujemy zasady gry, określimy używane technologie i zdefiniujemy interfejs bota.
 W czwartym rozdziale opiszemy proces rozwijania kolejnych algorytmów, aż w końcu w piątym podsumujemy efekty naszej pracy.
 
-\section{Quoridor - oryginalne zasady gry}
+\section{Quoridor --- oryginalne zasady gry}
 
 Gra rozgrywa się na planszy za pomocą 4 pionków i 20 ogrodzeń, nazywanych też ścianami. Na planszy znajduje się siatka szczelin wyznaczająca 81 kwadratowych pól, tworzących układ 9~x~9. Każdy pionek ma unikatowy kolor, mieści się na jednym polu planszy i nie może go dzielić z innym. Ogrodzenia są identyczne i dają się umieszczać w szczelinach między polami planszy. Ogrodzenie jest dwukrotnie dłuższe od boku pola, więc (poprawnie umieszczone) sąsiaduje z dwoma polami z każdej strony, zajmuje całą szerokość szczeliny i jedno skrzyżowanie szczelin.
 
@@ -189,7 +189,7 @@ Algorytm Alfa-Beta wprowadza pomocniczą funkcję \(alfabeta\):
   \end{cases}
 \]
 
-Przedział \((alfa, beta)\) nazywany jest oknem przeszukiwania - wartość wewnątrz niego to dokładnie obliczona wartosć \(minimax\).
+Przedział \((alfa, beta)\) nazywany jest oknem przeszukiwania --- wartość wewnątrz niego to dokładnie obliczona wartosć \(minimax\).
 Dla korzenia za okno przeszukiwania przyjmuje się przedział \((-\infty, \infty)\), a więc oblicza się dokładną wartość \(minimax\).
 Znaczenie okna przeszukiwania można wyrazić następującą intuicją: jeżeli wartość obliczana dla danego wierzchołka jest większa niż \(beta\), to końcowy wynik obliczeń nie zmieni się, jeżeli za wartość bieżącego wierzchołka przyjmiemy \(beta\) lub dowolną większą liczbę; gracz \(min\) nie dopuści do rozpatrywanego stanu, ponieważ ma lepszą alternatywę (analogicznie gdy wartość jest mniejsza niż \(alfa\) dla gracza \(max\)).
 Sam algorytm wygląda następująco:
