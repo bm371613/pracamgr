@@ -12,6 +12,16 @@
 \usepackage{verbatim}
 \usepackage{enumitem}
 \usepackage[title,titletoc]{appendix}
+\usepackage[labelfont=bf]{caption}
+\usepackage{float}
+
+\floatstyle{boxed}
+\newfloat{algorytm}{h}{}
+\floatname{algorytm}{Algorytm}
+
+\floatstyle{plain}
+\newfloat{rysunek}{h}{}
+\floatname{rysunek}{Rysunek}
 
 
 % version header
@@ -111,7 +121,7 @@ Inna aplikacja\footnote{https://play.google.com/store/apps/details?id=com.codest
 W drugim rozdziale określimy szerszą klasę gier, w której znajduje się Quoridor.
 Wprowadzimy pojęcia używane do ich opisu i algorytmy sztucznej inteligencji, które są wobec nich standardowo stosowane.
 
-W trzecim rozdziale określimy te aspekty aplikacji, którę są istotne dla graczy komputerowych (dalej "botów").
+W trzecim rozdziale określimy te aspekty aplikacji, którę są istotne dla graczy komputerowych (dalej ,,botów'').
 Tak więc doprecyzujemy zasady gry, wybierzemy technologie, zdefiniujemy interfejs bota, ograniczenia wykorzystania zasobów i oczekiwany czas działania.
 
 W czwartym rozdziale opiszemy proces rozwijania kolejnych algorytmów.
@@ -120,7 +130,7 @@ Uzasadnimy wybór tych, które zaimplementujemy, wymienimy napotykane problemy o
 W piątym rozdziale podsumujemy efekty naszej pracy.
 Wskażemy kierunki dalszego ulepszania stworzonych botów i spróbujemy wyciągnąć wnioski przydatne przy implentacji komputerowych wersji innych gier.
 
-\chapter{Standardowe metody dla tej klasy gier}
+\chapter{Standardowe metody dla stosownej klasy gier}
 
 \section{Klasyfikacja Quoridor}
 
@@ -137,7 +147,8 @@ Cechy gry mające decydujący wpływ na algorytmy sterujące botami to:
 
  - liczba graczy.
 
-Na wyjaśnienie zasługuje tu "podział zysku". Ta cecha gry określa sposób, w jaki nagradzani są gracze, w szczególności decyduje o tym, czy opłacalna jest kooperacja. I tak na przykład szachy są grą o sumie stałej, tzn. korzyść przeciwnika jest jednoznaczna ze stratą. Inaczej bywa w grach ekonomicznych, gdzie współpraca między graczami może zwiększyć wypłatę nagrody dla obu graczy.
+Na wyjaśnienie zasługuje tu ,,podział zysku''.
+Ta cecha gry określa sposób, w jaki gracze są nagradzani, w szczególności decyduje o tym, czy jest opłacalna kooperacja. I tak na przykład szachy, są grą o sumie stałej, tzn. korzyść przeciwnika jest jednoznaczna ze stratą. Inaczej bywa w grach ekonomicznych, gdzie współpraca między graczami może zwiększyć wypłatę nagrody dla obu graczy.
 
 Quoridor jest grą z podziałem na tury, z pełną informacją o stanie gry, bez losowości i jest grą o sumie stałej.
 A więc w wariancie dla dwóch graczy znajduje się w tej samej klasie gier co szachy, warcaby, go i wiele innych klasycznych gier, którymi informatyka zajmuje się od dziesięcioleci.
@@ -153,9 +164,11 @@ Na końcu przestawimy metody dostosowania algorytmów typowych dla gier dwuosobo
 
 \section{Podstawowe pojęcia}
 
-Podstawową abstrakcją używaną do reprezentacji gry jest graf skierowany, w którym wierzchołki reprezentują stany gry, a krawędzie reprezentują legalne ruchy. Rozgrywka jest reprezentowana przez ścieżkę, być może zawierającą cykle, od wierzchołka reprezentującego stan początkowy do jednego z wierzchołków reprezentujących stan końcowy.
+Podstawową abstrakcją używaną do opisu gry jest graf skierowany, w którym wierzchołki reprezentują stany gry, a krawędzie odpowiadają legalnym ruchom.
+Rozgrywka jest ścieżką, być może zawierającą cykle, od stanu początkowego do jednego ze stanów końcowych.
 
-Na potrzeby algorytmów sztucznej inteligencji często wygodniej jest użyć drzewa gry, w którym wiele wierzchołków może reprezentować ten sam stan gry. Stan początkowy jest reprezentowany korzeniem, stany końcowe liśćmi a rozgrywka ścieżką od korzenia do liścia.
+Na potrzeby algorytmów sztucznej inteligencji często wygodniej jest użyć drzewa gry, w którym wielu wierzchołkom może odpowiadać ten sam stan gry.
+Stan, dla którego ma być wybrany kolejny ruch, jest reprezentowany przez korzeń, stany końcowe przez liście, a możliwy dalszy przbieg rozgrywki przez ścieżkę od korzenia do liścia.
 
 W dalszej części pracy będziemy zamiennie używać pojęć stan i wierzchołek, ruch i krawędź itd. o ile nie będzie powodować to nieporozumień.
 
@@ -173,10 +186,11 @@ Zgodnie z intuicją, gracz \(max\) wybiera stany maksymalizujące wartość wyr�
 
 \subsection{Minimax}
 
-Algorytm Minimax rozpatruje w drzewie gry tylko poddrzewo bieżącego stanu gry do ustalonej głębokości. W tak uzyskanym drzewie liściom przypisana jest wartość funkcji oceniającej. Pozostałe wierzchołki będą miały przypisywane wartości na podstawie wartości synów:
+Algorytm Minimax rozpatruje w drzewie gry tylko poddrzewo bieżącego stanu gry do ustalonej głębokości. W tak uzyskanym drzewie, liściom jest przypisana wartość funkcji oceniającej.
+Pozostałe wierzchołki będą miały przypisywane wartości na podstawie wartości synów (patrz Algorytm \ref{minimax}).
 
-\begin{algorithm}
-\caption{Minimax}\label{minimax}
+\begin{algorytm}
+\caption{Minimax\label{minimax}}
 \begin{algorithmic}[1]
 \Function{minimax}{$v$}
 \If {$\texttt{\(v\) jest liściem}$}
@@ -189,17 +203,21 @@ Algorytm Minimax rozpatruje w drzewie gry tylko poddrzewo bieżącego stanu gry 
 \EndIf
 \EndFunction
 \end{algorithmic}
-\end{algorithm}
+\end{algorytm}
 
 Znając wartości \(minimax\) dla synów korzenia, możemy wybrać najkorzystniejszy ruch dla obecnego gracza.
 
 \subsection{Alfa-Beta}
 
-Algorytm Alfa-Beta jest ulepszeniem algorytmu minimax. Opiera się na następującej obserwacji: wartości \(minimax\) niektórych wierzchołków mogą być ustalone bez obliczania ich dla wszystkich potomków aż do liści, a więc niektóre obliczenia poprzedniego algorytmu są zbędne. Oszczędzając w ten sposób czas można zwiększyć głębokość przeszukiwanego drzewa, a więc podjąć lepszą decyzję.
+Algorytm Alfa-Beta jest ulepszeniem algorytmu minimax.
+Opiera się na następującej obserwacji: wartości \(minimax\) niektórych wierzchołków mogą być ustalone bez obliczania ich dla wszystkich potomków aż do liści, a więc niektóre poddrzewa mogą zostać ,,odcięte'' (przykład na Rysunku \ref{alfa-beta-cut}).
+Oszczędzając w ten sposób czas można zwiększyć głębokość przeszukiwanego drzewa, a więc podjąć lepszą decyzję.
 
-Poniższe drzewo ilustruje sytuację, w której po obliczeniu wartości \(minimax\) dla części wierzchołków drzewa można stwierdzić jaka jest wartość korzenia.
-
-\begin{center}\input{lib/alfa-beta.tikz}\end{center}
+\begin{rysunek}
+\caption{Odcięcie w algorytmie Alfa-Beta \label{alfa-beta-cut}}
+\centering
+\input{lib/alfa-beta.tikz}
+\end{rysunek}
 
 Algorytm Alfa-Beta wprowadza pomocniczą funkcję \(alfabeta\):
 
@@ -211,13 +229,13 @@ Algorytm Alfa-Beta wprowadza pomocniczą funkcję \(alfabeta\):
   \end{cases}
 \]
 
-Przedział \((alfa, beta)\) nazywany jest oknem przeszukiwania --- wartość wewnątrz niego to dokładnie obliczona wartosć \(minimax\).
+Przedział \((alfa, beta)\) jest nazywany \emph{oknem przeszukiwania} --- wartość wewnątrz niego to dokładnie obliczona wartosć \(minimax\).
 Dla korzenia za okno przeszukiwania przyjmuje się przedział \((-\infty, \infty)\), a więc oblicza się dokładną wartość \(minimax\).
-Znaczenie okna przeszukiwania można wyrazić następującą intuicją: jeżeli wartość obliczana dla danego wierzchołka jest większa niż \(beta\), to końcowy wynik obliczeń nie zmieni się, jeżeli za wartość bieżącego wierzchołka przyjmiemy \(beta\) lub dowolną większą liczbę; gracz \(min\) nie dopuści do rozpatrywanego stanu, ponieważ ma lepszą alternatywę (analogicznie gdy wartość jest mniejsza niż \(alfa\) dla gracza \(max\)).
-Sam algorytm wygląda następująco:
+Znaczenie okna przeszukiwania można wyrazić następującą intuicją: jeżeli wartość obliczana dla danego wierzchołka jest większa niż \(beta\), to końcowy wynik obliczeń nie zmieni się, jeżeli za wartość bieżącego wierzchołka przyjmiemy \(beta\) lub dowolną większą liczbę; gracz \(min\) nie dopuści do rozpatrywanego stanu, ponieważ ma lepszą alternatywę.
+Analogicznie, gdy wartość jest mniejsza niż \(alfa\), dla gracza \(max\) (patrz Algorytm \ref{alfabeta}).
 
-\begin{algorithm}
-\caption{Alfa-Beta}\label{alfabeta}
+\begin{algorytm}
+\caption{Alfa-Beta\label{alfabeta}}
 \begin{algorithmic}[1]
 \Function{alfabeta}{$v, alfa, beta$}
 \If {$\texttt{\(v\) jest liściem}$}
@@ -242,7 +260,7 @@ Sam algorytm wygląda następująco:
 \EndIf
 \EndFunction
 \end{algorithmic}
-\end{algorithm}
+\end{algorytm}
 
 \subsection{Tablica transpozycji}
 
@@ -258,15 +276,15 @@ Wysokość równa głębokości przeszukiwania oznacza, że wierzchołek był od
 Taką wartość uznajemy za gorszą od obliczonej dla wysokości o jeden mniejszej, kiedy rozpatrzone zostały wszystkie możliwe kolejne ruchy.
 A zatem odnaleziony w tablicy transpozycji wpis może zostać użyty tylko wtedy, gdy zgadzają się wartości funkcji haszującej oraz wysokość zapisana we wpisie jest nie większa niż bieżąca.
 
-W przypadku algorymu Minimimax dodatkowym polem wpisu jest to po prostu obliczona wartość wierzchołka, która może zostać zwrócona po spełnieniu wcześniej wymienionych warunków.
+W przypadku algorymu Minimimax dodatkowym polem wpisu jest to po prostu obliczona wartość wierzchołka, która może zostać użyta po spełnieniu wcześniej wymienionych warunków.
 
 W przypadku algorytmu Alfa-Beta, wpis zawiera ograniczenie dolne i górne na wartość \(minimaks\) wierzchołka (równe sobie, jeżeli znana jest dokładna wartość).
-Taki wpis nie zawsze pozwala natychmiast zwrócić wynik, ale może zawęzić okno przeszukiwania i skrócić czas działania algorytmu.
+Taki wpis nie zawsze pozwala natychmiast podać wynik, ale może zawęzić okno przeszukiwania i skrócić czas działania algorytmu.
 
-\subsection{Dalsze ulepszenia}
+\subsection{Inne ulepszenia}
 
 Istnieją dalsze ulepszenia algorytmu Alfa-Beta (NegaScout, MTD-f), które opierają się na zawężaniu okna przeszukiwania.
-Ten zabieg skraca czas działania, ale nie musi zwrócić przydatnego wyniku.
+Ten zabieg skraca czas działania, ale może nie dać przydatnego wyniku.
 Na przykład, zamiast obliczać wartość \(alfabeta(w, alfa, beta)\) oblicza się \(alfabeta(w, alfa, beta')\), gdzie \(alfa < beta' < beta\).
 Otrzymana wartość jest poprawnym wynikiem \(alfabeta(w, alfa, beta)\), o ile jest mniejsza od \(beta'\).
 Choć obliczanie nieużytecznych wyników spowalnia algorytm, powinno zdarzać się rzadko.
@@ -276,12 +294,12 @@ Ostatecznie, skuteczność tych technik sprawdza się eksperymentalnie.
 
 Metoda Monte Carlo nie opiera się w żaden sposób na Minimax i w ogóle nie wymaga użycia funkcji oceniającej wartość wierzchołka.
 Do jej zastosowania wystarczy znajomość zasad gry, to znaczy możliwych ruchów dla każdego stanu oraz stanów końcowych wraz z wynikiem rozgrywki.
-Ruchy oceniane są na podstawie wyników losowych symulacji; w najprostszym algorytmie, od synów danego wierzchołka moglibyśmy rozpocząć równą liczbę losowych rozgrywek i wybrać tego, który najczęściej doprowadził do zwycięstwa.
+Ruchy są oceniane na podstawie wyników losowych symulacji; w najprostszym algorytmie, od synów danego wierzchołka moglibyśmy rozpocząć równą liczbę losowych rozgrywek i wybrać tego, który najczęściej doprowadził do zwycięstwa.
 
 \subsection{Monte Carlo Tree Search}
 
 W praktyce prosta metoda Monte Carlo nie sprawdza się i należy w trakcie przeprowadzania symulacji niektóre wierzchołki początkowe porzucać jako mało obiecujące, a inne rozwijać, tzn. w ich miejsce wstawić wszystkich synów jako samodzielne wierzchołki początkowe symulacji.
-Tak działa Monte Carlo Tree Search (MCTS).
+Tak działa Monte Carlo Tree Search.
 
 Algorytm ten utrzymuje drzewo, zakorzenione w wierzchołku dla którego wybiera ruch i początkowo posiadające ponad to wyłącznie liść dla każdego możliwego kolejnego stanu gry.
 Każdy wierzchołek tego drzewa utrzymuje statystyki symulacji: liczbę symulacji i liczbę symulacji zakończonych zwycięstwem, które rozpoczęły się w poddrzewie danego wierzchołka.
@@ -293,7 +311,7 @@ W opisie algorytmu widać pewne luki: sposób wybierania najbardziej obiecujące
 
 Przy wybieraniu nabardziej obiecującego syna używa się metody granicy ufności.
 Ma ona zapobiec sytuacji, w której po niewielkiej liczbie symulacji (nawet tylko jednej) liść jest porzucany, co ma miejsce gdy porównuje się wyłącznie stosunek liczby zwycięstw do liczby symulacji.
-W tym celu to tego ilorazu dodawany jest tzw. współczynnik ufności, tym wyższy im mniejszą częścią symulacji rodzica są symulacje danego syna. Jako współczynnik ufności przymuje się \(\sqrt{\frac{\sqrt{n_p}}{n_s}}\) lub \(\sqrt{\frac{\log{n_p}}{n_s}}\), gdzie \(n_s\) to liczba symulacji w poddrzewie syna, a \(n_p\) to liczba symulacji w poddrzewie rodzica.
+W tym celu to tego ilorazu jest dodawany \emph{współczynnik ufności}, tym wyższy im mniejszą częścią symulacji rodzica są symulacje danego syna. Jako współczynnik ufności przymuje się \(\sqrt{\frac{\sqrt{n_p}}{n_s}}\) lub \(\sqrt{\frac{\log{n_p}}{n_s}}\), gdzie \(n_s\) to liczba symulacji w poddrzewie syna, a \(n_p\) to liczba symulacji w poddrzewie rodzica.
 
 Decyzję o rozwinięciu liścia podejmuje się na podstawie liczby symulacji, jakie zostały z niego rozpoczęte. Jeżeli przekroczy ustalony próg, zwykle zbliżony do liczby ruchów możliwych w jednym stanie gry, liść zostaje rozwinięty.
 
@@ -311,10 +329,10 @@ W przypadku obu algorytmów, zastosowanie dla dwóch graczy daje algorytm Minima
 Redukcja gry wieloosobowej do gry dwuosobowej, jaka stoi za algorytmem Paranoid, jest następująca: gracz realizujący algorytm uznaje, że wszyscy przeciwnicy są w zmowie i jest im obojętne który z nich wygra.
 Zależy im jedynie na zminimalizowaniu wyniku wyłączonego ze zmowy gracza.
 Dzięki temu wszystkich przeciwników można traktować zbiorczo jako jednego i, zgodnie z założeniami Minimax, minimalizuje on wartości tej samej funkcji, którą gracz maksymalizuje.
-Fakt, że ten zbiorczy przeciwnik może wykonywać więcej niż jeden ruch pod rząd i w jednym ruchu używa innego pionka niż w drugim, nie wpływa w żaden sposób na algorytm Minimax.
+Fakt, że ten zbiorczy przeciwnik może wykonywać więcej niż jeden ruch z rzędu i w jednym ruchu używa innego pionka niż w drugim, nie wpływa w żaden sposób na algorytm Minimax.
 
 Redukcja do dwuosobowego algorytmu Minimax pozwala zastosować wprost wszystkie ulepszenia, jakie dla niego opracowano.
-Niestety, zastosowane uproszczenie prowadzi do niekorzystnych decyzji, jeżeli przeciwnicy wcale nie są w zmowie\cite{sturtevant}.
+Niestety, zastosowane uproszczenie prowadzi do niekorzystnych decyzji, jeżeli przeciwnicy wcale nie są w zmowie (por. \cite{sturtevant}).
 
 \subsection{Max\textsuperscript{n}}
 
@@ -327,14 +345,14 @@ Niestety, nie da się wobec niego zastosować wprost ulepszeń Minimaksa, tzn. 
 
 \subsection*{Ulepszenie Alfa-Beta dla algorytmu Max\textsuperscript{n}}
 
-Da się jednak zastosować wobec algorytmu Max\textsuperscript{n} ulepszenie analogiczne do Alfy-Bety wobec Minimaksa\cite{korf}, o ile dysponuje się ograniczeniem górnym na sumę (po graczach) wartości funkcji oceniajacej \(sum\).
+Da się jednak zastosować wobec algorytmu Max\textsuperscript{n} ulepszenie analogiczne do Alfy-Bety wobec Minimaksa (por. \cite{korf}), o ile dysponuje się ograniczeniem górnym na sumę (po graczach) wartości funkcji oceniajacej \(sum\).
 Przedział \((alfa, beta)\) zastępuje tu jedna liczba, \(bound\).
 Analogicznie do Alfy-Bety: jeżeli w trakcie obliczania wartości wierzchołka jest jasne, że gracz wykonujący ruch może uzyskać (pod przypisanym sobie indeksem wynikowego wektora) co najmniej \(bound\), dalsze obliczanie może zostać porzucone; do rozpatrywanego stanu nie dojdzie.
 Jako wartość \(bound\) przekazuje się \(sum\) zmniejszone o największą wartość pod indeksem wykonującego ruch gracza spośród wartości-wektorów rozpatrzonych już synów.
 
 Obsługiwanie \(bound\) jest wyraźnie mniej złożone niż w przypadku \((alfa, beta)\).
 Można się stąd słusznie domyślić, że ten algorytm zastosowany do gry dwuosobowej jest mniej efektywny (wykonuje mniej odcięć) niż Alfa-Beta.
-Jest on jednak maksymalnie efektywny w ogólnym przypadku, tzn. odcina wszystkie poddrzewa bez których można dokładnie obliczyć wartość Max\textsuperscript{n}\cite{korf}.
+Jest on jednak maksymalnie efektywny w ogólnym przypadku, tzn. odcina wszystkie poddrzewa bez których można dokładnie obliczyć wartość Max\textsuperscript{n} (por. \cite{korf}).
 
 \chapter{Środowisko bota: tworzona aplikacja}
 
@@ -360,11 +378,11 @@ Możliwe, że autorzy i wydawcy gry świadomie woleli pozostawić mało prawdopo
 
 Niech pionki czarny i zielony sąsiadują z pionkiem czerwonym. Dalej, niech pionek czarny będzie odgrodzony od wszystkich sąsiednich pól oprócz tego, na którym stoi czerwony i niech czerwony będzie odgrodzony od tych pól, na których nie stoją czarny ani zielony. Teraz, jeżeli właściciel pionka czarnego nie ma już ogrodzeń, nie może wykonać ruchu (patrz rysunek \ref{problem}).
 
-\begin{figure}[ht!]
+\begin{rysunek}
+\caption{Brak legalnych ruchów \label{problem}}
 \centering
 \includegraphics[width=80mm]{no-move.png}
-\caption{Brak legalnych ruchów \label{problem}}
-\end{figure}
+\end{rysunek}
 
 \subsection*{Rozwiązanie problemu}
 
