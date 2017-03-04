@@ -358,23 +358,23 @@ Jest on jednak maksymalnie efektywny w ogólnym przypadku, tzn. odcina wszystkie
 
 \section{Wybór technologii}
 
-Przypomnijmy, że motywacją do badania algorytmów sztucznej inteligencji było stworzenie aplikacji, a nie odwrotnie.
+Przypomnijmy, że motywacją do badania algorytmów sztucznej inteligencji było wytworzenie aplikacji, a nie odwrotnie.
 Ustalenie hierarchii priorytetów było tu istotne, ponieważ na potrzeby sztucznej inteligencji w grach używa się języków programowania niskiego poziomu, mniej przenośnych, ale gwarantujących szybsze wykonywanie algorytmów.
 Dla aplikacji użytkowej istotna jest właśnie przenośność, uzyskiwana w językach wysokiego poziomu przez dodatkowe warstwy abstrakcji kosztem wydajności.
 
 Stawiając przenośność nad wydajnością, wybraliśmy język Java.
 Umożliwia on uruchamianie tej samej aplikacji, dystrybuowanej jako pojedynczy plik, na wszystkich popularnych architekturach, systemach operacyjnych i środowiskach graficznych używanych w komputerach osobistych.
-Co więcej, jest podstawowym językiem programowania dla systemu Android, najpopularniejszemu na urządzeniach mobilnych.
-Przy odpowiednim zorganizowaniu projektu, daje to szansę na użycie tego samego kodu źródłowego botów w aplikacji mobilnej, jeżeli taka będzie kiedyś stworzona.
+Co więcej, jest podstawowym językiem programowania dla systemu Android, najpopularniejszego na urządzeniach mobilnych.
+Przy odpowiednim zorganizowaniu projektu, daje to szansę na użycie tego samego kodu źródłowego botów w aplikacji mobilnej, jeżeli taka kiedyś powstanie.
 
 \section{Doprecyzowanie zasad}
 
 Implementując zasady gry dostrzegliśmy pewne niedoskonałości oryginalnych zasad, które należało rozstrzygnąć.
 
-Otóż pewnych stanów gry oryginalne zasady nie odpowiadają jednoznacznie na pytanie o legalne ruchy albo dają odpowiedź nieoczekiwaną, wyglądającą na efekt niedopatrzenia.
+Otóż dla pewnych stanów gry oryginalne zasady nie odpowiadają jednoznacznie na pytanie o legalne ruchy albo dają odpowiedź nieoczekiwaną, wyglądającą na efekt niedopatrzenia.
 Możliwe, że autorzy i wydawcy gry świadomie woleli pozostawić mało prawdopodobne sytuacje do rozsądzenia graczom niż wydłużać instrukcję analizami kolejnych przypadków.
 
-\subsection*{Ilustracja problemu}
+\subsection{Ilustracja problemu}
 
 Niech pionki czarny i zielony sąsiadują z pionkiem czerwonym. Dalej, niech pionek czarny będzie odgrodzony od wszystkich sąsiednich pól oprócz tego, na którym stoi czerwony i niech czerwony będzie odgrodzony od tych pól, na których nie stoją czarny ani zielony. Teraz, jeżeli właściciel pionka czarnego nie ma już ogrodzeń, nie może wykonać ruchu (patrz rysunek \ref{problem}).
 
@@ -384,7 +384,7 @@ Niech pionki czarny i zielony sąsiadują z pionkiem czerwonym. Dalej, niech pio
 \includegraphics[width=80mm]{no-move.png}
 \end{rysunek}
 
-\subsection*{Rozwiązanie problemu}
+\subsection{Rozwiązanie problemu}
 
 Zasady nie przewidują sytuacji, w której nie ma legalnych ruchów i żaden gracz nie zwyciężył.
 Możliwe wyjścia z tej sytuacji to
@@ -398,10 +398,10 @@ Możliwe wyjścia z tej sytuacji to
 
 Jedynym dostępnym kryterium przy dokonaniu wyboru jest tutaj subiektywna jakość rozgrywki, która powinna jak najlepiej przypominać oryginalną grę.
 Rozwiązania \ref{loose-turn} i \ref{loose-game} naszym zdaniem nadto zmieniają zasady.
-\ref{loose-turn} stwarza możliwość celowego blokowania gracza, aby układać ogrodzenia nie odczuwając kosztu związanego z nie poruszeniem pionka.
-\ref{loose-game} jest jeszcze większą ingerencją w dostępne strategie, ponieważ uznając więcej stanów za końcowe pozwala porzucić oryginalne cel rozgrywki, tzn. dotarcie na drugą stronę planszy.
-Wadą \ref{prevent} jest mała przejrzystość.
-Jeżeli jeden gracz wykonuje ruch, który pozostawia drugiemu tylko jeden możliwy ruch, który w efekcie odbiera trzeciemu wszystkie możliwości, ruch pierwszego gracza powinien być zakazany.
+Pierwsze stwarza możliwość celowego blokowania gracza, aby układać ogrodzenia nie odczuwając kosztu związanego z nie poruszeniem pionka.
+Drugie jest jeszcze większą ingerencją w dostępne strategie, ponieważ uznając więcej stanów za końcowe pozwala porzucić oryginalny cel rozgrywki, tzn. dotarcie na drugą stronę planszy.
+Wadą wariantu numer \ref{prevent} jest mała przejrzystość.
+Jeżeli jeden gracz wykona ruch pozostawiący następnemu tylko jeden możliwy ruch, który w efekcie odbierze trzeciemu wszystkie możliwości, ruch pierwszego gracza powinien być zakazany.
 Jest to jednak trudne do spotrzeżenia i gracz pierwszy może nie rozumieć, dlaczego nie może wykonać takiego ruchu.
 
 Wybraliśmy więc rozwiązanie \ref{solve}, poszerzając definicję przeskoczenia pionka przeciwnika.
@@ -410,19 +410,19 @@ We wcześniej przedstawionym przykładzie, ruch wykonuje gracz czarny.
 Gdyby ruch wykonywał gracz czerwony, mógłby przeskoczyć pionek gracza zielonego.
 A zatem gracz czerwony również może to zrobić, co daje mu dwa możliwe ruchy do wyboru.
 
-Ponieważ pierwotne zasady gry zapewniają, że każdy gracz ma dostępną przy namniej jedną drogę do celu, nowa definicja przeskoczenia pionka gwarantuje, że zawsze można wykonać ruch pionkiem.
+Ponieważ pierwotne zasady gry zapewniają, że każdy gracz ma dostępną przynamniej jedną drogę do celu, nowa definicja przeskoczenia pionka gwarantuje, że zawsze można wykonać ruch pionkiem.
 
 \section{Interfejs bota}
 
 Przed rozwijaniem algorytmów botów należy określić sposób w jaki będzie on udzielał odpowiedzi i ograniczenia, jakie zostaną narzucone.
 Musimy tu przede wszystkim wziąć pod uwagę jakość użytkowania aplikacji i ograniczenia urządzeń, na jakich ma być uruchamiana.
 
-Najprostszym interfejsem bota byłaby pojedyncza procedura, która dla zadanego stanu gry zwraca wybrany ruch.
-Utrudnia jednak ona właściwe wykorzystanie czasu, jaki bot ma na wybranie ruchu.
+Najprostszym interfejsem bota byłaby pojedyncza procedura, której jedynym argumentem jest stan gry, a wynikiem jest jeden z dozwolonych ruchów.
+Utrudnia ona jednak właściwe wykorzystanie czasu.
 Nie ma on możliwości wyboru decyzji jako wydającej się najlepszą w danej chwili i dalszego szukania lepszej.
-Jeżeli próbując wykorzystać cały dostępny czas przekroczy go, arbiter przerwie procedurę i w ogóle nie zwróci ona wyniku.
+Jeżeli próbując wykorzystać cały dostępny czas przekroczy go, arbiter przerwie procedurę i nie obliczy ona żadnego wyniku.
 
-Dlatego jako interfejs bota obraliśmy procedurę nie zwracającą wyniku, która będzie uruchamiana przez aplikację w osobnym procesie na wyznaczony czas, a następnie przerywana.
+Dlatego jako interfejs bota obraliśmy procedurę nie mającą wyniku, która będzie uruchamiana przez aplikację w osobnym procesie na wyznaczony czas, a następnie przerywana.
 Podczas działania będzie mogła modyfikować swoją decyzję o wybranym ruchu, będącą obiektem współdzielonym z procesem arbitra aplikacji.
 
 Dla zapewnienia płynności rozgrywki, limit czasu ustalamy na 2 sekundy.
