@@ -278,7 +278,7 @@ A zatem odnaleziony w tablicy transpozycji wpis może zostać użyty tylko wtedy
 
 W przypadku algorymu Minimimax dodatkowym polem wpisu jest to po prostu obliczona wartość wierzchołka, która może zostać użyta po spełnieniu wcześniej wymienionych warunków.
 
-W przypadku algorytmu Alfa-Beta, wpis zawiera ograniczenie dolne i górne na wartość \(minimaks\) wierzchołka (równe sobie, jeżeli znana jest dokładna wartość).
+W przypadku algorytmu Alfa-Beta, wpis zawiera ograniczenie dolne i górne na wartość \(minimax\) wierzchołka (równe sobie, jeżeli znana jest dokładna wartość).
 Taki wpis nie zawsze pozwala natychmiast podać wynik, ale może zawęzić okno przeszukiwania i skrócić czas działania algorytmu.
 
 \subsection{Inne ulepszenia}
@@ -432,6 +432,30 @@ Ustaliliśmy też przybliżone maksymalne zużycie pamięci na 500 MB, co ma zna
 Jednak nasza aplikacja ma działać na współczesnym komputerze osobistym (który ma dziś zwykle 4 GB pamięci), a nie brać udział w potyczkach botów na superkomputerach.
 
 \chapter{Rozwijanie botów}
+
+\section{Minimax i Max\textsuperscript{n}}
+
+Pierwszy zaimplementowany bot był oparty o Minimax i Max\textsuperscript{n} (w wersji dla czterech graczy).
+Choć same algorytmy nie stwarzały problemów podczas implementacji, były pretekstem do opracowania procedury iteracyjnego pogłębiania i funkcji oceniającej, które miały być ponownie przydatne podczas pracy nad kolejnymi botami.
+
+\subsection{Iteracyjne pogłębianie}
+
+Zastosowanie techniki iteracyjnego pogłębiania miało na celu jak najlepsze wykorzstanie danego botowi czasu i zaprojektowanego dla niego interfejsu.
+Oryginalny Minimax rozpatruje drzewo gry do ustalonej głębokości; przyjęcie zbyt małej wartości mogłoby oznaczać niższej jakości wynik obliczony w krótkim czasie, a zbyt wysokiej - przekroczenie limitu czasowego i brak jakiegokolwiek wyniku.
+Iteracyjne pogłębianie polega na wielokrotnym wykonywaniu algorytmu, za każdym razem dla głębokości większej o 1 (co oznacza wykładniczy wzrost liczby rozpatrywanych stanów gry).
+
+Do procedury iteracyjnego pogłębiania dodaliśmy też specjalne warunki przerwania, które miały poprawić jakość rozgrywki.
+Chcieliśmy ograniczyć sytuacje, kiedy gracz komputerowy przekonany, że wygra (maksymalna wartość \(minimax\) korzenia) niespiesznie dąży do celu albo odwrotnie, gracz przekonany o porażce (minimalna wartość korzenia) poddaje się i nie zmierza nawet do celu licząc na błąd przeciwnika.
+Obie sytuacje mogą mieć miejsce, kiedy algorytm Minimax zostanie uruchomiony dla większej głębokości niż jest konieczna, żeby wartość korzenia nie była przybliżeniem opartym o wartość funkcji oceniającej dla pewnego liścia, ale dokładną wartością skrajną, którą przyjmuje się dla napotkanych w drzewie stanów końcowych.
+Algorytm na równi traktuje ruchy prowadzące do zwycięstwa (analogicznie klęski), bez względu na odległość do stanu końcowego, tzn. wygrana w 3 ruchach jest równie dobra co wygrana w 13 i bot może przez wiele tur przesuwać pionek w tę i z powrotem, dopóki przeciwnik nie zbliży się odpowiednio do celu.
+Przeciwnik z kolei może wcale nie zbliżać się do celu, również kręcąc się w kółko wobec wyboru między porażką w takiej czy innej liczbie ruchów.
+Żeby ograniczyć takie sytuacje, procedura iteracyjnego pogłębiania przestaje wykonywać Minimax dla kolejnych głębokości po tym, jak najlepszą osiągalną wartością okaże się jedna ze skrajnych.
+Jeżeli bot po pewnej iteracji odkryje, że jest skazany na porażkę, wybierze ruch, który wydawał się najlepszy po poprzedniej iteracji.
+Jeżeli miałby zagwarantowane zwycięstwo, wybierze dający je ruch i zaprzestanie dalszego pogłębiania.
+
+\subsection{Funkcja oceniająca}
+
+
 
 \chapter{Podsumowanie}
 
