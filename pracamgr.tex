@@ -461,10 +461,21 @@ W pozostałych przypadkach wynikiem jest \[(minOtherPlayerDistance - distance) *
 
 Intuicyjnie, zgodnie z tą funkcją bot stara się mieć jak największą przewagę (lub najmniejszą stratę) w odglełości do celu względem najlepszego z przeciwników, a jeżeli jest to możliwe na wiele sposobów - zachowując jak najwięcej ścianek.
 Łatwo zauważyć, że ma ona pożądane właściwości: skrajne wartości przyjmuje wtedy i tylko wtedy, gdy rozpatruje końcowy stan gry.
-Co więcej, nadaje się też do ulepszania algorytmu Max\textsuperscript{n} analogicznie do AlfyBety, tzn. ma ograniczenie na sumę wartości dla wszystkich graczy, lepsze niż ograniczenie na wartość dla jednego gracza pomnożone przez ich liczbę.
+Co więcej, nadaje się też do ulepszania algorytmu Max\textsuperscript{n} analogicznie do Alfy-Bety, tzn. ma ograniczenie na sumę wartości dla wszystkich graczy, lepsze niż ograniczenie na wartość dla jednego gracza pomnożone przez ich liczbę.
 Ograniczeniem tym jest \(WALL\_COUNT\).
 W istocie, dla każdego stanu gracze wnoszą do sumy dwie składowe - przewagę nad najlepszym z przeciwników w odległości do celu i liczbę ścianek.
 Suma drugich składników jest ograniczona właśnie przez \(WALL\_COUNT\), a suma pierwszch przez \(0\) - dla dwóch graczy najbliższych celowi są to liczby przeciwne, a dla pozostałych niedodatnie.
+
+\section {Alfa-Beta}
+
+Drugim zaimplementowanym algorytmem był Alfa-Beta.
+W wersji dla czterech graczy zaimplementowaliśmy wcześniej opisywane, analogiczne do oryginalnej Alfy-Bety, ulepszenie algorytmu Max\textsuperscript{n}.
+Implementacja samych algorytmów nie stwarzała trudności, jednak fakt wprowadzenia odcięć (porzucania niektórych poddrzew), nakłonił nas do ulepszenia implementacji zasad gry w celu przyspieszenia tego bota i wykonania przez niego większej liczby iteracji.
+
+Chodziło o stopniowe obliczanie możliwych ruchów w miejsce wyznaczania ich wszystkich od razu.
+W wielu grach mogłoby to nie mieć znaczenia, jednak w Quoridor sprawdzenie legalności postawienia ściany wymaga upewnienia się, że każdy przeciwnik wciąż ma drogę do celu.
+Do tego potencjalnie możliwych ruchów tego rodzaju na począku gry jest ponad sto, a rozpatrywanie legalnych ruchów jest częstą operacją dla każdego z botów.
+Dlatego postanowiliśmy wyznaczać legalne ruchy po jednym, zaczynając od ruchów pionkiem, licząc na to, że po odcięciu poddrzewa sprawdzanie ruchów ścianką nie będzie potrzebne, a przynajmniej będzie ograniczone.
 
 \chapter{Podsumowanie}
 
