@@ -455,7 +455,16 @@ Jeżeli miałby zagwarantowane zwycięstwo, wybierze dający je ruch i zaprzesta
 
 \subsection{Funkcja oceniająca}
 
+Do obliczania wartości funkcji oceniającej używamy pomocniczych wartości: odległości danego gracza do celu \(distance\), minimalnej odległości do celu przeciwników \(minOtherPlayerDistance\), ilości ścianek, jakie pozostały wybranemu graczowi \(wallsLeft\) oraz dwóch stałych: ilości ścianek w grze \(WALL\_COUNT\) (20) i górnego ograniczenia na długość najkrótszej ścieżki do celu \(DISTANCE\_UPPER\_BOUND\), za które przyjęliśmy liczbę pól planszy (81).
+W przypadku stanów końcowy, funkcja przyjmuje skrajne wartości: \[-DISTANCE\_UPPER\_BOUND * WALL\_COUNT \text{,}\] \[(DISTANCE\_UPPER\_BOUND + 1) * WALL\_COUNT\] odpowiednio w przypadku porażki i zwycięstwa zadanego gracza.
+W pozostałych przypadkach wynikiem jest \[(minOtherPlayerDistance - distance) * WALL\_COUNT + wallsfLeft \text{.}\]
 
+Intuicyjnie, zgodnie z tą funkcją bot stara się mieć jak największą przewagę (lub najmniejszą stratę) w odglełości do celu względem najlepszego z przeciwników, a jeżeli jest to możliwe na wiele sposobów - zachowując jak najwięcej ścianek.
+Łatwo zauważyć, że ma ona pożądane właściwości: skrajne wartości przyjmuje wtedy i tylko wtedy, gdy rozpatruje końcowy stan gry.
+Co więcej, nadaje się też do ulepszania algorytmu Max\textsuperscript{n} analogicznie do AlfyBety, tzn. ma ograniczenie na sumę wartości dla wszystkich graczy, lepsze niż ograniczenie na wartość dla jednego gracza pomnożone przez ich liczbę.
+Ograniczeniem tym jest \(WALL\_COUNT\).
+W istocie, dla każdego stanu gracze wnoszą do sumy dwie składowe - przewagę nad najlepszym z przeciwników w odległości do celu i liczbę ścianek.
+Suma drugich składników jest ograniczona właśnie przez \(WALL\_COUNT\), a suma pierwszch przez \(0\) - dla dwóch graczy najbliższych celowi są to liczby przeciwne, a dla pozostałych niedodatnie.
 
 \chapter{Podsumowanie}
 
