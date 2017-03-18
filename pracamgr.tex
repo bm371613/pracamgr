@@ -516,6 +516,40 @@ Przypadek dla dwóch graczy wymaga niewielkich zmian: znikają zmienne \(x_2\), 
 
 \subsection{Zastosowanie wobec Alfy-Bety dla wielu graczy}
 
+Przypomnijmy, że Max\textsuperscript{n} przypisuje stanom gry wektor, którego składowe to wartości funkcji oceniających dla każdego z graczy.
+Ulepszenia analogiczne do Alfy-Bety wprowadza do rozpatrywania wierzchołka dodatkowy parametr \(bound\), który ogranicza z góry wartości odpowiadające graczowi wykonującemu ruch tak samo, jak \(beta\) dla gracza \(max\) w wersji dwuosobowej.
+
+Ponieważ \(bound\) odwołuje się do aktualnego gracza, nasze użycie tablicy transpozycji dla tego algorytmu opiera się na założeniu, że wartość funkcji haszującej zależy od gracza wykonującego ruch, co być może nie jest konieczne w innych przypadkach.
+Opisana wcześniej funkcja haszująca spełnia ten warunek.
+
+Wpis w tablicy transpozycji wyposażyliśmy w następujące pola:
+
+\begin{itemize}
+\item{\(hash\): wartość funkcji haszującej, jest wykorzystywana do weryfikacji adekwatności wpisu. Można go użyć tylko, jeżeli \(hash\) jest równe wartości funkcji haszującej rozpatrywanego stanu gry.}
+\item{\(depth\): odległość od liści w drzewie przeszukiwania z momentu tworzenia wpisu, używana jako wskaźnik jakości. Wpisu można użyć tylko, jeżeli \(depth\) jest większe lub równe aktualnej odległości od liści.}
+\item{\(exact\): wartość logiczna, która określa czy pole \(value\) to dokładny wektor wartości, czy tylko osiągalny z punktu widzenia gracza wykonującego ruchu.}
+\item{\(value\): wektor wartości funkcji oceniającej dla graczy.}
+\end{itemize}
+
+Rozpatrując wierzchołek, nasz algorytm najpierw odnajduje właściwy mu wpis w tablicy transpozycji i jeśli go znajdzie, sprawdza czy wartości \(hash\) i \(depth\) pozwalają go użyć.
+Jeżeli tak, oraz jest to wpis dokłady (\(exact\) jest prawdą) albo wartość w wektorze odpowiadająca aktualnemu graczowi przekracza \(bound\), odnaleziona \(value\) jest używana jako wynik bez dalszych obliczeń.
+
+Kiedy wpis nie zostanie odnaleziony albo nie okaże się przydatny, algorytm oblicza wynik tak samo, jak bez użycia tablicy transpozycji.
+
+Na końcu procedury, jeżeli wpis nie został wcześniej odnaleziony albo został odrzucony z powodu niewłaściwych wartośc \(hash\) czy \(depth\), do tablicy zapisywany jest nowy wpis.
+Obliczony wynik trafia do \(value\), a wartość \(exact\) ustala się jako prawdę wtedy i tylko wtedy, gdy wartość w wektorze wynikowym odpowiadającemu graczowi jest mniejsza niż \(bound\).
+
+Postępowanie z \(hash\) i \(depth\) niczym nie różni się tutaj od standardowej, dwuosobowej wersji algorytmu Minimax z tablicą transpozycji.
+Więcej uwagi wymagają specyficznie używane \(exact\) i \(value\).
+
+Jeżeli \(exact\) jest prawdą, wpis należy odczytywać następująco: ,,wektor wartości dla odpowiadającego stanu został dokładnie obliczony, znajduje się w \(value\)'', więc \(value\) natychmiast przyjmujemy ją za wynik, tak jakbyśmy wykonywali Max\textsuperscript{n} z użyciem tablicy transpozycji.
+
+Dopiero kiedy \(exact\) jest fałszem, widoczne jest działanie \(bound\) - wpis oznacza, że ,,jeden z synów ma wartość \(value\), a więc ten stan jest co najmniej równie dobry z punktu widzenia gracza wykonującego ruch''. Dokładna wartość nie została obliczona, ponieważ już \(value\) przekroczyło \(bound\) używane w trakcie tworzenia wpisu.
+Co więcej, takie znaczenie wpisu może być użyteczne tylko jeżeli jest jasne o którego gracza chodzi, stąd dodatkowe wymaganie dla funkcji haszującej.
+Takiego wpisu możemy użyć tylko jeżeli wynik nie musi być dokładny, a więc gdy \(value\) przekracza aktualne \(bound\).
+
+\section{Monte Carlo Tree Search}
+
 \chapter{Podsumowanie}
 
 \begin{thebibliography}{98}
