@@ -472,10 +472,49 @@ Drugim zaimplementowanym algorytmem był Alfa-Beta.
 W wersji dla czterech graczy zaimplementowaliśmy wcześniej opisywane, analogiczne do oryginalnej Alfy-Bety, ulepszenie algorytmu Max\textsuperscript{n}.
 Implementacja samych algorytmów nie stwarzała trudności, jednak fakt wprowadzenia odcięć (porzucania niektórych poddrzew), nakłonił nas do ulepszenia implementacji zasad gry w celu przyspieszenia tego bota i wykonania przez niego większej liczby iteracji.
 
-Chodziło o stopniowe obliczanie możliwych ruchów w miejsce wyznaczania ich wszystkich od razu.
+Chodziło o stopniowe obliczanie możliwych ruchów, w miejsce wyznaczania ich wszystkich od razu.
 W wielu grach mogłoby to nie mieć znaczenia, jednak w Quoridor sprawdzenie legalności postawienia ściany wymaga upewnienia się, że każdy przeciwnik wciąż ma drogę do celu.
 Do tego potencjalnie możliwych ruchów tego rodzaju na począku gry jest ponad sto, a rozpatrywanie legalnych ruchów jest częstą operacją dla każdego z botów.
-Dlatego postanowiliśmy wyznaczać legalne ruchy po jednym, zaczynając od ruchów pionkiem, licząc na to, że po odcięciu poddrzewa sprawdzanie ruchów ścianką nie będzie potrzebne, a przynajmniej będzie ograniczone.
+Dlatego postanowiliśmy wyznaczać legalne ruchy po jednym, licząc na to, że po odcięciu poddrzewa sprawdzanie ruchów ścianką nie będzie potrzebne, a przynajmniej będzie ograniczone.
+Co więcej, ruchy, których legalność łatwiej zweryfikować, zaczęliśmy rozpatrywać jako pierwsze.
+Dodaliśmy też specjalną obsługę kilku przypadków, w których można szybciej stwierdzić, że każdy ma drogę do celu (np. wszystkie ściany na planszy są ustawione w tym samym kierunku).
+
+\section{Tablica transpozycji}
+
+Spośród możliwych ulepszeń algorytmów Minimax Alfa-Beta wybraliśmy do zaimplementowania tablicę transpozycji jako to, które nadaje się do zastosowania wobec wersji dla wielu graczy opartej o Max\textsuperscript{n}.
+Użycie tej techniki wymagało po pierwsze zaprojektowania funkcji haszującej, do czego użyliśmy metody znanej jako haszowanie Zobrista, po drugie metody użycia wobec Alfy-Bety dla wielu graczy.
+O ile przykłady użycia tablicy transpozycji zarówno dla algorytmu Minimax i Alfa-Beta w standardowej, dwuosobowej wersji są łatwo dostępne, a przypadek Max\textsuperscript{n} jest w zasadzie identyczny co Minimax, o tyle Alfa-Beta dla wielu graczy w oparciu o Max\textsuperscript{n} została opracowana przez samodzielnie (co oczywiście nie oznacza, że pioniersko).
+
+\subsection{Haszowanie Zobrista}
+
+Projektując funkcję haszującą techniką Zobrista, najpierw należy rozkłożyć stan gry na składowe.
+W naszym przypadku były to (załóżmy przypadek czteroosobowy):
+
+\begin{itemize}
+\item indeks gracza, który właśnie wykonuje ruch (\(p \in \{0, 1, 2, 3\}\))
+\item stan każdego z \(8 \times 8\) skrzyżowań szczelin na planszy: 1 dla środka ogrodzenia poziomego, 2 dla pionowego, 0 w przeciwnym wypadku (\( b_{0, 0}, b_{0, 1}, .., b_{0, 7}, b_{1, 0}, .., b_{7, 7} \in \{0, 1, 2\}\))
+\item pozycja pionka każdego gracza (\(x_0, y_0, x_1, y_1, x_2, y_2, x_3, y_3 \in \{0, 1, .., 8\}\))
+\item liczba ogrodzeń stanowiących zasoby graczy (\(w_0, w_1, w_2, w_3 \in \{0, 1, 2, 3, 4, 5\}\))
+\end {itemize}
+
+Otrzymaliśmy więc 150 zmiennych, których wartości wzajemnie jednoznacznie wyznaczały stany gry.
+Dalej, dla tych zmiennych \(v_0, v_1, .., v_{149}\) utworzyliśmy tablice \(V_0, V_1, .., V_{149}\) tak, żeby długość \(V_i.length\) każdej tablicy była równa liczbie wartości przyjmowanych przez odpowiadającą zmienną \(v_i\).
+Dalej, losowo wypełniliśmy te tablice liczbami z przedziału właściwego dla typu ich elementów (wybraliśmy \emph{long} z języka Java).
+
+Wtedy już mogliśmy zdefiniować wartość funkcji haszującej \(h(s)\) dla stanu \(s\) opisanego wartościami zmiennych \(v_0, v_1, .., v_{149}\) jako \[\oplus_{i = 0}^{149} V_i[v_i]\text{,}\] gdzie znak \(\oplus\) oznacza binarną operację XOR (alternatywę rozłączną).
+
+Funkcja haszująca zaprojektowana techniką Zobrista daje się ponadto obliczać inkrementalnie, to znaczy znając jej wartość dla danego stanu i wykonany po nim ruch można wydajniej obliczyć wartość dla stanu wynikowego.
+Wykorzystuje się tu fakt, że operacja XOR jest łączna, przemienna i każdy element jest sam wobec siebie odwrotny.
+W przypadku Quoridor, wykonanie ruchu zmienia wartość najwyżej trzech zmiennych wykorzystanywanych do opisu stanu.
+Jedną z nich jest zawsze indeks gracza wykonującego ruch.
+Dla ruchu pionkiem, pozostałe to pozycja pionka gracza wykonującego ruch.
+W przypadku postawienia ogrodzenia, są to liczba pozostałych graczowi ogrodzeń i stan tego ze skrzyżowań szczelin planszy, na którym znalazł się środek ogrodzenia.
+Jeżeli dla każdej zmiennej \(v_i\), która w wyniku ruchu zmieniła wartość z \(x_i\) na \(y_i\) zastosujemy wobec wartość funkcji haszującej dla wyjściowego stanu operację XOR z \(V_i[x_i] \oplus V_i[y_i]\), otrzymamy wartość funkcji haszującej dla stanu wynikowego.
+A więc rozpatrzymy jedynie 3 zmienne zamiast 150.
+
+Przypadek dla dwóch graczy wymaga niewielkich zmian: znikają zmienne \(x_2\), \(x_3\), \(y_2\), \(y_3\), \(w_2\), \(w_3\), ponadto \(p \in \{0, 1\}\) i \(w_0, w_1 \in \{0, 1, .., 10\}\).
+
+\subsection{Zastosowanie wobec Alfy-Bety dla wielu graczy}
 
 \chapter{Podsumowanie}
 
