@@ -469,15 +469,21 @@ Suma drugich składników jest ograniczona właśnie przez \(WALL\_COUNT\), a su
 \section {Alfa-Beta}
 
 Drugim zaimplementowanym algorytmem był Alfa-Beta.
-W wersji dla czterech graczy zaimplementowaliśmy wcześniej opisywane, analogiczne do oryginalnej Alfy-Bety, ulepszenie algorytmu Max\textsuperscript{n}.
-Implementacja samych algorytmów nie stwarzała trudności, jednak fakt wprowadzenia odcięć (porzucania niektórych poddrzew), nakłonił nas do ulepszenia implementacji zasad gry w celu przyspieszenia tego bota i wykonania przez niego większej liczby iteracji.
-
+Wersja właściwa, dla dwóch graczy, nie stworzyła problemów implementacyjnych.
+Natomiast samo wprowadzenie odcięć (porzucanie niektórych poddrzew), nakłoniło nas do ulepszenia implementacji zasad gry w celu przyspieszenia tego bota i wykonania przez niego większej liczby iteracji.
 Chodziło o stopniowe obliczanie możliwych ruchów, w miejsce wyznaczania ich wszystkich od razu.
 W wielu grach mogłoby to nie mieć znaczenia, jednak w Quoridor sprawdzenie legalności postawienia ściany wymaga upewnienia się, że każdy przeciwnik wciąż ma drogę do celu.
 Do tego potencjalnie możliwych ruchów tego rodzaju na począku gry jest ponad sto, a rozpatrywanie legalnych ruchów jest częstą operacją dla każdego z botów.
 Dlatego postanowiliśmy wyznaczać legalne ruchy po jednym, licząc na to, że po odcięciu poddrzewa sprawdzanie ruchów ścianką nie będzie potrzebne, a przynajmniej będzie ograniczone.
 Co więcej, ruchy, których legalność łatwiej zweryfikować, zaczęliśmy rozpatrywać jako pierwsze.
 Dodaliśmy też specjalną obsługę kilku przypadków, w których można szybciej stwierdzić, że każdy ma drogę do celu (np. wszystkie ściany na planszy są ustawione w tym samym kierunku).
+
+Wersja dla czterech wymagała modyfikacji.
+Opisany wcześniej algorytm obliczał \(bound\) na podstawie dwóch dodatkowych, danych wraz z funkcją oceniającą wartości: dolnego ograniczenia na każdy element wektora wartości (autorzy przyjęli 0, ponieważ można przesunąć wartości) i górnego na sumę liczb w wektorze \(sum\).
+Jeżeli osiągalnej dla jednego gracza \(value\) odpowiadało \(bound\) (równe \(sum - value\)), to osiągnięcie przez kolejnego gracza w następnym ruchu \(bound\) lub więcej oznaczało, że pierwszemu graczowi pozostawia to wynik najwyżej \(value\), a więc całe poddrzewo wynikające z takiego ruchu można porzucić.
+Użycie takiego ulepszenia wobec przyjętej funkcji oceniającej nie pozwalałoby na wiele odcięć, dlatego sposób obliczania \(bound\) dopasowaliśmy do przyjętej funkcji oceniającej.
+
+TODO
 
 \section{Tablica transpozycji}
 
