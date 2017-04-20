@@ -447,14 +447,12 @@ Zastosowanie techniki iteracyjnego pogłębiania miało na celu jak najlepsze wy
 Oryginalny Minimax rozpatruje drzewo gry do ustalonej głębokości; przyjęcie zbyt małej wartości mogłoby oznaczać niższej jakości wynik obliczony w krótkim czasie, a zbyt wysokiej - przekroczenie limitu czasowego i brak jakiegokolwiek wyniku.
 Iteracyjne pogłębianie polega na wielokrotnym wykonywaniu algorytmu, za każdym razem dla głębokości większej o 1 (co oznacza wykładniczy wzrost liczby rozpatrywanych stanów gry).
 
-Do procedury iteracyjnego pogłębiania dodaliśmy też specjalne warunki przerwania, które miały poprawić jakość rozgrywki.
+W procedurze iteracyjnego pogłębiania wprowadziliśmy dodatkowe usprawnienia, które miały poprawić jakość rozgrywki.
 Chcieliśmy ograniczyć sytuacje, kiedy gracz komputerowy przekonany, że wygra (maksymalna wartość \(minimax\) korzenia) niespiesznie dąży do celu albo odwrotnie, gracz przekonany o porażce (minimalna wartość korzenia) poddaje się i nie zmierza nawet do celu licząc na błąd przeciwnika.
-Obie sytuacje mogą mieć miejsce, kiedy algorytm Minimax zostanie uruchomiony dla większej głębokości niż jest konieczna, żeby wartość korzenia nie była przybliżeniem opartym o wartość funkcji oceniającej dla pewnego liścia, ale dokładną wartością skrajną, którą przyjmuje się dla napotkanych w drzewie stanów końcowych.
-Algorytm na równi traktuje ruchy prowadzące do zwycięstwa (analogicznie klęski), bez względu na odległość do stanu końcowego, tzn. wygrana w 3 ruchach jest równie dobra co wygrana w 13 i bot może przez wiele tur przesuwać pionek w tę i z powrotem, dopóki przeciwnik nie zbliży się odpowiednio do celu.
+Oryginalny algorytm na równi traktuje ruchy prowadzące do pewnego zwycięstwa (analogicznie klęski), więc bot może przez wiele tur przesuwać pionek w tę i z powrotem, dopóki przeciwnik nie zbliży się odpowiednio do celu.
 Przeciwnik z kolei może wcale nie zbliżać się do celu, również kręcąc się w kółko wobec wyboru między porażką w takiej czy innej liczbie ruchów.
-Żeby ograniczyć takie sytuacje, procedura iteracyjnego pogłębiania przestaje wykonywać Minimax dla kolejnych głębokości po tym, jak najlepszą osiągalną wartością okaże się jedna ze skrajnych.
-Jeżeli bot po pewnej iteracji odkryje, że jest skazany na porażkę, wybierze ruch, który wydawał się najlepszy po poprzedniej iteracji.
-Jeżeli miałby zagwarantowane zwycięstwo, wybierze dający je ruch i zaprzestanie dalszego pogłębiania.
+Żeby ograniczyć takie sytuacje, spośród ruchów najlepszych z punktu widzenia wartości \(minimax\) wybieramy ten, który najbardziej zbliża do celu.
+Ponad to, jeżeli wartość minimaks oznacza pewne zwycięstwo lub nieuchronną przegraną, pogłębianie jest przerywane, dzięki czemu bot szybciej wykonuje ruchy, zwłaszcza pod koniec rozgrywki.
 
 \subsection{Funkcja oceniająca}
 
