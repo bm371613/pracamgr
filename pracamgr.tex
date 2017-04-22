@@ -561,6 +561,69 @@ Takiego wpisu możemy użyć tylko jeżeli wynik nie musi być dokładny, a wię
 
 \section{Monte Carlo Tree Search}
 
+Zgodnie z wcześniejszym opisem algorytmu Monte Carlo Tree Search (dales ,,MCTS''), zaimplementowany przez nas MCTSBot był parametryzowany sposobem obliczania współczynnika ufności \(hopeFactor\), \(\sqrt{\frac{\sqrt{n_p}}{n_s}}\) lub \(\sqrt{\frac{\log{n_p}}{n_s}}\), które będziemy nazywać odpowiednio \(SQRT\) i \(LOG\), oraz liczbą symulacji po której rozwijany jest liść \(expansionThreshold\), która zwykle jest zbliżona do liczby możliwych ruchów (dla Quoridor jest to maksymalnie 138, minimalnie 1).
+Podczas pierwszych obserwacji tego bota zauważyliśmy, że bez względu na dobór parametrów wydaje się wybierać losowe ruchy.
+W przyjętym przez nas limicie czasowym na ruch wykonywał zbyt mało symulacji, często nie rozwijając żadnego liścia.
+Żeby temu zabopiec, postanowiliśmy skrócić symulacje, wprowadzając kolejny parametr: limit długości symulacji \(maxMoves\).
+Po osiągnięciu tej wartości zwyciężcę symulacji algorytm miał wyłaniać na podstawie odległości do celu.
+Udało się nam zaobserwować poprawę i wytypować kandydatów na wartości dla wszystkich parametrów.
+
+\subsection{Metoda optymalizacji parametrów}
+
+Do pierwszej serii eksperymentów mających na celu wyznaczenie optymalnych wartości parametrów wybraliśmy 2 wartości dla \(hopeFactor\) (\(LOG\) i \(SQRT\)), 4 dla \(expansionThreshold\) (40, 80, 120 i 160) i 4 dla \(maxMoves\) (3, 5, 7, 9), czyli 32 kombinacje.
+
+Przy przeprowadzaniu automatycznych turniejów należało zadbać o to, żeby zachować symetrię i nie dać żadnemu botowi przewagi umieszczając go częściej na którejś pozycji, np. jako rozpoczynającego.
+Prostym sposobem na spełnienie tego warunku jest rozpatrzenie wszystkich możliwych konfiguracji, ale przy 32 algorytmach i 4 graczach przekracza to nasze możliwości obliczeniowe.
+Dlatego zdecydowaliśmy się nie porównywać różnych wariantów MCTS do siebie bezpośrednio, ale każdego z osobna do bota Minimax (który, przypomnijmy, wykonuje Max\textsuperscript{n} w wersji dla czterech graczy).
+Wszystkich możliwych sposobów przypisania jednego dwóch algorytmów do \(k\) kolejnych graczy tak, by jeden nie sterował wszystkimi, jest \(2^k - 2\).
+Tak więc każdy MCTSBot miał rozegrać przeciw Minimaksowi jednakową liczbę meczy dwuosobowych w każdej z \(2^2 -2 = 2\) kombinacji, oraz jednakową liczbę meczy czteroosobowych w każdej z \(2^4 - 2 = 14\) kombinacji.
+Miarą skuteczności parametrów miała być liczba zwycięstw, rozpatrywana osobno dla obu wariantów gry.
+W związku z rozdzieleniem eksperymentów względem liczby graczy, spodziewaliśmy się otrzymać różne zestawy parametrów, które potem miały zostać wykorzystane w jednym bocie, przyjmującym jedne lub drugie parametry w zależności od wariantu gry.
+
+\subsection{Optymalizacja parametrów dla wersji dwuosobowej}
+
+W przypadku wersji dwuosobowej, dla każdej kombinacji parametrów pierwszego zestawu przeprowadziliśmy 25-krotnie mecze z Minimaksem we obu możliwych ustawieniach, a więc każdy wariant MCTS rozegrał 50 pojedynków.
+Rysunek \ref{experiment1-2p}. podsumowuje uzyskane wyniki, w pełni przedstawione w dodatku \ref{results-1-2p}.
+
+\begin{rysunek}
+\caption{Wyniki eksperymentów z parametrami MCTS (2 graczy, zestaw 1) \label{experiment1-2p}}
+\centering
+\includegraphics[width=160mm]{experiment1-2p.png}
+\end{rysunek}
+
+W drugiej serii eksperymentów postanowiliśmy rozpatrzeć wyłącznie \(hopeFactor = LOG\), 5 wartości \(expansionThreshold\) (20, 40, 60, 80, 100) i 3 wartości maxMoves (1, 2, 3).
+Rysunek \ref{experiment2-2p}. podsumowuje uzyskane wyniki, w pełni przedstawione w dodatku \ref{results-2-2p}.
+
+\begin{rysunek}
+\caption{Wyniki eksperymentów z parametrami MCTS (2 graczy, zestaw 2) \label{experiment2-2p}}
+\centering
+\includegraphics[width=80mm]{experiment2-2p.png}
+\end{rysunek}
+
+Ostatecznie, dla wersji dwuosobowej ustaliliśmy parametry \[hopeFactor = LOG, expansionThreshold = 60, maxMoves=1,\] które dały zwycięstwo nad Minimaksem w 19 rozgrywkach na 50.
+
+\subsection{Optymalizacja parametrów dla wersji czteroosobowej}
+
+W przypadku wersji czteroosobowej, dla każdej kombinacji parametrów pierwszego zestawu przeprowadziliśmy 5-krotnie mecze z Minimaksem we wszystkich czternastu możliwych ustawieniach, a więc każdy wariant MCTS rozegrał 70 pojedynków.
+Rysunek \ref{experiment1-4p}. podsumowuje uzyskane wyniki, w pełni przedstawione w dodatku \ref{results-1-4p}.
+
+\begin{rysunek}
+\caption{Wyniki eksperymentów z parametrami MCTS (4 graczy, zestaw 1) \label{experiment1-4p}}
+\centering
+\includegraphics[width=160mm]{experiment1-4p.png}
+\end{rysunek}
+
+W drugiej serii eksperymentów postanowiliśmy rozpatrzeć wyłącznie \(hopeFactor = LOG\), 10 wartości \(expansionThreshold\) (20, 40, 60, 80, 100, 120, 140, 160, 180, 200) i 3 wartości maxMoves (1, 2, 3).
+Rysunek \ref{experiment3-4p}. podsumowuje uzyskane wyniki, w pełni przedstawione w dodatku \ref{results-3-4p}.
+
+\begin{rysunek}
+\caption{Wyniki eksperymentów z parametrami MCTS (4 graczy, zestaw 3) \label{experiment3-4p}}
+\centering
+\includegraphics[width=80mm]{experiment3-4p.png}
+\end{rysunek}
+
+Ostatecznie, dla wersji czteroosobowej ustaliliśmy parametry \[hopeFactor = LOG, expansionThreshold = 180, maxMoves=2,\] które dały zwycięstwo nad Minimaksem w 38 rozgrywkach na 70.
+
 \chapter{Podsumowanie}
 
 \begin{thebibliography}{98}
@@ -577,6 +640,169 @@ Takiego wpisu możemy użyć tylko jeżeli wynik nie musi być dokładny, a wię
 
 \chapter{Kod źródłowy aplikacji}
 Na dołączonej płycie znajduje się kod źródłowy.
+
+\chapter{Pełne wyniki eksperymentów}
+
+\section{Optymalizacja parametrów MCTS, 2 graczy, zestaw 1\label{results-1-2p}}
+
+\begin{center}
+    \begin{tabular}{| c | c | c | c |}
+	\hline
+    hopeFactor & expansionThreshold & maxMoves & liczba zwycięstw (na 50 meczy) \\ \hline
+	\hline
+        LOG & 100 & 2 & 11 \\ \hline
+        LOG & 20 & 2 & 9 \\ \hline
+        LOG & 20 & 4 & 8 \\ \hline
+        LOG & 60 & 2 & 7 \\ \hline
+        LOG & 100 & 4 & 7 \\ \hline
+        LOG & 140 & 2 & 5 \\ \hline
+        SQRT & 20 & 2 & 4 \\ \hline
+        LOG & 140 & 4 & 4 \\ \hline
+        LOG & 60 & 4 & 3 \\ \hline
+        SQRT & 60 & 2 & 3 \\ \hline
+        SQRT & 100 & 2 & 3 \\ \hline
+        LOG & 20 & 6 & 3 \\ \hline
+        SQRT & 140 & 4 & 3 \\ \hline
+        SQRT & 140 & 2 & 2 \\ \hline
+        SQRT & 20 & 4 & 2 \\ \hline
+        LOG & 60 & 6 & 2 \\ \hline
+        SQRT & 20 & 6 & 2 \\ \hline
+        SQRT & 140 & 6 & 2 \\ \hline
+        LOG & 140 & 6 & 2 \\ \hline
+        SQRT & 60 & 6 & 1 \\ \hline
+        LOG & 100 & 6 & 1 \\ \hline
+        SQRT & 100 & 4 & 1 \\ \hline
+        LOG & 100 & 8 & 1 \\ \hline
+        LOG & 20 & 8 & 1 \\ \hline
+        LOG & 60 & 8 & 1 \\ \hline
+        LOG & 140 & 8 & 1 \\ \hline
+    \end{tabular}
+\end{center}
+
+\vfill
+\hspace{0pt}
+\pagebreak
+
+\section{Optymalizacja parametrów MCTS, 2 graczy, zestaw 2\label{results-2-2p}}
+
+\begin{center}
+    \begin{tabular}{| c | c | c | c |}
+	\hline
+    hopeFactor & expansionThreshold & maxMoves & liczba zwycięstw (na 50 meczy) \\ \hline
+	\hline
+
+        LOG & 60 & 1 & 19 \\ \hline
+        LOG & 40 & 1 & 13 \\ \hline
+        LOG & 100 & 2 & 11 \\ \hline
+        LOG & 40 & 3 & 10 \\ \hline
+        LOG & 20 & 1 & 9 \\ \hline
+        LOG & 80 & 1 & 9 \\ \hline
+        LOG & 20 & 2 & 9 \\ \hline
+        LOG & 100 & 1 & 9 \\ \hline
+        LOG & 20 & 3 & 8 \\ \hline
+        LOG & 40 & 2 & 8 \\ \hline
+        LOG & 120 & 1 & 8 \\ \hline
+        LOG & 60 & 2 & 7 \\ \hline
+        LOG & 80 & 2 & 6 \\ \hline
+        LOG & 60 & 3 & 5 \\ \hline
+        LOG & 120 & 2 & 5 \\ \hline
+        LOG & 100 & 3 & 5 \\ \hline
+        LOG & 80 & 3 & 4 \\ \hline
+        LOG & 120 & 3 & 3 \\ \hline
+
+    \end{tabular}
+\end{center}
+
+\vfill
+\hspace{0pt}
+\pagebreak
+
+\section{Optymalizacja parametrów MCTS, 4 graczy, zestaw 1\label{results-1-4p}}
+
+\begin{center}
+    \begin{tabular}{| c | c | c | c |}
+	\hline
+    hopeFactor & expansionThreshold & maxMoves & liczba zwycięstw (na 70 meczy) \\ \hline
+	\hline
+        LOG & 140 & 2 & 37 \\ \hline
+        LOG & 20 & 2 & 33 \\ \hline
+        LOG & 60 & 8 & 33 \\ \hline
+        SQRT & 100 & 6 & 33 \\ \hline
+        LOG & 100 & 2 & 32 \\ \hline
+        SQRT & 20 & 6 & 31 \\ \hline
+        LOG & 20 & 6 & 29 \\ \hline
+        SQRT & 20 & 2 & 29 \\ \hline
+        SQRT & 20 & 4 & 29 \\ \hline
+        LOG & 60 & 4 & 29 \\ \hline
+        LOG & 60 & 6 & 29 \\ \hline
+        SQRT & 60 & 2 & 29 \\ \hline
+        SQRT & 60 & 6 & 28 \\ \hline
+        LOG & 100 & 6 & 27 \\ \hline
+        LOG & 140 & 6 & 27 \\ \hline
+        LOG & 20 & 4 & 26 \\ \hline
+        LOG & 60 & 2 & 26 \\ \hline
+        SQRT & 100 & 2 & 26 \\ \hline
+        SQRT & 140 & 6 & 26 \\ \hline
+        LOG & 140 & 4 & 25 \\ \hline
+        LOG & 100 & 8 & 24 \\ \hline
+        SQRT & 20 & 8 & 23 \\ \hline
+        LOG & 20 & 8 & 22 \\ \hline
+        SQRT & 140 & 2 & 22 \\ \hline
+        SQRT & 140 & 8 & 22 \\ \hline
+        LOG & 140 & 8 & 21 \\ \hline
+        SQRT & 100 & 4 & 20 \\ \hline
+        SQRT & 140 & 4 & 20 \\ \hline
+        SQRT & 60 & 4 & 19 \\ \hline
+        SQRT & 60 & 8 & 19 \\ \hline
+        LOG & 100 & 4 & 19 \\ \hline
+        SQRT & 100 & 8 & 18 \\ \hline
+
+    \end{tabular}
+\end{center}
+
+\vfill
+\hspace{0pt}
+\pagebreak
+
+\section{Optymalizacja parametrów MCTS, 4 graczy, zestaw 3\label{results-3-4p}}
+
+\begin{center}
+    \vspace{0pt}
+    \begin{tabular}{| c | c | c | c |}
+	\hline
+    hopeFactor & expansionThreshold & maxMoves & liczba zwycięstw (na 70 meczy) \\ \hline
+        LOG & 180 & 2 & 38 \\ \hline
+        LOG & 140 & 2 & 37 \\ \hline
+        LOG & 40 & 2 & 36 \\ \hline
+        LOG & 160 & 2 & 36 \\ \hline
+        LOG & 200 & 2 & 34 \\ \hline
+        LOG & 20 & 2 & 33 \\ \hline
+        LOG & 100 & 2 & 32 \\ \hline
+        LOG & 160 & 3 & 32 \\ \hline
+        LOG & 80 & 3 & 30 \\ \hline
+        LOG & 120 & 3 & 30 \\ \hline
+        LOG & 60 & 3 & 29 \\ \hline
+        LOG & 100 & 3 & 29 \\ \hline
+        LOG & 120 & 2 & 29 \\ \hline
+        LOG & 20 & 3 & 28 \\ \hline
+        LOG & 180 & 3 & 28 \\ \hline
+        LOG & 20 & 1 & 27 \\ \hline
+        LOG & 140 & 3 & 27 \\ \hline
+        LOG & 60 & 2 & 26 \\ \hline
+        LOG & 200 & 3 & 26 \\ \hline
+        LOG & 100 & 1 & 25 \\ \hline
+        LOG & 200 & 1 & 24 \\ \hline
+        LOG & 40 & 1 & 23 \\ \hline
+        LOG & 80 & 2 & 23 \\ \hline
+        LOG & 120 & 1 & 23 \\ \hline
+        LOG & 80 & 1 & 22 \\ \hline
+        LOG & 60 & 1 & 21 \\ \hline
+        LOG & 140 & 1 & 21 \\ \hline
+        LOG & 160 & 1 & 20 \\ \hline
+        LOG & 180 & 1 & 20 \\ \hline
+        LOG & 40 & 3 & 19 \\ \hline
+    \end{tabular}
+\end{center}
 
 \end{appendices}
 
