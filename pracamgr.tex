@@ -663,6 +663,18 @@ Oba warianty gry dały ten porządek uczestników turnieju według skuteczności
 
 \section{Efekty ogólne}
 
+Spośród metod opracowanych przez nas samodzielnie, dwie są dość ogólne, by użyć ich wobec innych gier.
+Obiema zajmowaliśmy się na potrzeby czteroosobowego wariantu Quoridor, ale mogą być przydatne przy każdej liczbie graczy większej niż dwa - dla gier dwuosobowych pozostają poprawne, jednak mniej efektywne od swoich powszechnie stosowanych odpowiedników specyficznych dla klasycznego pojedynku.
+
+Pierwszą z nich jest inne, umożliwiające większą ilość odcięć, obliczanie \(bound\) przy implementacji analogicznego do Alfy-Bety ulepszenia dla Max\textsuperscript{n}, możliwe dzięki wzmocnieniu założenia na temat funkcji oceniającej.
+Przypomnijmy, że wymaga to istnienia górnego ograniczenia na sumę każdych dwóch liczb w wektorze wartości, silniejszego niż to, które wynika z ograniczenia górnego na sumę wszystkich liczb w tym wektorze, wymaganego w oryginalnej wersji.
+Takiego ograniczenia możemy się spodziewać, jeżeli funkcja oceniająca dba tylko o sytuację gracza względem najlepiej usytuowanego przeciwnika.
+Jest to naturalne w przypadku gier wyłaniających i nagradzających wyłącznie jednego zwyciężcę.
+
+Drugim takim efektem naszej pracy jest sposób zastosowania tablicy transpozycji wobec wieloosobowej Alfy-Bety.
+Ponieważ wartość \(bound\), będąca elementem wpisu tablicy, sama w sobie nie informuje którego gracza dotyczy, podkreśliliśmy wymóg, by funkcja haszująca brała pod uwagą gracza wykonującego ruch.
+Warunek ten jest bardzo naturalny i trudno nam odnaleźć grę, w którym nie był konieczny z innych powodów.
+
 \section{Wypełnienie założeń}
 
 \begin{thebibliography}{98}
