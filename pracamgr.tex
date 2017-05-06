@@ -23,6 +23,10 @@
 \newfloat{rysunek}{h}{}
 \floatname{rysunek}{Rysunek}
 
+\floatstyle{plain}
+\newfloat{tabela}{h}{}
+\floatname{tabela}{Tabela}
+
 
 % version header
 \usepackage{fancyhdr}
@@ -494,7 +498,7 @@ A zatem za \(bound\) możemy przyjąć \(WALL\_COUNT - value\), a nie jedynie \[
 
 Spośród możliwych ulepszeń algorytmów Minimax Alfa-Beta wybraliśmy do zaimplementowania tablicę transpozycji jako to, które nadaje się do zastosowania wobec wersji dla wielu graczy opartej o Max\textsuperscript{n}.
 Użycie tej techniki wymagało po pierwsze zaprojektowania funkcji haszującej, do czego użyliśmy metody znanej jako haszowanie Zobrista, po drugie metody użycia wobec Alfy-Bety dla wielu graczy.
-O ile przykłady użycia tablicy transpozycji zarówno dla algorytmu Minimax i Alfa-Beta w standardowej, dwuosobowej wersji są łatwo dostępne, a przypadek Max\textsuperscript{n} jest w zasadzie identyczny co Minimax, o tyle Alfa-Beta dla wielu graczy w oparciu o Max\textsuperscript{n} została opracowana przez samodzielnie (co oczywiście nie oznacza, że pioniersko).
+O ile przykłady użycia tablicy transpozycji zarówno dla algorytmu Minimax i Alfa-Beta w standardowej, dwuosobowej wersji są łatwo dostępne, a przypadek Max\textsuperscript{n} jest w zasadzie identyczny co Minimax, o tyle Alfa-Beta dla wielu graczy w oparciu o Max\textsuperscript{n} została opracowana przez nas samodzielnie (co oczywiście nie oznacza, że pioniersko).
 
 \subsection{Haszowanie Zobrista}
 
@@ -625,6 +629,41 @@ Rysunek \ref{experiment3-4p}. podsumowuje uzyskane wyniki, w pełni przedstawion
 Ostatecznie, dla wersji czteroosobowej ustaliliśmy parametry \[hopeFactor = LOG, expansionThreshold = 180, maxMoves=2,\] które dały zwycięstwo nad Minimaksem w 38 rozgrywkach na 70.
 
 \chapter{Podsumowanie}
+
+\section{Porównanie zaimplementowanych algorytmów}
+
+Po zaimplementowaniu botów, przeprowadziliśmy automatyczny turniej w celu porównania ich i sprawdzenia, czy ulepszenia rzeczywiście okazały się skuteczne.
+Wzięły w nim udział boty
+
+\begin{itemize}
+    \item \(AlphaBetaTT\) - Alfa-Beta z tablicą transpozycji (dla wersji czteroosobowej odpowiednik oparty na Max\textsuperscript{n})
+    \item \(Minimax\) - Minimax (w wersji czteroosobowej Max\textsuperscript{n})
+    \item \(MCTS\) - Monte Carlo Tree Search, z parametrami ustalonymi wcześniej ekserymentalnie, osobno dla obu wersji gry
+\end{itemize}
+
+Ze względu na małą liczbę uczestników, możliwe było wieloktrotne przeprowadzenie meczy we wszystkich możliwych ustawieniach, w których graczami sterują co najmniej dwa różne algorytmy.
+W przypadku rozgrywki dwuosobowej jest to \(3^2 - 3 = 6\) kombinacji, dla czteroosobowej \(3^4 - 3 = 78\).
+Te pierwsze powtarzaliśmy 65 razy, a drugie 5, a więc dla obu wersji przeprowadziliśmy 390 meczy.
+
+Oba warianty gry dały ten porządek uczestników turnieju według skuteczności (por. z tabelą \ref{turniej}).
+\(AlphaBetaTT\), zgodnie z oczekiwaniami, okazał się lepszy od bota \(Minimax\), którego jest ulepszeniem.
+\(MCTS\) dwukrotnie zajął ostatnie miejsce, wyraźnie mniej skuteczny w rozgrywce dwuosobowej i bliższy pozostałym w czteroosobowej.
+
+\begin{tabela}
+    \caption{Wyniki turnieju podsumowującego \label{turniej}}
+    \begin{tabular}{| c | c | c | c |}
+	\hline
+        bot & liczba zwycięstw w grze dwuosobowej & liczba zwycięstw w grze czteroosobowej \\ \hline
+	\hline
+        AlphaBetaTT & 176 & 141 \\ \hline
+        Minimax & 167 & 132 \\ \hline
+        MCTS & 47 & 117 \\ \hline
+    \end{tabular}
+\end{tabela}
+
+\section{Efekty ogólne}
+
+\section{Wypełnienie założeń}
 
 \begin{thebibliography}{98}
 \addcontentsline{toc}{chapter}{Bibliografia}
