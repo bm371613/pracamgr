@@ -677,6 +677,29 @@ Warunek ten jest bardzo naturalny i trudno nam odnaleźć grę, w którym nie by
 
 \section{Wypełnienie założeń}
 
+Dzięki zaimplementowanym botom, wytworzony przez nas prototyp aplikacji, zgodnie z założeniami, pozwala obserwować i mierzyć się z różnymi algorytmami.
+Zgodnie z planem kod źródłowy jest dostępny publicznie, z wyodrębionymi częściami odpowiedzialnymi za zasady gry, sztuczną inteligencję, aplikację i narzędzia do przeprowadzania eksperymentów (por. dodatek \ref{code}), co umożliwia zrozumienie i ulepszanie działania botów.
+
+Wybranie języka Java do implementacji zapewniło łatwość dystrybucji.
+Projekt pozwala jednym poleceniem zbudować plik JAR, niezależny od architektury i wykonywalny na popularnych systemach operacyjnych, które standardowo wspierają środowisko uruchomieniowe Javy.
+Modularna budowa i dobór technologii umożliwia też przyszłe wytworzenie aplikacji na urządzenia mobilne z systemem Android, z wykorzystaniem tego samego kodu odpowiedzialnego za zasady gry i sztuczną inteligencję.
+
+Poziom samych botów, odczuwany subiektywnie podczas rozgrywki, możemy określić jako zadowalający, jednak nie dość wysoki, by użyć któregoś jako poziom ,,bardzo trudny'' w aplikacji dla użytkownika niezainteresowanego algorytmami.
+Może być to konsekwencja rygorystycznego limitu na czas jak na grę z dużą liczbą możliwych ruchów i wyboru technologii.
+Chcielibyśmy jednak wskazać kierunki poszukiwań dla poprawy, inne niż zwiększanie limitu czasowego.
+
+\section{Kierunki dalszego rozwoju sztucznej inteligencji}
+
+Bez względu na algorytm sterujacy botem, kilka pierwszych ruchów można potraktować specjalnie, implementując kilka otwarć uznanych za dobre.
+Losowanie jednego z nich przez rozpoczynającego grę może też urozmaicić rozgrywkę, zwłaszcza w przypadku metod deterministycznych, dla których jedynym źródłem losowości jest moment przerwania obliczeń z powodu przekroczenia limitu czasowego.
+
+Dalsze ulepszanie \(AlphaBetaTT\) mogłoby polegać na manipulowaniu oknem przeszukiwań / \(bound\).
+O ile w przypadku gry dwuosobowej jest to dobrze opracowana i skuteczna metoda, o tyle wersja czteroosobowa jest nie tylko nieopisana, ale i nie jest jasne, czy byłaby skuteczna.
+Pamiętajmy, że samo \(bound\) pozwala na mniej odcięć niż okno przeszukiwań, a nieudana próba skrócenia obliczeń oznacza zmarnowanie czasu.
+
+Poprawianie Monte Carlo Tree Search może polegać na manipulowaniu parametrami w trakcie gry (ilość możliwych ruchów drastycznie spada, a jest to punkt wyjścia do poszukiwania \(expensionThreshold\)).
+Innym kierunkiem byłaby zmiana rozkładu prawdopodobieństwa wyboru ruchu podczas losowania, który bez zastosowania wiedzy eksperckiej jest jednostajny.
+
 \begin{thebibliography}{98}
 \addcontentsline{toc}{chapter}{Bibliografia}
 
@@ -689,7 +712,7 @@ Warunek ten jest bardzo naturalny i trudno nam odnaleźć grę, w którym nie by
 
 \begin{appendices}
 
-\chapter{Kod źródłowy aplikacji}
+    \chapter{Kod źródłowy aplikacji \label{code}}
 Na dołączonej płycie znajduje się kod źródłowy.
 
 \chapter{Pełne wyniki eksperymentów}
