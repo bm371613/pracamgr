@@ -713,7 +713,17 @@ Innym kierunkiem byłaby zmiana rozkładu prawdopodobieństwa wyboru ruchu podcz
 \begin{appendices}
 
     \chapter{Kod źródłowy aplikacji \label{code}}
-Na dołączonej płycie znajduje się kod źródłowy.
+
+    Na dołączonej płycie znajduje się wykonywalny plik \textit{quoridor-gui.jar} uruchamiający wytworzoną aplikację oraz katalog \textit{src} z kodem źródłowym, podzielonym jest na:
+
+\begin{itemize}
+    \item \textit{quoridor-core} - zasady gry, z kluczową klasą \textit{GameRules} w pliku \\ \textit{quoridor-core/src/main/java/quoridor/core/GameRules.java}
+    \item \textit{quoridor-ai} - sztuczną inteligencję, z implementacją botów w katalogu \\ \textit{quoridor-ai/src/main/java/quoridor/ai/bot}
+    \item \textit{quoridor-analysis} - narzędzia do przeprowadzania automatycznych rozgrywek między botami
+    \item \textit{quoridor-gui} - aplikację z interfejsem graficznym
+\end{itemize}
+
+    Bezpośrednio w katalogu \textit{src} znajduje się plik \textit{README.md} z któtkim opisem projektu i wskazówkami dotyczącymi rozwijania, w szczególności podaje sposób użycia znajdującego się obok skryptu \textit{gradlew} w celu zbudowania pliku wykonywalnego aplikacji.
 
 \chapter{Pełne wyniki eksperymentów}
 
