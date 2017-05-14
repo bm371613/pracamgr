@@ -93,10 +93,25 @@ Przedstawimy też implementację opracowanych metod na potrzeby wytwarzanego pro
 
 \section{Tematyka pracy}
 
-W pracy zajmiemy się algorytmami sztucznej inteligencji na potrzeby wytwarzanego oprogramowania --- komputerowej wersji gry planszowej Quoridor.
-Aplikacja ta będzie umożliwiać wybór algorytmu sterującego każdym z uczestników gry albo pozostawienie tej roli samemu użytkownikowi.
-Opiszemy powszechnie stosowane podejścia do problematyki oraz nasze próby ich wykorzystania.
-Spróbujemy ocenić efekty swojej pracy i wyciągnąć wnioski przydatne w dalszej pracy nad sztuczną inteligencją w tej lub podobnych aplikacjach.
+W pracy zajmiemy się algorytmami sztucznej inteligencji dla gier planszowych.
+Tego określenia używamy jako intuicyjnej nazwy pewnej klasy gier, która niekoniecznie pokrywa się dokładnie ze zbiorem gier korzystających z planszy.
+Obejmuje ona w szczególności warcaby, szachy, go i stanowi obiekt zainteresowania informatyki przynajmniej od roku 1949 (por. \cite{anderson}), kiedy Claude Shannon napisał pracę \textit{Programming a Computer for Playing Chess}.
+Przez wiele lat to właśnie gra w szachy stanowiła jeden z wyznaczników stanu zaawansowania sztucznej inteligencji, obok m. in. testu Turinga.
+Na drodze do spektakularnego sukcesu z 1997 roku, kiedy superkomputer Deep Blue pokonał wielokrotnego mistrza świata Garri Kasparowa, prace nad programami grającymi w szachy przynosiły wyniki bardziej ogólne, dające się zastosować do innych gier.
+Tak powstawały niektóre metody uznawane dziś za standardowe.
+
+W tej pracy również skupimy zainteresowanie na jednej grze --- Quoridor --- która mimo prostych zasad dorównuje złoźonością szachom (por. \cite{mertens}).
+Mamy nadzieję, że i nam uda się uzyskać efekty interesujące dla osób zajmujących się innymi grami.
+Poszukiwania zaczniemy od przeglądu powszechnie stosowanych, podstawowych metod oraz wybranych ulepszeń, które będą wydawać się przydatne dla Quoridor.
+Opiszemy ich wykorzystanie lub dostosowanie i próby ulepszenia, a także porównamy między sobą.
+Później postaramy się z naszych wysiłków wyłuskać efekty ogólne, dające się zastosować poza Quodior.
+
+Równolegle z pracą będziemy wytwarzać oprogramowanie otwartoźródłowe --- prototyp komputerowej wersji gry, która będzie umożliwiać użytkownikowi mierzenie się z różnymi algorytmami sztucznej inteligencji albo obserwację rozgrywek między nimi.
+Użytkownikowi-programiście, naturalnemu odbiorcy prototypu z publicznym dostępem do kodu, ma umożliwiać modyfikowanie i dodawanie algorytmów oraz porównywanie poprzez przeprowadzanie automatycznych turniejów.
+Aplikacja, jako bezpośrednia motywacja do poszukiwań teoretycznych, pomoże wyznaczyć dla nich wymagania i ograniczenia.
+
+Zwrócimy też uwagę na często pomijany, ale istotny dla gry komputerowej, aspekt algorytmu sztucznej inteligencji dla gier planszowych --- wpływ na jakość interakcji z użytkownikiem.
+A więc w miarę możliwości będziemy starać się, żeby gracz komputerowy spośród wielu możliwych sposobów uzyskania takiego samego efektu wybrał taki sposób, który uczyni rozgrywkę najbardziej przyjemną dla przeciwnika.
 
 \section{Quoridor --- oryginalne zasady gry}
 
@@ -104,22 +119,22 @@ Gra rozgrywa się na planszy za pomocą 4 pionków i 20 ogrodzeń, nazywanych te
 
 W grze może wziąć udział dwóch lub czterech graczy. W obu przypadkach otrzymują po jednym pionku, dzielą się po równo ogrodzeniami i przypisują się do różnych boków planszy; jeżeli jest ich dwóch, muszą to być boki przeciwległe.
 
-Na początku gry na planszy nie ma ogrodzeń (stanowią zasoby graczy), a pionek każdego gracza umieszcza się na polu przy środku boku, do którego jest przypisany.
+Na początku gry na planszy nie ma ogrodzeń (stanowią one zasoby graczy), a pionek każdego gracza umieszcza się na polu przy środku boku, do którego jest przypisany.
 Następnie gracze wykonują kolejno swoje ruchy. Celem gry jest dotarcie swoim pionkiem do boku planszy przeciwległego wobec boku, do którego jest się przypisanym. Gra kończy się w momencie, w którym jednemu z graczy się to uda.
 
-Każdy ruch może polegać na ustawieniu jednego ze swoich nieużytych ogrodzeń na planszy albo przesunięciu pionka. Ogrodzenie nie może kolidować z żadnym innym i nie może odciąć żadnemu graczowi wszystkich dróg do celu. Ruch pionkiem polega na przesunięciu go na puste, sąsiadnie pole (sąsiedztwo wyznacza wspólny bok).
+Każdy ruch polega na ustawieniu jednego ze swoich nieużytych ogrodzeń na planszy albo przesunięciu pionka. Ogrodzenie nie może kolidować z żadnym innym i nie może odciąć żadnemu graczowi wszystkich dróg do celu. Ruch pionkiem polega na przesunięciu go na puste, sąsiadnie pole (sąsiedztwo wyznacza wspólny bok).
 
 Jeżeli na pewnym sąsiednim, nieodgrodzonym polu znajduje się już pionek przeciwnika, można wykonać skok na pole za tym pionkiem, o ile jest ono puste i nieodgrodzone. Jeżeli taki skok nie jest możliwy, można wykonać skok na jedno z dwóch pozostałych pól sąsiadujących z przeciwnikiem, znów o ile jest puste i nieodgrodzone.
 
 \section{Cele i założenia}
 
 Opracowywanie sztucznej inteligencji do gier planszowych może mieć różne założenia i cele.
-Pełne rozwiązanie gier z dużą liczbą stanów wymaga mocy obliczeniowej przekraczającej możliwości komputera osobistego, a nawet jeśli uzyska się je na superkomputerze, to wynikowa tablica optymalnych ruchów nie nadaje się do dystrybucji wraz z grą.
+Nie interesują nas tu metody wymagające mocy obliczeniowej superkomputera.
 Celem tej pracy jest opracowanie algorytmów sztucznej inteligencji dla gry Quoridor i utworzenie prototypu oprogramowania otwartoźródłowego, łatwego w dystrybucji i nadającego się do użycia na komputerze osobistym lub urządzeniu przenośnym, które będzie umożliwało grę w obu wariantach gry (dla 2 i 4 graczy), przy czy każdy gracz może być człowiekiem albo graczem komputerowym sterowanym przez jeden z dostępnych algorytmów sztucznej inteligencji.
 
 \section{Istniejące rozwiązania}
 
-Dostępnych jest już kilka programów grających w Quoridor. Są to aplikacje działające w przeglądarce internetowej. Żadna z nich nie osiąga celów, jakie postawiliśmy tworzonemu przez nas oprogramowaniu.
+Dostępnych jest już kilka programów grających w Quoridor. Są to aplikacje działające w przeglądarce internetowej lub na urządzeniu przenośnym. Żadna z nich nie osiąga celów, jakie postawiliśmy tworzonemu przez nas oprogramowaniu.
 Tylko w jednym przypadku\footnote{http://danielborowski.com/quoridor-ai/v2/display.html} udostępniony jest kod źródłowy.
 Inna aplikacja\footnote{https://play.google.com/store/apps/details?id=com.codestare.corridor}, wciąż w trakcie rozwoju, jest jedyną implementująca oba warianty gry.
 
@@ -703,10 +718,12 @@ Innym kierunkiem byłaby zmiana rozkładu prawdopodobieństwa wyboru ruchu podcz
 \begin{thebibliography}{98}
 \addcontentsline{toc}{chapter}{Bibliografia}
 
-\bibitem[1]{pawlewicz} Jakub Pawlewicz, \textit{Techniki sztucznej inteligencji
+\bibitem[1]{anderson} Eike Anderson, \textit{Playing smart - artificial intelligence in computer games}, materiał na konferencję zfxCON03, 2003
+\bibitem[2]{mertens} P.J.C Mertens, \textit{A Quoridor-playing Agent},\\https://project.dke.maastrichtuniversity.nl/games/files/bsc/Mertens\_BSc-paper.pdf, 2006
+\bibitem[3]{pawlewicz} Jakub Pawlewicz, \textit{Techniki sztucznej inteligencji
     w programach grających}, https://www.mimuw.edu.pl/\textasciitilde{}pan/gry.pdf, 2010
-\bibitem[2]{sturtevant} Nathan Reed Sturtevant, \textit{Multi-Player Games: Algorithms and Approaches}, University of California Los Angeles, 2003
-\bibitem[3]{korf} Richard Korf, \textit{Multi-player alpha-beta pruning}, Artificial Intelligence, vol. 48 no. 1, 1991
+\bibitem[4]{sturtevant} Nathan Reed Sturtevant, \textit{Multi-Player Games: Algorithms and Approaches}, University of California Los Angeles, 2003
+\bibitem[5]{korf} Richard Korf, \textit{Multi-player alpha-beta pruning}, Artificial Intelligence, vol. 48 no. 1, 1991
 
 \end{thebibliography}
 
