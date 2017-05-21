@@ -666,9 +666,9 @@ Po zaimplementowaniu botów, przeprowadziliśmy automatyczny turniej w celu por�
 Wzięły w nim udział boty
 
 \begin{itemize}
-    \item \(AlphaBetaTT\) - Alfa-Beta z tablicą transpozycji (dla wersji czteroosobowej odpowiednik oparty na Max\textsuperscript{n})
-    \item \(Minimax\) - Minimax (w wersji czteroosobowej Max\textsuperscript{n})
-    \item \(MCTS\) - Monte Carlo Tree Search, z parametrami ustalonymi wcześniej ekserymentalnie, osobno dla obu wersji gry
+    \item \(AlphaBetaTT\) --- Alfa-Beta z tablicą transpozycji (dla wersji czteroosobowej odpowiednik oparty na Max\textsuperscript{n})
+    \item \(Minimax\) --- Minimax (w wersji czteroosobowej Max\textsuperscript{n})
+    \item \(MCTS\) --- Monte Carlo Tree Search, z parametrami ustalonymi wcześniej ekserymentalnie, osobno dla obu wersji gry
 \end{itemize}
 
 Ze względu na małą liczbę uczestników, możliwe było wieloktrotne przeprowadzenie meczy we wszystkich możliwych ustawieniach, w których graczami sterują co najmniej dwa różne algorytmy.
@@ -693,10 +693,10 @@ Oba warianty gry dały ten porządek uczestników turnieju według skuteczności
 
 \section{Efekty ogólne}
 
-Spośród metod opracowanych przez nas samodzielnie, dwie są dość ogólne, by użyć ich wobec innych gier.
-Obiema zajmowaliśmy się na potrzeby czteroosobowego wariantu Quoridor, ale mogą być przydatne przy każdej liczbie graczy większej niż dwa - dla gier dwuosobowych pozostają poprawne, jednak mniej efektywne od swoich powszechnie stosowanych odpowiedników specyficznych dla klasycznego pojedynku.
+Spośród metod opracowanych przez nas samodzielnie, dwie są na tyle ogólne, że można ich użyć wobec innych gier.
+Obiema zajmowaliśmy się na potrzeby czteroosobowego wariantu Quoridor, ale mogą być przydatne przy każdej liczbie graczy większej niż dwa --- dla gier dwuosobowych pozostają poprawne, jednak mniej efektywne od swoich powszechnie stosowanych odpowiedników specyficznych dla klasycznego pojedynku.
 
-Pierwszą z nich jest inne, umożliwiające większą ilość odcięć, obliczanie \(bound\) przy implementacji analogicznego do Alfy-Bety ulepszenia dla Max\textsuperscript{n}, możliwe dzięki wzmocnieniu założenia na temat funkcji oceniającej.
+Pierwszą z nich jest inne, umożliwiające większą liczbę odcięć, obliczanie \(bound\), możliwe dzięki wzmocnieniu założenia na temat funkcji oceniającej.
 Przypomnijmy, że wymaga to istnienia górnego ograniczenia na sumę każdych dwóch liczb w wektorze wartości, silniejszego niż to, które wynika z ograniczenia górnego na sumę wszystkich liczb w tym wektorze, wymaganego w oryginalnej wersji.
 Takiego ograniczenia możemy się spodziewać, jeżeli funkcja oceniająca dba tylko o sytuację gracza względem najlepiej usytuowanego przeciwnika.
 Jest to naturalne w przypadku gier wyłaniających i nagradzających wyłącznie jednego zwyciężcę.
@@ -718,12 +718,12 @@ Poziom samych botów, odczuwany subiektywnie podczas rozgrywki, możemy określi
 Może być to konsekwencja rygorystycznego limitu na czas jak na grę z dużą liczbą możliwych ruchów i wyboru technologii.
 Chcielibyśmy jednak wskazać kierunki poszukiwań dla poprawy, inne niż zwiększanie limitu czasowego.
 
-\section{Kierunki dalszego rozwoju sztucznej inteligencji}
+\section{Kierunki dalszego rozwoju botów}
 
 Bez względu na algorytm sterujacy botem, kilka pierwszych ruchów można potraktować specjalnie, implementując kilka otwarć uznanych za dobre.
 Losowanie jednego z nich przez rozpoczynającego grę może też urozmaicić rozgrywkę, zwłaszcza w przypadku metod deterministycznych, dla których jedynym źródłem losowości jest moment przerwania obliczeń z powodu przekroczenia limitu czasowego.
 
-Dalsze ulepszanie \(AlphaBetaTT\) mogłoby polegać na manipulowaniu oknem przeszukiwań / \(bound\).
+Dalsze ulepszanie \(AlphaBetaTT\) mogłoby polegać na manipulowaniu oknem przeszukiwań i \(bound\).
 O ile w przypadku gry dwuosobowej jest to dobrze opracowana i skuteczna metoda, o tyle wersja czteroosobowa jest nie tylko nieopisana, ale i nie jest jasne, czy byłaby skuteczna.
 Pamiętajmy, że samo \(bound\) pozwala na mniej odcięć niż okno przeszukiwań, a nieudana próba skrócenia obliczeń oznacza zmarnowanie czasu.
 
