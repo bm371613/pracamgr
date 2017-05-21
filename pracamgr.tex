@@ -454,7 +454,7 @@ Oczywiście mógłby być konfigurowany przez użytkownika, ale wskazanie pożą
 Ustaliliśmy też przybliżone maksymalne zużycie pamięci na 500 MB, co ma znaczenie zwłaszcza dla algorytmów wykorzystujące tablicę transpozycji, która tym lepiej się sprawdza, im jest większa.
 Jednak nasza aplikacja ma działać na współczesnym komputerze osobistym z dość ograniczoną pamięcią, a nie brać udział w potyczkach botów na superkomputerach.
 
-\chapter{Rozwijanie botów}
+\chapter{Kolejne realizacje botów}
 
 \section{Minimax i Max\textsuperscript{n}}
 
@@ -464,43 +464,53 @@ Choć same algorytmy nie stwarzały problemów podczas implementacji, były pret
 \subsection{Iteracyjne pogłębianie}
 
 Zastosowanie techniki iteracyjnego pogłębiania miało na celu jak najlepsze wykorzstanie danego botowi czasu i zaprojektowanego dla niego interfejsu.
-Oryginalny Minimax rozpatruje drzewo gry do ustalonej głębokości; przyjęcie zbyt małej wartości mogłoby oznaczać niższej jakości wynik obliczony w krótkim czasie, a zbyt wysokiej - przekroczenie limitu czasowego i brak jakiegokolwiek wyniku.
+Oryginalny Minimax rozpatruje drzewo gry do ustalonej głębokości; przyjęcie zbyt małej wartości mogłoby oznaczać niższej jakości wynik obliczony w krótkim czasie, a zbyt wysokiej --- przekroczenie limitu czasowego i brak jakiegokolwiek wyniku.
 Iteracyjne pogłębianie polega na wielokrotnym wykonywaniu algorytmu, za każdym razem dla głębokości większej o 1 (co oznacza wykładniczy wzrost liczby rozpatrywanych stanów gry).
 
 W procedurze iteracyjnego pogłębiania wprowadziliśmy dodatkowe usprawnienia, które miały poprawić jakość rozgrywki.
-Chcieliśmy ograniczyć sytuacje, kiedy gracz komputerowy przekonany, że wygra (maksymalna wartość \(minimax\) korzenia) niespiesznie dąży do celu albo odwrotnie, gracz przekonany o porażce (minimalna wartość korzenia) poddaje się i nie zmierza nawet do celu licząc na błąd przeciwnika.
+Chcieliśmy ograniczyć sytuacje, kiedy bot przekonany, że wygra (maksymalna wartość \(minimax\) korzenia) niespiesznie dąży do celu albo odwrotnie, gracz przekonany o porażce (minimalna wartość korzenia) poddaje się i nie zmierza nawet do celu licząc na błąd przeciwnika.
 Oryginalny algorytm na równi traktuje ruchy prowadzące do pewnego zwycięstwa (analogicznie klęski), więc bot może przez wiele tur przesuwać pionek w tę i z powrotem, dopóki przeciwnik nie zbliży się odpowiednio do celu.
 Przeciwnik z kolei może wcale nie zbliżać się do celu, również kręcąc się w kółko wobec wyboru między porażką w takiej czy innej liczbie ruchów.
 Żeby ograniczyć takie sytuacje, spośród ruchów najlepszych z punktu widzenia wartości \(minimax\) wybieramy ten, który najbardziej zbliża do celu.
-Ponad to, jeżeli wartość minimaks oznacza pewne zwycięstwo lub nieuchronną przegraną, pogłębianie jest przerywane, dzięki czemu bot szybciej wykonuje ruchy, zwłaszcza pod koniec rozgrywki.
+Ponadto, jeżeli wartość minimaks oznacza pewne zwycięstwo lub nieuchronną przegraną, pogłębianie jest przerywane, dzięki czemu bot szybciej wykonuje ruchy, zwłaszcza pod koniec rozgrywki.
 
 \subsection{Funkcja oceniająca}
 
-Do obliczania wartości funkcji oceniającej używamy pomocniczych wartości: odległości danego gracza do celu \(distance\), minimalnej odległości do celu przeciwników \(minOtherPlayerDistance\), ilości ścianek, jakie pozostały wybranemu graczowi \(wallsLeft\) oraz dwóch stałych: ilości ścianek w grze \(WALL\_COUNT\) (20) i górnego ograniczenia na długość najkrótszej ścieżki do celu \(DISTANCE\_UPPER\_BOUND\), za które przyjęliśmy liczbę pól planszy (81).
+Do obliczania wartości funkcji oceniającej używamy pomocniczych wartości:
+\begin{itemize}
+\item \(distance\) --- odległości danego gracza do celu
+\item \(minOtherPlayerDistance\) --- minimalnej odległości do celu jednego z przeciwników
+\item \(wallsLeft\) --- liczby ścianek, jakie pozostały wybranemu graczowi
+\end{itemize}
+oraz dwóch stałych:
+\begin{itemize}
+\item \(WALL\_COUNT\) --- liczby ścianek w grze (20)
+\item \(DISTANCE\_UPPER\_BOUND\) --- górnego ograniczenia na długość najkrótszej ścieżki do celu, za które przyjęliśmy liczbę pól planszy (81)
+\end{itemize}
 W przypadku stanów końcowy, funkcja przyjmuje skrajne wartości: \[-DISTANCE\_UPPER\_BOUND * WALL\_COUNT \text{,}\] \[(DISTANCE\_UPPER\_BOUND + 1) * WALL\_COUNT\] odpowiednio w przypadku porażki i zwycięstwa zadanego gracza.
 W pozostałych przypadkach wynikiem jest \[(minOtherPlayerDistance - distance) * WALL\_COUNT + wallsfLeft \text{.}\]
 
-Intuicyjnie, zgodnie z tą funkcją bot stara się mieć jak największą przewagę (lub najmniejszą stratę) w odglełości do celu względem najlepszego z przeciwników, a jeżeli jest to możliwe na wiele sposobów - zachowując jak najwięcej ścianek.
+Intuicyjnie, zgodnie z tą funkcją bot stara się mieć jak największą przewagę (lub najmniejszą stratę) w odglełości do celu względem najlepszego z przeciwników, a jeżeli jest to możliwe na wiele sposobów --- zachowując jak najwięcej ścianek.
 Łatwo zauważyć, że ma ona pożądane właściwości: skrajne wartości przyjmuje wtedy i tylko wtedy, gdy rozpatruje końcowy stan gry.
 Co więcej, nadaje się też do ulepszania algorytmu Max\textsuperscript{n} analogicznie do Alfy-Bety, tzn. ma ograniczenie na sumę wartości dla wszystkich graczy, lepsze niż ograniczenie na wartość dla jednego gracza pomnożone przez ich liczbę.
 Ograniczeniem tym jest \(WALL\_COUNT\).
-W istocie, dla każdego stanu gracze wnoszą do sumy dwie składowe - przewagę nad najlepszym z przeciwników w odległości do celu i liczbę ścianek.
-Suma drugich składników jest ograniczona właśnie przez \(WALL\_COUNT\), a suma pierwszch przez \(0\) - dla dwóch graczy najbliższych celowi są to liczby przeciwne, a dla pozostałych niedodatnie.
+W istocie, dla każdego stanu gracze wnoszą do sumy dwie składowe --- przewagę nad najlepszym z przeciwników w odległości do celu i liczbę ścianek.
+Suma drugich składników jest ograniczona właśnie przez \(WALL\_COUNT\), a suma pierwszch przez \(0\) --- dla dwóch graczy najbliższych celowi są to liczby przeciwne, a dla pozostałych niedodatnie.
 
 \section {Alfa-Beta}
 
-Drugim zaimplementowanym algorytmem był Alfa-Beta.
-Wersja właściwa, dla dwóch graczy, nie stworzyła problemów implementacyjnych.
+Drugim zrealizowanym algorytmem był Alfa-Beta.
+Wersja właściwa, dla dwóch graczy, nie generowała problemów implementacyjnych.
 Natomiast samo wprowadzenie odcięć (porzucanie niektórych poddrzew), nakłoniło nas do ulepszenia implementacji zasad gry w celu przyspieszenia tego bota i wykonania przez niego większej liczby iteracji.
 Chodziło o stopniowe obliczanie możliwych ruchów, w miejsce wyznaczania ich wszystkich od razu.
 W wielu grach mogłoby to nie mieć znaczenia, jednak w Quoridor sprawdzenie legalności postawienia ściany wymaga upewnienia się, że każdy przeciwnik wciąż ma drogę do celu.
-Do tego potencjalnie możliwych ruchów tego rodzaju na począku gry jest ponad sto, a rozpatrywanie legalnych ruchów jest częstą operacją dla każdego z botów.
+Co więcej, potencjalnie możliwych ruchów tego rodzaju na począku gry jest ponad sto, a rozpatrywanie legalnych ruchów jest częstą operacją dla każdego z botów.
 Dlatego postanowiliśmy wyznaczać legalne ruchy po jednym, licząc na to, że po odcięciu poddrzewa sprawdzanie ruchów ścianką nie będzie potrzebne, a przynajmniej będzie ograniczone.
 Co więcej, ruchy, których legalność łatwiej zweryfikować, zaczęliśmy rozpatrywać jako pierwsze.
 Dodaliśmy też specjalną obsługę kilku przypadków, w których można szybciej stwierdzić, że każdy ma drogę do celu (np. wszystkie ściany na planszy są ustawione w tym samym kierunku).
 
 Wersję dla czterech graczy udoskonaliliśmy.
-Opisany wcześniej algorytm obliczał \(bound\) na podstawie dwóch dodatkowych, danych wraz z funkcją oceniającą wartości: dolnego ograniczenia na każdy element wektora wartości (autorzy przyjęli 0, ponieważ można przesunąć wartości) i górnego na sumę liczb w wektorze \(sum\).
+Opisany wcześniej algorytm obliczał \(bound\) na podstawie dwóch dodatkowych danych wraz z funkcją oceniającą wartości: dolnego ograniczenia na każdy element wektora wartości (autorzy przyjęli 0, ponieważ można przesunąć wartości) i górnego na sumę liczb w wektorze \(sum\).
 Jeżeli osiągalnej dla jednego gracza \(value\) odpowiadało \(bound\) (równe \(sum - value\)), to osiągnięcie przez kolejnego gracza w następnym ruchu \(bound\) lub więcej oznaczało, że pierwszemu graczowi pozostawia to wynik najwyżej \(value\), a więc całe poddrzewo wynikające z takiego ruchu można porzucić.
 
 Przyjęta przez nas funkcja oceniająca ma dodatkową właściwość: suma każdych dwóch liczb w wektorze wartości jest ograniczona z góry (przez \(WALL\_COUNT\)).
@@ -512,7 +522,7 @@ A zatem za \(bound\) możemy przyjąć \(WALL\_COUNT - value\), a nie jedynie \[
 
 \section{Tablica transpozycji}
 
-Spośród możliwych ulepszeń algorytmów Minimax Alfa-Beta wybraliśmy do zaimplementowania tablicę transpozycji jako to, które nadaje się do zastosowania wobec wersji dla wielu graczy opartej o Max\textsuperscript{n}.
+Spośród możliwych ulepszeń algorytmów Minimax oraz Alfa-Beta wybraliśmy do zaimplementowania tablicę transpozycji jako to, które nadaje się do zastosowania wobec wersji dla wielu graczy opartej o Max\textsuperscript{n}.
 Użycie tej techniki wymagało po pierwsze zaprojektowania funkcji haszującej, do czego użyliśmy metody znanej jako haszowanie Zobrista, po drugie metody użycia wobec Alfy-Bety dla wielu graczy.
 O ile przykłady użycia tablicy transpozycji zarówno dla algorytmu Minimax i Alfa-Beta w standardowej, dwuosobowej wersji są łatwo dostępne, a przypadek Max\textsuperscript{n} jest w zasadzie identyczny co Minimax, o tyle Alfa-Beta dla wielu graczy w oparciu o Max\textsuperscript{n} została opracowana przez nas samodzielnie (co oczywiście nie oznacza, że pioniersko).
 
@@ -539,8 +549,8 @@ Wykorzystuje się tu fakt, że operacja XOR jest łączna, przemienna i każdy e
 W przypadku Quoridor, wykonanie ruchu zmienia wartość najwyżej trzech zmiennych wykorzystanywanych do opisu stanu.
 Jedną z nich jest zawsze indeks gracza wykonującego ruch.
 Dla ruchu pionkiem, pozostałe to pozycja pionka gracza wykonującego ruch.
-W przypadku postawienia ogrodzenia, są to liczba pozostałych graczowi ogrodzeń i stan tego ze skrzyżowań szczelin planszy, na którym znalazł się środek ogrodzenia.
-Jeżeli dla każdej zmiennej \(v_i\), która w wyniku ruchu zmieniła wartość z \(x_i\) na \(y_i\) zastosujemy wobec wartość funkcji haszującej dla wyjściowego stanu operację XOR z \(V_i[x_i] \oplus V_i[y_i]\), otrzymamy wartość funkcji haszującej dla stanu wynikowego.
+W przypadku postawienia ogrodzenia, jest to liczba pozostałych graczowi ogrodzeń oraz stan tego ze skrzyżowań szczelin planszy, na którym znalazł się środek ogrodzenia.
+Jeżeli dla każdej zmiennej \(v_i\), która w wyniku ruchu zmieniła wartość z \(x_i\) na \(y_i\), zastosujemy wobec wartości funkcji haszującej dla wyjściowego stanu operację XOR z \(V_i[x_i] \oplus V_i[y_i]\), otrzymamy wartość funkcji haszującej dla stanu wynikowego.
 A więc rozpatrzymy jedynie 3 zmienne zamiast 150.
 
 Przypadek dla dwóch graczy wymaga niewielkich zmian: znikają zmienne \(x_2\), \(x_3\), \(y_2\), \(y_3\), \(w_2\), \(w_3\), ponadto \(p \in \{0, 1\}\) i \(w_0, w_1 \in \{0, 1, .., 10\}\).
@@ -556,10 +566,10 @@ Opisana wcześniej funkcja haszująca spełnia ten warunek.
 Wpis w tablicy transpozycji wyposażyliśmy w następujące pola:
 
 \begin{itemize}
-\item{\(hash\): wartość funkcji haszującej, jest wykorzystywana do weryfikacji adekwatności wpisu. Można go użyć tylko, jeżeli \(hash\) jest równe wartości funkcji haszującej rozpatrywanego stanu gry.}
-\item{\(depth\): odległość od liści w drzewie przeszukiwania z momentu tworzenia wpisu, używana jako wskaźnik jakości. Wpisu można użyć tylko, jeżeli \(depth\) jest większe lub równe aktualnej odległości od liści.}
-\item{\(exact\): wartość logiczna, która określa czy pole \(value\) to dokładny wektor wartości, czy tylko osiągalny z punktu widzenia gracza wykonującego ruchu.}
-\item{\(value\): wektor wartości funkcji oceniającej dla graczy.}
+\item{\(hash\) --- wartość funkcji haszującej. Jest wykorzystywana do weryfikacji --- wpisu można go użyć tylko, jeżeli \(hash\) jest równe wartości funkcji haszującej rozpatrywanego stanu gry.}
+\item{\(depth\) --- odległość od liści w drzewie przeszukiwania z momentu tworzenia wpisu, używana jako wskaźnik jakości. Wpisu można użyć tylko, jeżeli \(depth\) jest większe lub równe aktualnej odległości od liści.}
+\item{\(exact\) --- wartość logiczna, która określa czy pole \(value\) to dokładny wektor wartości, czy tylko osiągalny z punktu widzenia gracza wykonującego ruchu.}
+\item{\(value\) --- wektor wartości funkcji oceniającej dla graczy.}
 \end{itemize}
 
 Rozpatrując wierzchołek, nasz algorytm najpierw odnajduje właściwy mu wpis w tablicy transpozycji i jeśli go znajdzie, sprawdza czy wartości \(hash\) i \(depth\) pozwalają go użyć.
@@ -567,25 +577,26 @@ Jeżeli tak, oraz jest to wpis dokłady (\(exact\) jest prawdą) albo wartość 
 
 Kiedy wpis nie zostanie odnaleziony albo nie okaże się przydatny, algorytm oblicza wynik tak samo, jak bez użycia tablicy transpozycji.
 
-Na końcu procedury, jeżeli wpis nie został wcześniej odnaleziony albo został odrzucony z powodu niewłaściwych wartośc \(hash\) czy \(depth\), do tablicy zapisywany jest nowy wpis.
+Na końcu procedury, jeżeli wpis nie został wcześniej odnaleziony albo został odrzucony z powodu niewłaściwych wartość \(hash\) czy \(depth\), do tablicy jest zapisywany nowy wpis.
 Obliczony wynik trafia do \(value\), a wartość \(exact\) ustala się jako prawdę wtedy i tylko wtedy, gdy wartość w wektorze wynikowym odpowiadającemu graczowi jest mniejsza niż \(bound\).
 
 Postępowanie z \(hash\) i \(depth\) niczym nie różni się tutaj od standardowej, dwuosobowej wersji algorytmu Minimax z tablicą transpozycji.
 Więcej uwagi wymagają specyficznie używane \(exact\) i \(value\).
 
-Jeżeli \(exact\) jest prawdą, wpis należy odczytywać następująco: ,,wektor wartości dla odpowiadającego stanu został dokładnie obliczony, znajduje się w \(value\)'', więc \(value\) natychmiast przyjmujemy ją za wynik, tak jakbyśmy wykonywali Max\textsuperscript{n} z użyciem tablicy transpozycji.
+Jeżeli \(exact\) jest prawdą, wpis należy odczytywać następująco: ,,wektor wartości dla odpowiadającego stanu został dokładnie obliczony, znajduje się w \(value\)'', więc \(value\) natychmiast przyjmujemy za wynik, tak jakbyśmy wykonywali Max\textsuperscript{n} z użyciem tablicy transpozycji.
 
-Dopiero kiedy \(exact\) jest fałszem, widoczne jest działanie \(bound\) - wpis oznacza, że ,,jeden z synów ma wartość \(value\), a więc ten stan jest co najmniej równie dobry z punktu widzenia gracza wykonującego ruch''. Dokładna wartość nie została obliczona, ponieważ już \(value\) przekroczyło \(bound\) używane w trakcie tworzenia wpisu.
+Dopiero kiedy \(exact\) jest fałszem, widoczne jest działanie \(bound\) --- wpis oznacza, że ,,jeden z synów ma wartość \(value\), a więc ten stan jest co najmniej równie dobry z punktu widzenia gracza wykonującego ruch''.
+Dokładna wartość nie została obliczona, ponieważ już \(value\) przekroczyło \(bound\) używane w trakcie tworzenia wpisu.
 Co więcej, takie znaczenie wpisu może być użyteczne tylko jeżeli jest jasne o którego gracza chodzi, stąd dodatkowe wymaganie dla funkcji haszującej.
 Takiego wpisu możemy użyć tylko jeżeli wynik nie musi być dokładny, a więc gdy \(value\) przekracza aktualne \(bound\).
 
 \section{Monte Carlo Tree Search}
 
-Zgodnie z wcześniejszym opisem algorytmu Monte Carlo Tree Search (dales ,,MCTS''), zaimplementowany przez nas MCTSBot był parametryzowany sposobem obliczania współczynnika ufności \(hopeFactor\), \(\sqrt{\frac{\sqrt{n_p}}{n_s}}\) lub \(\sqrt{\frac{\log{n_p}}{n_s}}\), które będziemy nazywać odpowiednio \(SQRT\) i \(LOG\), oraz liczbą symulacji po której rozwijany jest liść \(expansionThreshold\), która zwykle jest zbliżona do liczby możliwych ruchów (dla Quoridor jest to maksymalnie 138, minimalnie 1).
+Zgodnie z wcześniejszym opisem algorytmu Monte Carlo Tree Search (dalej \emph{MCTS}), zaimplementowany przez nas bot był parametryzowany sposobem obliczania współczynnika ufności \(hopeFactor\), \(\sqrt{\frac{\sqrt{n_p}}{n_s}}\) lub \(\sqrt{\frac{\log{n_p}}{n_s}}\), które będziemy nazywać odpowiednio \(SQRT\) i \(LOG\), oraz liczbą symulacji po której rozwijany jest liść \(expansionThreshold\), która zwykle jest zbliżona do liczby możliwych ruchów (dla Quoridor jest to maksymalnie 138, minimalnie 1).
 Podczas pierwszych obserwacji tego bota zauważyliśmy, że bez względu na dobór parametrów wydaje się wybierać losowe ruchy.
-W przyjętym przez nas limicie czasowym na ruch wykonywał zbyt mało symulacji, często nie rozwijając żadnego liścia.
+W przyjętym przez nas limicie czasowym na ruch, wykonywał zbyt mało symulacji, często nie rozwijając żadnego liścia.
 Żeby temu zabopiec, postanowiliśmy skrócić symulacje, wprowadzając kolejny parametr: limit długości symulacji \(maxMoves\).
-Po osiągnięciu tej wartości zwyciężcę symulacji algorytm miał wyłaniać na podstawie odległości do celu.
+Po osiągnięciu tej wartości zwycięzcę symulacji algorytm miał wyłaniać na podstawie odległości do celu.
 Udało się nam zaobserwować poprawę i wytypować kandydatów na wartości dla wszystkich parametrów.
 
 \subsection{Metoda optymalizacji parametrów}
@@ -595,8 +606,8 @@ Do pierwszej serii eksperymentów mających na celu wyznaczenie optymalnych wart
 Przy przeprowadzaniu automatycznych turniejów należało zadbać o to, żeby zachować symetrię i nie dać żadnemu botowi przewagi umieszczając go częściej na którejś pozycji, np. jako rozpoczynającego.
 Prostym sposobem na spełnienie tego warunku jest rozpatrzenie wszystkich możliwych konfiguracji, ale przy 32 algorytmach i 4 graczach przekracza to nasze możliwości obliczeniowe.
 Dlatego zdecydowaliśmy się nie porównywać różnych wariantów MCTS do siebie bezpośrednio, ale każdego z osobna do bota Minimax (który, przypomnijmy, wykonuje Max\textsuperscript{n} w wersji dla czterech graczy).
-Wszystkich możliwych sposobów przypisania jednego dwóch algorytmów do \(k\) kolejnych graczy tak, by jeden nie sterował wszystkimi, jest \(2^k - 2\).
-Tak więc każdy MCTSBot miał rozegrać przeciw Minimaksowi jednakową liczbę meczy dwuosobowych w każdej z \(2^2 -2 = 2\) kombinacji, oraz jednakową liczbę meczy czteroosobowych w każdej z \(2^4 - 2 = 14\) kombinacji.
+Wszystkich możliwych sposobów przypisania jednego z dwóch algorytmów do \(k\) kolejnych graczy tak, by jeden nie sterował wszystkimi, jest \(2^k - 2\).
+Tak więc każdy wariant MCTS miał rozegrać przeciw Minimaksowi jednakową liczbę meczy dwuosobowych w każdej z \(2^2 -2 = 2\) kombinacji, oraz jednakową liczbę meczy czteroosobowych w każdej z \(2^4 - 2 = 14\) kombinacji.
 Miarą skuteczności parametrów miała być liczba zwycięstw, rozpatrywana osobno dla obu wariantów gry.
 W związku z rozdzieleniem eksperymentów względem liczby graczy, spodziewaliśmy się otrzymać różne zestawy parametrów, które potem miały zostać wykorzystane w jednym bocie, przyjmującym jedne lub drugie parametry w zależności od wariantu gry.
 
@@ -605,10 +616,13 @@ W związku z rozdzieleniem eksperymentów względem liczby graczy, spodziewaliś
 W przypadku wersji dwuosobowej, dla każdej kombinacji parametrów pierwszego zestawu przeprowadziliśmy 25-krotnie mecze z Minimaksem we obu możliwych ustawieniach, a więc każdy wariant MCTS rozegrał 50 pojedynków.
 Rysunek \ref{experiment1-2p}. podsumowuje uzyskane wyniki, w pełni przedstawione w dodatku \ref{results-1-2p}.
 
+Tę i dalsze wizualizacje należy odczytywać następująco: każdej kombinacji parametrów odpowiada pewien prostokąt, którego kolor (zgodnie z legendą) wskazuje jaka część spośród rozegranych meczy została wygrana.
+Żeby odnaleźć najlepszy zestaw parametrów, będziemy skupiać się na obszarach o ciemnym kolorze.
+
 \begin{rysunek}
 \caption{Wyniki eksperymentów z parametrami MCTS (2 graczy, zestaw 1) \label{experiment1-2p}}
 \centering
-\includegraphics[width=160mm]{experiment1-2p.png}
+\includegraphics[width=140mm]{experiment1-2p.png}
 \end{rysunek}
 
 W drugiej serii eksperymentów postanowiliśmy rozpatrzeć wyłącznie \(hopeFactor = LOG\), 5 wartości \(expansionThreshold\) (20, 40, 60, 80, 100) i 3 wartości maxMoves (1, 2, 3).
@@ -617,7 +631,7 @@ Rysunek \ref{experiment2-2p}. podsumowuje uzyskane wyniki, w pełni przedstawion
 \begin{rysunek}
 \caption{Wyniki eksperymentów z parametrami MCTS (2 graczy, zestaw 2) \label{experiment2-2p}}
 \centering
-\includegraphics[width=80mm]{experiment2-2p.png}
+\includegraphics[width=70mm]{experiment2-2p.png}
 \end{rysunek}
 
 Ostatecznie, dla wersji dwuosobowej ustaliliśmy parametry \[hopeFactor = LOG, expansionThreshold = 60, maxMoves=1,\] które dały zwycięstwo nad Minimaksem w 19 rozgrywkach na 50.
@@ -630,7 +644,7 @@ Rysunek \ref{experiment1-4p}. podsumowuje uzyskane wyniki, w pełni przedstawion
 \begin{rysunek}
 \caption{Wyniki eksperymentów z parametrami MCTS (4 graczy, zestaw 1) \label{experiment1-4p}}
 \centering
-\includegraphics[width=160mm]{experiment1-4p.png}
+\includegraphics[width=140mm]{experiment1-4p.png}
 \end{rysunek}
 
 W drugiej serii eksperymentów postanowiliśmy rozpatrzeć wyłącznie \(hopeFactor = LOG\), 10 wartości \(expansionThreshold\) (20, 40, 60, 80, 100, 120, 140, 160, 180, 200) i 3 wartości maxMoves (1, 2, 3).
@@ -639,7 +653,7 @@ Rysunek \ref{experiment3-4p}. podsumowuje uzyskane wyniki, w pełni przedstawion
 \begin{rysunek}
 \caption{Wyniki eksperymentów z parametrami MCTS (4 graczy, zestaw 3) \label{experiment3-4p}}
 \centering
-\includegraphics[width=80mm]{experiment3-4p.png}
+\includegraphics[width=70mm]{experiment3-4p.png}
 \end{rysunek}
 
 Ostatecznie, dla wersji czteroosobowej ustaliliśmy parametry \[hopeFactor = LOG, expansionThreshold = 180, maxMoves=2,\] które dały zwycięstwo nad Minimaksem w 38 rozgrywkach na 70.
