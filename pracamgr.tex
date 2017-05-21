@@ -431,28 +431,28 @@ Wybraliśmy więc rozwiązanie \ref{solve}, poszerzając definicję przeskoczeni
 Zgodnie z nową definicją gracz może przeskoczyć sąsiadujący (i nieodgrodzony) pionek przeciwnika stawiając swój  na dowolnym polu, na który mógłby postawić go przeciwnik, gdyby właśnie wykonywał ruch.
 We wcześniej przedstawionym przykładzie, ruch wykonuje gracz czarny.
 Gdyby ruch wykonywał gracz czerwony, mógłby przeskoczyć pionek gracza zielonego.
-A zatem gracz czerwony również może to zrobić, co daje mu dwa możliwe ruchy do wyboru.
+A zatem gracz czarny również może to zrobić, co daje mu dwa możliwe ruchy do wyboru.
 
 Ponieważ pierwotne zasady gry zapewniają, że każdy gracz ma dostępną przynamniej jedną drogę do celu, nowa definicja przeskoczenia pionka gwarantuje, że zawsze można wykonać ruch pionkiem.
 
 \section{Interfejs bota}
 
-Przed rozwijaniem algorytmów botów należy określić sposób w jaki będzie on udzielał odpowiedzi i ograniczenia, jakie zostaną narzucone.
+Przed rozwijaniem algorytmów botów należy określić sposób w jaki będą one udzielały odpowiedzi i ograniczenia, jakie zostaną narzucone.
 Musimy tu przede wszystkim wziąć pod uwagę jakość użytkowania aplikacji i ograniczenia urządzeń, na jakich ma być uruchamiana.
 
 Najprostszym interfejsem bota byłaby pojedyncza procedura, której jedynym argumentem jest stan gry, a wynikiem jest jeden z dozwolonych ruchów.
-Utrudnia ona jednak właściwe wykorzystanie czasu.
-Nie ma on możliwości wyboru decyzji jako wydającej się najlepszą w danej chwili i dalszego szukania lepszej.
+Jednak takie podejście utrudnia właściwe wykorzystanie czasu.
+Bot nie ma możliwości wskazania decyzji wydającej się najlepszą w danej chwili i dalszego szukania lepszej.
 Jeżeli próbując wykorzystać cały dostępny czas przekroczy go, arbiter przerwie procedurę i nie obliczy ona żadnego wyniku.
 
 Dlatego jako interfejs bota obraliśmy procedurę nie mającą wyniku, która będzie uruchamiana przez aplikację w osobnym procesie na wyznaczony czas, a następnie przerywana.
 Podczas działania będzie mogła modyfikować swoją decyzję o wybranym ruchu, będącą obiektem współdzielonym z procesem arbitra aplikacji.
 
 Dla zapewnienia płynności rozgrywki, limit czasu ustalamy na 2 sekundy.
-Oczywiście mógłby być konfigurowany przez użytkownika, ale wyszczególnienie pożądanej wartości pomoże w porównywaniu botów i wskazaniu algorytmu, który najlepiej sprawdza się w określonych warunkach.
+Oczywiście mógłby być konfigurowany przez użytkownika, ale wskazanie pożądanej wartości pomoże w porównywaniu botów i znalezieniu algorytmu, który najlepiej sprawdza się w określonych warunkach.
 
 Ustaliliśmy też przybliżone maksymalne zużycie pamięci na 500 MB, co ma znaczenie zwłaszcza dla algorytmów wykorzystujące tablicę transpozycji, która tym lepiej się sprawdza, im jest większa.
-Jednak nasza aplikacja ma działać na współczesnym komputerze osobistym (który ma dziś zwykle 4 GB pamięci), a nie brać udział w potyczkach botów na superkomputerach.
+Jednak nasza aplikacja ma działać na współczesnym komputerze osobistym z dość ograniczoną pamięcią, a nie brać udział w potyczkach botów na superkomputerach.
 
 \chapter{Rozwijanie botów}
 
