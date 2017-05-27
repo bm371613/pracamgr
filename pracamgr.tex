@@ -80,7 +80,7 @@ I. Computing Methodologies \\
 \begin{abstract}
 W pracy zajmiemy się algorytmami sztucznej inteligencji dla gier planszowych.
 Opiszemy podstawowe metody, ze szczególnym uwzględnieniem liczby graczy jako czynnika wpływającego na użyteczność algorytmu.
-Dalej, przejdziemy do możliwych ulepszeń, zarówno ogólnych i specyficznych dla gry Quoridor, na której się skupimy.
+Dalej, przejdziemy do możliwych ulepszeń, zarówno ogólnych jak i specyficznych dla gry Quoridor, na której się skupimy.
 Przedstawimy też implementację opracowanych metod na potrzeby wytwarzanego prototypu aplikacji, dzięki której użytkownik będzie mógł eksperymentować z różnymi algorytmami.
 \end{abstract}
 
@@ -100,11 +100,11 @@ Przez wiele lat to właśnie gra w szachy stanowiła jeden z wyznaczników stanu
 Na drodze do spektakularnego sukcesu z 1997 roku, kiedy superkomputer Deep Blue pokonał wielokrotnego mistrza świata Garri Kasparowa, prace nad programami grającymi w szachy przynosiły wyniki bardziej ogólne, dające się zastosować do innych gier.
 Tak powstawały niektóre metody uznawane dziś za standardowe.
 
-W tej pracy również skupimy zainteresowanie na jednej grze --- Quoridor --- która mimo prostych zasad dorównuje złoźonością szachom (por. \cite{mertens}).
+W tej pracy również skupimy zainteresowanie na jednej grze --- Quoridor --- która mimo prostych zasad dorównuje złożonością szachom (por. \cite{mertens}).
 Mamy nadzieję, że i nam uda się uzyskać efekty interesujące dla osób zajmujących się innymi grami.
 Poszukiwania zaczniemy od przeglądu powszechnie stosowanych, podstawowych metod oraz wybranych ulepszeń, które będą wydawać się przydatne dla Quoridor.
 Opiszemy ich wykorzystanie lub dostosowanie i próby ulepszenia, a także porównamy między sobą.
-Później postaramy się z naszych wysiłków wyłuskać efekty ogólne, dające się zastosować poza Quodior.
+Później postaramy się z uzyskanych wyników wyłuskać efekty ogólne, dające się zastosować poza Quodior.
 
 Równolegle z pracą będziemy wytwarzać oprogramowanie otwartoźródłowe --- prototyp komputerowej wersji gry, która będzie umożliwiać użytkownikowi mierzenie się z różnymi algorytmami sztucznej inteligencji albo obserwację rozgrywek między nimi.
 Użytkownikowi-programiście, naturalnemu odbiorcy prototypu z publicznym dostępem do kodu, ma umożliwiać modyfikowanie i dodawanie algorytmów oraz porównywanie poprzez przeprowadzanie automatycznych turniejów.
@@ -136,7 +136,7 @@ Celem tej pracy jest opracowanie algorytmów sztucznej inteligencji dla gry Quor
 
 Dostępnych jest już kilka programów grających w Quoridor. Są to aplikacje działające w przeglądarce internetowej lub na urządzeniu przenośnym. Żadna z nich nie osiąga celów, jakie postawiliśmy tworzonemu przez nas oprogramowaniu.
 Tylko w jednym przypadku\footnote{http://danielborowski.com/quoridor-ai/v2/display.html} udostępniony jest kod źródłowy.
-Inna aplikacja\footnote{https://play.google.com/store/apps/details?id=com.codestare.corridor}, wciąż w trakcie rozwoju, jest jedyną implementująca oba warianty gry.
+Inna aplikacja\footnote{https://play.google.com/store/apps/details?id=com.codestare.corridor}, wciąż w trakcie rozwoju, jest jedyną implementującą oba warianty gry.
 
 \section{Struktura pracy}
 
@@ -177,7 +177,7 @@ A więc w wariancie dla dwóch graczy znajduje się w tej samej klasie gier co s
 Wiele z metod dla tej klasy gier zasłużyło już na miano standardowych.
 
 Wariant dla czterech graczy wciąż pozostaje pod wieloma względami podobny do gier klasycznych.
-Nie ma osobnego zestawu standardowych metod dla tego przypadku, który moglibyśmy tu przedstawić.
+Nie ma osobnego zestawu metod dla tego przypadku, który moglibyśmy tu przedstawić.
 Stosuje się, o ile to możliwe, specjalne warianty algorytmów używanych dla dwóch graczy.
 
 Od tej pory będziemy mówić wyłącznie o grach o sumie zerowej, z pełną informacją o stanie gry, w których gracze wykonują ruchy na zmianę.
@@ -298,7 +298,7 @@ Wysokość równa głębokości przeszukiwania oznacza, że wierzchołek był od
 Taką wartość uznajemy za gorszą od obliczonej dla wysokości o jeden mniejszej, kiedy rozpatrzone zostały wszystkie możliwe kolejne ruchy.
 A zatem odnaleziony w tablicy transpozycji wpis może zostać użyty tylko wtedy, gdy zgadzają się wartości funkcji haszującej oraz wysokość zapisana we wpisie jest nie większa niż bieżąca.
 
-W przypadku algorymu Minimimax dodatkowym polem wpisu jest to po prostu obliczona wartość wierzchołka, która może zostać użyta po spełnieniu wcześniej wymienionych warunków.
+W przypadku algorytmu Minimimax dodatkowym polem wpisu jest po prostu obliczona wartość wierzchołka, która może zostać użyta po spełnieniu wcześniej wymienionych warunków.
 
 W przypadku algorytmu Alfa-Beta, wpis zawiera ograniczenie dolne i górne na wartość \(minimax\) wierzchołka (równe sobie, jeżeli znana jest dokładna wartość).
 Taki wpis nie zawsze pozwala natychmiast podać wynik, ale może zawęzić okno przeszukiwania i skrócić czas działania algorytmu.
@@ -333,7 +333,7 @@ W opisie algorytmu widać pewne luki: sposób wybierania najbardziej obiecujące
 
 Przy wybieraniu najbardziej obiecującego syna używa się metody granicy ufności.
 Ma ona zapobiec sytuacji, w której po niewielkiej liczbie symulacji (nawet tylko jednej) liść jest porzucany, co ma miejsce gdy porównuje się wyłącznie stosunek liczby zwycięstw do liczby symulacji.
-W tym celu to tego ilorazu jest dodawany \emph{współczynnik ufności}, tym wyższy im mniejszą częścią symulacji rodzica są symulacje danego syna. Jako współczynnik ufności przymuje się \(\sqrt{\frac{\sqrt{n_p}}{n_s}}\) lub \(\sqrt{\frac{\log{n_p}}{n_s}}\), gdzie \(n_s\) to liczba symulacji w poddrzewie syna, a \(n_p\) to liczba symulacji w poddrzewie rodzica.
+W tym celu do tego ilorazu jest dodawany \emph{współczynnik ufności}, tym wyższy im mniejszą częścią symulacji rodzica są symulacje danego syna. Jako współczynnik ufności przymuje się \(\sqrt{\frac{\sqrt{n_p}}{n_s}}\) lub \(\sqrt{\frac{\log{n_p}}{n_s}}\), gdzie \(n_s\) to liczba symulacji w poddrzewie syna, a \(n_p\) to liczba symulacji w poddrzewie rodzica.
 
 Decyzję o rozwinięciu liścia podejmuje się na podstawie liczby symulacji, jakie zostały z niego rozpoczęte.
 Jeżeli przekroczy ona ustalony próg, zwykle zbliżony do liczby ruchów możliwych w jednym stanie gry, liść zostaje rozwinięty.
@@ -472,7 +472,7 @@ Chcieliśmy ograniczyć sytuacje, kiedy bot przekonany, że wygra (maksymalna wa
 Oryginalny algorytm na równi traktuje ruchy prowadzące do pewnego zwycięstwa (analogicznie klęski), więc bot może przez wiele tur przesuwać pionek w tę i z powrotem, dopóki przeciwnik nie zbliży się odpowiednio do celu.
 Przeciwnik z kolei może wcale nie zbliżać się do celu, również kręcąc się w kółko wobec wyboru między porażką w takiej czy innej liczbie ruchów.
 Żeby ograniczyć takie sytuacje, spośród ruchów najlepszych z punktu widzenia wartości \(minimax\) wybieramy ten, który najbardziej zbliża do celu.
-Ponadto, jeżeli wartość minimaks oznacza pewne zwycięstwo lub nieuchronną przegraną, pogłębianie jest przerywane, dzięki czemu bot szybciej wykonuje ruchy, zwłaszcza pod koniec rozgrywki.
+Ponadto, jeżeli wartość \(minimax\) oznacza pewne zwycięstwo lub nieuchronną przegraną, pogłębianie jest przerywane, dzięki czemu bot szybciej wykonuje ruchy, zwłaszcza pod koniec rozgrywki.
 
 \subsection{Funkcja oceniająca}
 
@@ -528,7 +528,7 @@ O ile przykłady użycia tablicy transpozycji zarówno dla algorytmu Minimax i A
 
 \subsection{Haszowanie Zobrista}
 
-Projektując funkcję haszującą techniką Zobrista, najpierw należy rozkłożyć stan gry na składowe.
+Projektując funkcję haszującą techniką Zobrista, najpierw należy rozłożyć stan gry na składowe.
 W naszym przypadku były to (załóżmy przypadek czteroosobowy):
 
 \begin{itemize}
@@ -544,11 +544,11 @@ Dalej, losowo wypełniliśmy te tablice liczbami z przedziału właściwego dla 
 
 Wtedy już mogliśmy zdefiniować wartość funkcji haszującej \(h(s)\) dla stanu \(s\) opisanego wartościami zmiennych \(v_0, v_1, .., v_{149}\) jako \[\oplus_{i = 0}^{149} V_i[v_i]\text{,}\] gdzie znak \(\oplus\) oznacza binarną operację XOR (alternatywę rozłączną).
 
-Funkcja haszująca zaprojektowana techniką Zobrista daje się ponadto obliczać inkrementalnie, to znaczy znając jej wartość dla danego stanu i wykonany po nim ruch można wydajniej obliczyć wartość dla stanu wynikowego.
+Funkcja haszująca zaprojektowana techniką Zobrista daje się ponadto obliczać inkrementalnie, to znaczy znając jej wartość dla danego stanu i wykonany po nim ruch, można wydajniej obliczyć wartość dla stanu wynikowego.
 Wykorzystuje się tu fakt, że operacja XOR jest łączna, przemienna i każdy element jest sam wobec siebie odwrotny.
 W przypadku Quoridor, wykonanie ruchu zmienia wartość najwyżej trzech zmiennych wykorzystanywanych do opisu stanu.
 Jedną z nich jest zawsze indeks gracza wykonującego ruch.
-Dla ruchu pionkiem, pozostałe to pozycja pionka gracza wykonującego ruch.
+Dla ruchu pionkiem, pozostałe dwie to współrzędne pionka gracza wykonującego ruch.
 W przypadku postawienia ogrodzenia, jest to liczba pozostałych graczowi ogrodzeń oraz stan tego ze skrzyżowań szczelin planszy, na którym znalazł się środek ogrodzenia.
 Jeżeli dla każdej zmiennej \(v_i\), która w wyniku ruchu zmieniła wartość z \(x_i\) na \(y_i\), zastosujemy wobec wartości funkcji haszującej dla wyjściowego stanu operację XOR z \(V_i[x_i] \oplus V_i[y_i]\), otrzymamy wartość funkcji haszującej dla stanu wynikowego.
 A więc rozpatrzymy jedynie 3 zmienne zamiast 150.
@@ -566,7 +566,7 @@ Opisana wcześniej funkcja haszująca spełnia ten warunek.
 Wpis w tablicy transpozycji wyposażyliśmy w następujące pola:
 
 \begin{itemize}
-\item{\(hash\) --- wartość funkcji haszującej. Jest wykorzystywana do weryfikacji --- wpisu można go użyć tylko, jeżeli \(hash\) jest równe wartości funkcji haszującej rozpatrywanego stanu gry.}
+\item{\(hash\) --- wartość funkcji haszującej. Jest wykorzystywana do weryfikacji --- wpisu można użyć tylko, jeżeli \(hash\) jest równe wartości funkcji haszującej rozpatrywanego stanu gry.}
 \item{\(depth\) --- odległość od liści w drzewie przeszukiwania z momentu tworzenia wpisu, używana jako wskaźnik jakości. Wpisu można użyć tylko, jeżeli \(depth\) jest większe lub równe aktualnej odległości od liści.}
 \item{\(exact\) --- wartość logiczna, która określa czy pole \(value\) to dokładny wektor wartości, czy tylko osiągalny z punktu widzenia gracza wykonującego ruchu.}
 \item{\(value\) --- wektor wartości funkcji oceniającej dla graczy.}
@@ -607,7 +607,7 @@ Przy przeprowadzaniu automatycznych turniejów należało zadbać o to, żeby za
 Prostym sposobem na spełnienie tego warunku jest rozpatrzenie wszystkich możliwych konfiguracji, ale przy 32 algorytmach i 4 graczach przekracza to nasze możliwości obliczeniowe.
 Dlatego zdecydowaliśmy się nie porównywać różnych wariantów MCTS do siebie bezpośrednio, ale każdego z osobna do bota Minimax (który, przypomnijmy, wykonuje Max\textsuperscript{n} w wersji dla czterech graczy).
 Wszystkich możliwych sposobów przypisania jednego z dwóch algorytmów do \(k\) kolejnych graczy tak, by jeden nie sterował wszystkimi, jest \(2^k - 2\).
-Tak więc każdy wariant MCTS miał rozegrać przeciw Minimaksowi jednakową liczbę meczy dwuosobowych w każdej z \(2^2 -2 = 2\) kombinacji, oraz jednakową liczbę meczy czteroosobowych w każdej z \(2^4 - 2 = 14\) kombinacji.
+Tak więc każdy wariant MCTS miał rozegrać przeciw Minimaksowi jednakową liczbę meczów dwuosobowych w każdej z \(2^2 -2 = 2\) kombinacji, oraz jednakową liczbę meczów czteroosobowych w każdej z \(2^4 - 2 = 14\) kombinacji.
 Miarą skuteczności parametrów miała być liczba zwycięstw, rozpatrywana osobno dla obu wariantów gry.
 W związku z rozdzieleniem eksperymentów względem liczby graczy, spodziewaliśmy się otrzymać różne zestawy parametrów, które potem miały zostać wykorzystane w jednym bocie, przyjmującym jedne lub drugie parametry w zależności od wariantu gry.
 
@@ -616,7 +616,7 @@ W związku z rozdzieleniem eksperymentów względem liczby graczy, spodziewaliś
 W przypadku wersji dwuosobowej, dla każdej kombinacji parametrów pierwszego zestawu przeprowadziliśmy 25-krotnie mecze z Minimaksem we obu możliwych ustawieniach, a więc każdy wariant MCTS rozegrał 50 pojedynków.
 Rysunek \ref{experiment1-2p}. podsumowuje uzyskane wyniki, w pełni przedstawione w dodatku \ref{results-1-2p}.
 
-Tę i dalsze wizualizacje należy odczytywać następująco: każdej kombinacji parametrów odpowiada pewien prostokąt, którego kolor (zgodnie z legendą) wskazuje jaka część spośród rozegranych meczy została wygrana.
+Tę i dalsze wizualizacje należy odczytywać następująco: każdej kombinacji parametrów odpowiada pewien prostokąt, którego kolor (zgodnie z legendą) wskazuje jaka część spośród rozegranych meczów została wygrana.
 Żeby odnaleźć najlepszy zestaw parametrów, będziemy skupiać się na obszarach o ciemnym kolorze.
 
 \begin{rysunek}
@@ -671,9 +671,9 @@ Wzięły w nim udział boty
     \item \(MCTS\) --- Monte Carlo Tree Search, z parametrami ustalonymi wcześniej ekserymentalnie, osobno dla obu wersji gry
 \end{itemize}
 
-Ze względu na małą liczbę uczestników, możliwe było wieloktrotne przeprowadzenie meczy we wszystkich możliwych ustawieniach, w których graczami sterują co najmniej dwa różne algorytmy.
+Ze względu na małą liczbę uczestników, możliwe było wieloktrotne przeprowadzenie meczów we wszystkich możliwych ustawieniach, w których graczami sterują co najmniej dwa różne algorytmy.
 W przypadku rozgrywki dwuosobowej jest to \(3^2 - 3 = 6\) kombinacji, dla czteroosobowej \(3^4 - 3 = 78\).
-Te pierwsze powtarzaliśmy 65 razy, a drugie 5, a więc dla obu wersji przeprowadziliśmy 390 meczy.
+Te pierwsze powtarzaliśmy 65 razy, a drugie 5, a więc dla obu wersji przeprowadziliśmy 390 meczów.
 
 Oba warianty gry dały ten porządek uczestników turnieju według skuteczności (por. z tabelą \ref{turniej}).
 \(AlphaBetaTT\), zgodnie z oczekiwaniami, okazał się lepszy od bota \(Minimax\), którego jest ulepszeniem.
@@ -746,16 +746,24 @@ Innym kierunkiem byłaby zmiana rozkładu prawdopodobieństwa wyboru ruchu podcz
 
     \chapter{Kod źródłowy aplikacji \label{code}}
 
-    Na dołączonej płycie znajduje się wykonywalny plik \textit{quoridor-gui.jar} uruchamiający wytworzoną aplikację oraz katalog \textit{src} z kodem źródłowym, podzielonym jest na:
-
+    Na dołączonej płycie znajdują się:
 \begin{itemize}
-    \item \textit{quoridor-core} --- zasady gry, z kluczową klasą \textit{GameRules} w pliku \\ \textit{quoridor-core/src/main/java/quoridor/core/GameRules.java}
-    \item \textit{quoridor-ai} --- sztuczną inteligencję, z implementacją botów w katalogu \\ \textit{quoridor-ai/src/main/java/quoridor/ai/bot}
-    \item \textit{quoridor-analysis} --- narzędzia do przeprowadzania automatycznych rozgrywek między botami
-    \item \textit{quoridor-gui} --- aplikację z interfejsem graficznym
+    \item \textit{praca.pdf} --- plik zawierający tekst tej pracy,
+    \item \textit{quoridor-gui.jar} --- plik ze zbudowaną aplikacją, wykonywalny przy pomocy środowiska uruchomieniowego Javy,
+    \item \textit{src} --- katalog z wytworzonym kodem źródłowym.
 \end{itemize}
 
-    Bezpośrednio w katalogu \textit{src} znajduje się plik \textit{README.md} z któtkim opisem projektu i wskazówkami dotyczącymi rozwijania, w szczególności podaje sposób użycia znajdującego się obok skryptu \textit{gradlew} w celu zbudowania pliku wykonywalnego aplikacji.
+Kod podzielony jest na:
+
+\begin{itemize}
+    \item \textit{quoridor-core} --- zasady gry, z kluczową klasą \textit{GameRules} w pliku \\ \textit{quoridor-core/src/main/java/quoridor/core/GameRules.java},
+    \item \textit{quoridor-ai} --- sztuczną inteligencję, z implementacją botów w katalogu \\ \textit{quoridor-ai/src/main/java/quoridor/ai/bot},
+    \item \textit{quoridor-analysis} --- narzędzia do przeprowadzania automatycznych rozgrywek między botami,
+    \item \textit{quoridor-gui} --- aplikację z interfejsem graficznym.
+\end{itemize}
+
+    Bezpośrednio w katalogu \textit{src} znajduje się plik \textit{README.md} z opisem projektu i wskazówkami dotyczącymi rozwijania.
+    W szczególności podaje sposób zbudowania pliku wykonywalnego aplikacji przy pomocy znajdującego się obok skryptu \textit{gradlew}.
 
 \chapter{Pełne wyniki eksperymentów}
 
@@ -764,7 +772,7 @@ Innym kierunkiem byłaby zmiana rozkładu prawdopodobieństwa wyboru ruchu podcz
 \begin{center}
     \begin{tabular}{| c | c | c | c |}
 	\hline
-    hopeFactor & expansionThreshold & maxMoves & liczba zwycięstw (na 50 meczy) \\ \hline
+    hopeFactor & expansionThreshold & maxMoves & liczba zwycięstw (na 50 meczów) \\ \hline
 	\hline
         LOG & 100 & 2 & 11 \\ \hline
         LOG & 20 & 2 & 9 \\ \hline
@@ -804,7 +812,7 @@ Innym kierunkiem byłaby zmiana rozkładu prawdopodobieństwa wyboru ruchu podcz
 \begin{center}
     \begin{tabular}{| c | c | c | c |}
 	\hline
-    hopeFactor & expansionThreshold & maxMoves & liczba zwycięstw (na 50 meczy) \\ \hline
+    hopeFactor & expansionThreshold & maxMoves & liczba zwycięstw (na 50 meczów) \\ \hline
 	\hline
 
         LOG & 60 & 1 & 19 \\ \hline
@@ -838,7 +846,7 @@ Innym kierunkiem byłaby zmiana rozkładu prawdopodobieństwa wyboru ruchu podcz
 \begin{center}
     \begin{tabular}{| c | c | c | c |}
 	\hline
-    hopeFactor & expansionThreshold & maxMoves & liczba zwycięstw (na 70 meczy) \\ \hline
+    hopeFactor & expansionThreshold & maxMoves & liczba zwycięstw (na 70 meczów) \\ \hline
 	\hline
         LOG & 140 & 2 & 37 \\ \hline
         LOG & 20 & 2 & 33 \\ \hline
@@ -886,7 +894,7 @@ Innym kierunkiem byłaby zmiana rozkładu prawdopodobieństwa wyboru ruchu podcz
     \vspace{0pt}
     \begin{tabular}{| c | c | c | c |}
 	\hline
-    hopeFactor & expansionThreshold & maxMoves & liczba zwycięstw (na 70 meczy) \\ \hline
+    hopeFactor & expansionThreshold & maxMoves & liczba zwycięstw (na 70 meczów) \\ \hline
         LOG & 180 & 2 & 38 \\ \hline
         LOG & 140 & 2 & 37 \\ \hline
         LOG & 40 & 2 & 36 \\ \hline
