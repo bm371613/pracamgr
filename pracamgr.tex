@@ -32,7 +32,7 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhead{}
-\fancyhead[C]{wersja 4}
+\fancyhead[C]{wersja 5}
 
 \fancypagestyle{plain}{%
 }
@@ -100,22 +100,22 @@ Przez wiele lat to właśnie gra w szachy stanowiła jeden z wyznaczników stanu
 Na drodze do spektakularnego sukcesu z 1997 roku, kiedy superkomputer Deep Blue pokonał wielokrotnego mistrza świata Garri Kasparowa, prace nad programami grającymi w szachy przynosiły wyniki bardziej ogólne, dające się zastosować do innych gier.
 Tak powstawały niektóre metody uznawane dziś za standardowe.
 
-W tej pracy również skupimy zainteresowanie na jednej grze --- Quoridor --- która mimo prostych zasad dorównuje złożonością szachom (por. \cite{mertens}).
+W tej pracy skupimy się na jednej grze -- Quoridor -- która mimo prostych zasad dorównuje złożonością szachom (por. \cite{mertens}).
 Mamy nadzieję, że i nam uda się uzyskać efekty interesujące dla osób zajmujących się innymi grami.
 Poszukiwania zaczniemy od przeglądu powszechnie stosowanych, podstawowych metod oraz wybranych ulepszeń, które będą wydawać się przydatne dla Quoridor.
 Opiszemy ich wykorzystanie lub dostosowanie i próby ulepszenia, a także porównamy między sobą.
 Później postaramy się z uzyskanych wyników wyłuskać efekty ogólne, dające się zastosować poza Quodior.
 
-Równolegle z pracą będziemy wytwarzać oprogramowanie otwartoźródłowe --- prototyp komputerowej wersji gry, która będzie umożliwiać użytkownikowi mierzenie się z różnymi algorytmami sztucznej inteligencji albo obserwację rozgrywek między nimi.
+Równolegle z pracą analityczną będziemy wytwarzać oprogramowanie otwartoźródłowe --- prototyp komputerowej wersji gry, która będzie umożliwiać użytkownikowi mierzenie się z różnymi algorytmami sztucznej inteligencji albo obserwację rozgrywek między nimi.
 Użytkownikowi-programiście, naturalnemu odbiorcy prototypu z publicznym dostępem do kodu, ma umożliwiać modyfikowanie i dodawanie algorytmów oraz porównywanie poprzez przeprowadzanie automatycznych turniejów.
 Aplikacja, jako bezpośrednia motywacja do poszukiwań teoretycznych, pomoże wyznaczyć dla nich wymagania i ograniczenia.
 
 Zwrócimy też uwagę na często pomijany, ale istotny dla gry komputerowej, aspekt algorytmu sztucznej inteligencji dla gier planszowych --- wpływ na jakość interakcji z użytkownikiem.
-A więc w miarę możliwości będziemy starać się, żeby gracz komputerowy spośród wielu możliwych sposobów uzyskania takiego samego efektu wybrał taki sposób, który uczyni rozgrywkę najbardziej przyjemną dla przeciwnika.
+A więc w miarę możliwości będziemy starać się, żeby gracz komputerowy spośród wielu możliwych sposobów uzyskania takiego samego efektu wybrał taki, który uczyni rozgrywkę najbardziej przyjemną dla przeciwnika.
 
 \section{Quoridor --- oryginalne zasady gry}
 
-Gra rozgrywa się na planszy za pomocą 4 pionków i 20 ogrodzeń, nazywanych też ścianami. Na planszy znajduje się siatka szczelin wyznaczająca 81 kwadratowych pól, tworzących układ 9~x~9. Każdy pionek ma unikatowy kolor, mieści się na jednym polu planszy i nie może go dzielić z innym. Ogrodzenia są identyczne i dają się umieszczać w szczelinach między polami planszy. Ogrodzenie jest dwukrotnie dłuższe od boku pola, więc (poprawnie umieszczone) sąsiaduje z dwoma polami z każdej strony, zajmuje całą szerokość szczeliny i jedno skrzyżowanie szczelin.
+Gra Quoridor jest rozgrywana na planszy za pomocą 4 pionków i 20 ogrodzeń, nazywanych też ścianami. Na planszy znajduje się siatka szczelin wyznaczająca 81 kwadratowych pól, tworzących układ 9~x~9. Każdy pionek ma unikatowy kolor, mieści się na jednym polu planszy i nie może go dzielić z innym. Ogrodzenia są identyczne i dają się umieszczać w szczelinach między polami planszy. Ogrodzenie jest dwukrotnie dłuższe od boku pola, więc (poprawnie umieszczone) sąsiaduje z dwoma polami z każdej strony, zajmuje całą szerokość szczeliny i jedno skrzyżowanie szczelin.
 
 W grze może wziąć udział dwóch lub czterech graczy. W obu przypadkach otrzymują po jednym pionku, dzielą się po równo ogrodzeniami i przypisują się do różnych boków planszy; jeżeli jest ich dwóch, muszą to być boki przeciwległe.
 
@@ -130,7 +130,7 @@ Jeżeli na pewnym sąsiednim, nieodgrodzonym polu znajduje się już pionek prze
 
 Opracowywanie sztucznej inteligencji do gier planszowych może mieć różne założenia i cele.
 Nie interesują nas tu metody wymagające mocy obliczeniowej superkomputera.
-Celem tej pracy jest opracowanie algorytmów sztucznej inteligencji dla gry Quoridor i utworzenie prototypu oprogramowania otwartoźródłowego, łatwego w dystrybucji i nadającego się do użycia na komputerze osobistym lub urządzeniu przenośnym, które będzie umożliwało grę w obu wariantach gry (dla 2 i 4 graczy), przy czy każdy gracz może być człowiekiem albo graczem komputerowym sterowanym przez jeden z dostępnych algorytmów sztucznej inteligencji.
+Celem tej pracy jest opracowanie algorytmów sztucznej inteligencji dla gry Quoridor i utworzenie prototypu oprogramowania otwartoźródłowego, łatwego w dystrybucji i nadającego się do użycia na komputerze osobistym lub urządzeniu przenośnym, które będzie umożliwało grę w obu wariantach (dla 2 i 4 graczy), przy czym każdy gracz może być człowiekiem albo graczem komputerowym sterowanym przez jeden z dostępnych algorytmów sztucznej inteligencji (zwanym dalej ,,botem'').
 
 \section{Istniejące rozwiązania}
 
@@ -143,14 +143,14 @@ Inna aplikacja\footnote{https://play.google.com/store/apps/details?id=com.codest
 W drugim rozdziale określimy szerszą klasę gier, w której znajduje się Quoridor.
 Wprowadzimy pojęcia używane do ich opisu i algorytmy sztucznej inteligencji, które są wobec nich standardowo stosowane.
 
-W trzecim rozdziale określimy te aspekty aplikacji, którę są istotne dla graczy komputerowych (dalej ,,botów'').
+W trzecim rozdziale określimy te aspekty aplikacji, którę są istotne dla graczy komputerowych.
 Tak więc doprecyzujemy zasady gry, wybierzemy technologie, zdefiniujemy interfejs bota, ograniczenia wykorzystania zasobów i oczekiwany czas działania.
 
 W czwartym rozdziale opiszemy proces rozwijania kolejnych algorytmów.
 Uzasadnimy wybór tych, które zaimplementujemy, wymienimy napotykane problemy oraz przedstawimy nasze rozwiązania.
 
-W piątym rozdziale podsumujemy efekty naszej pracy.
-Wskażemy kierunki dalszego ulepszania stworzonych botów i spróbujemy wyciągnąć wnioski przydatne przy implentacji komputerowych wersji innych gier.
+W ostatnim rozdziale podsumujemy efekty naszej pracy.
+Wskażemy kierunki dalszego ulepszania wytworzonych botów i spróbujemy wyciągnąć wnioski przydatne przy implentacji komputerowych wersji innych gier.
 
 \chapter{Standardowe metody dla gier planszowych typu Quoridor}
 
@@ -289,7 +289,7 @@ Analogicznie, gdy wartość jest mniejsza niż \(alfa\), dla gracza \(max\) (por
 Ponieważ algorytmy Minimax i Alfa-Beta traktują graf gry jako drzewo, ten sam wierzchołek może być odwiedzony kilkukronie, o ile prowadzą do niego różne ścieżki.
 Ta obserwacja jest podstawą techniki tablicy transpozycji, która pozwala na wykorzystanie wyników wcześniejszych obliczeń w trakcie działania algorytmu i przyspieszenie, dzięki któremu można zwiększyć głębokość przeszukiwania.
 
-Zastosowanie tablicy transpozycji wymaga użycia funkcji haszującej \(h\), która umożliwi przypisanie każdemu stanowi gry liczby całkowitej, ograniczoną z góry przez ustaloną wartość.
+Zastosowanie tablicy transpozycji wymaga użycia funkcji haszującej \(h\), która umożliwi przypisanie każdemu stanowi gry liczby całkowitej, ograniczonej z góry przez ustaloną wartość.
 Należy też ustalić wielkość tablicy \(R\), która będzie musiała zmieścić się w pamięci dostępnej botowi.
 Wtedy, po obliczeniu wartości wierzchołka \(w\), pod indeksem \(h(w)\ \textrm{mod}\ R\) tablicy haszującej umieszcza się wpis zawierający \(h(w)\), odległość wierzhołka \(w\) od korzenia w przeszukiwanym drzewie (wysokość) oraz specyficzne dla algorytmu wartości przydatne przy ponownym odwiedzeniu wierzchołka \(w\).
 Zapisana wartość \(h(w)\), podczas odwiedzania wierzchołka \(v\) takiego, że \(h(w) \equiv h(v) (\textrm{mod}\ R)\), pozwala rozpoznać kolizję.
@@ -490,7 +490,7 @@ oraz dwóch stałych:
 W przypadku stanów końcowy, funkcja przyjmuje skrajne wartości: \[-DISTANCE\_UPPER\_BOUND * WALL\_COUNT \text{,}\] \[(DISTANCE\_UPPER\_BOUND + 1) * WALL\_COUNT\] odpowiednio w przypadku porażki i zwycięstwa zadanego gracza.
 W pozostałych przypadkach wynikiem jest \[(minOtherPlayerDistance - distance) * WALL\_COUNT + wallsfLeft \text{.}\]
 
-Intuicyjnie, zgodnie z tą funkcją bot stara się mieć jak największą przewagę (lub najmniejszą stratę) w odglełości do celu względem najlepszego z przeciwników, a jeżeli jest to możliwe na wiele sposobów --- zachowując jak najwięcej ścianek.
+Intuicyjnie, zgodnie z tą funkcją bot stara się mieć jak największą przewagę (lub najmniejszą stratę) w odległości do celu względem najlepszego z przeciwników, a jeżeli jest to możliwe na wiele sposobów --- zachowując jak najwięcej ścianek.
 Łatwo zauważyć, że ma ona pożądane właściwości: skrajne wartości przyjmuje wtedy i tylko wtedy, gdy rozpatruje końcowy stan gry.
 Co więcej, nadaje się też do ulepszania algorytmu Max\textsuperscript{n} analogicznie do Alfy-Bety, tzn. ma ograniczenie na sumę wartości dla wszystkich graczy, lepsze niż ograniczenie na wartość dla jednego gracza pomnożone przez ich liczbę.
 Ograniczeniem tym jest \(WALL\_COUNT\).
@@ -523,8 +523,8 @@ A zatem za \(bound\) możemy przyjąć \(WALL\_COUNT - value\), a nie jedynie \[
 \section{Tablica transpozycji}
 
 Spośród możliwych ulepszeń algorytmów Minimax oraz Alfa-Beta wybraliśmy do zaimplementowania tablicę transpozycji jako to, które nadaje się do zastosowania wobec wersji dla wielu graczy opartej o Max\textsuperscript{n}.
-Użycie tej techniki wymagało po pierwsze zaprojektowania funkcji haszującej, do czego użyliśmy metody znanej jako haszowanie Zobrista, po drugie metody użycia wobec Alfy-Bety dla wielu graczy.
-O ile przykłady użycia tablicy transpozycji zarówno dla algorytmu Minimax i Alfa-Beta w standardowej, dwuosobowej wersji są łatwo dostępne, a przypadek Max\textsuperscript{n} jest w zasadzie identyczny co Minimax, o tyle Alfa-Beta dla wielu graczy w oparciu o Max\textsuperscript{n} została opracowana przez nas samodzielnie (co oczywiście nie oznacza, że pioniersko).
+Użycie tej techniki wymagało po pierwsze zaprojektowania funkcji haszującej, do czego użyliśmy metody znanej jako haszowanie Zobrista, po drugie opracowania metody użycia wobec Alfy-Bety dla wielu graczy.
+O ile przykłady użycia tablicy transpozycji, zarówno dla algorytmu Minimax i Alfa-Beta w standardowej, dwuosobowej wersji są łatwo dostępne, a przypadek Max\textsuperscript{n} jest w zasadzie identyczny co Minimax, o tyle Alfa-Beta dla wielu graczy w oparciu o Max\textsuperscript{n} została opracowana przez nas samodzielnie (co oczywiście nie oznacza, że pioniersko).
 
 \subsection{Haszowanie Zobrista}
 
@@ -540,7 +540,7 @@ W naszym przypadku były to (załóżmy przypadek czteroosobowy):
 
 Otrzymaliśmy więc 150 zmiennych, których wartości wzajemnie jednoznacznie wyznaczały stany gry.
 Dalej, dla tych zmiennych \(v_0, v_1, .., v_{149}\) utworzyliśmy tablice \(V_0, V_1, .., V_{149}\) tak, żeby długość \(V_i.length\) każdej tablicy była równa liczbie wartości przyjmowanych przez odpowiadającą zmienną \(v_i\).
-Dalej, losowo wypełniliśmy te tablice liczbami z przedziału właściwego dla typu ich elementów (wybraliśmy \emph{long} z języka Java).
+Następnie losowo wypełniliśmy te tablice liczbami z przedziału właściwego dla typu ich elementów (wybraliśmy \emph{long} z języka Java).
 
 Wtedy już mogliśmy zdefiniować wartość funkcji haszującej \(h(s)\) dla stanu \(s\) opisanego wartościami zmiennych \(v_0, v_1, .., v_{149}\) jako \[\oplus_{i = 0}^{149} V_i[v_i]\text{,}\] gdzie znak \(\oplus\) oznacza binarną operację XOR (alternatywę rozłączną).
 
@@ -696,7 +696,7 @@ Oba warianty gry dały ten porządek uczestników turnieju według skuteczności
 Spośród metod opracowanych przez nas samodzielnie, dwie są na tyle ogólne, że można ich użyć wobec innych gier.
 Obiema zajmowaliśmy się na potrzeby czteroosobowego wariantu Quoridor, ale mogą być przydatne przy każdej liczbie graczy większej niż dwa --- dla gier dwuosobowych pozostają poprawne, jednak mniej efektywne od swoich powszechnie stosowanych odpowiedników specyficznych dla klasycznego pojedynku.
 
-Pierwszą z nich jest inne, umożliwiające większą liczbę odcięć, obliczanie \(bound\), możliwe dzięki wzmocnieniu założenia na temat funkcji oceniającej.
+Pierwszą z nich jest inne -- umożliwiające większą liczbę odcięć -- obliczanie \(bound\), możliwe dzięki wzmocnieniu założenia na temat funkcji oceniającej.
 Przypomnijmy, że wymaga to istnienia górnego ograniczenia na sumę każdych dwóch liczb w wektorze wartości, silniejszego niż to, które wynika z ograniczenia górnego na sumę wszystkich liczb w tym wektorze, wymaganego w oryginalnej wersji.
 Takiego ograniczenia możemy się spodziewać, jeżeli funkcja oceniająca dba tylko o sytuację gracza względem najlepiej usytuowanego przeciwnika.
 Jest to naturalne w przypadku gier wyłaniających i nagradzających wyłącznie jednego zwyciężcę.
@@ -727,13 +727,13 @@ Dalsze ulepszanie \(AlphaBetaTT\) mogłoby polegać na manipulowaniu oknem przes
 O ile w przypadku gry dwuosobowej jest to dobrze opracowana i skuteczna metoda, o tyle wersja czteroosobowa jest nie tylko nieopisana, ale i nie jest jasne, czy byłaby skuteczna.
 Pamiętajmy, że samo \(bound\) pozwala na mniej odcięć niż okno przeszukiwań, a nieudana próba skrócenia obliczeń oznacza zmarnowanie czasu.
 
-Poprawianie Monte Carlo Tree Search może polegać na manipulowaniu parametrami w trakcie gry (ilość możliwych ruchów drastycznie spada, a jest to punkt wyjścia do poszukiwania \(expensionThreshold\)).
+Poprawianie Monte Carlo Tree Search może polegać na manipulowaniu parametrami w trakcie gry (liczba możliwych ruchów drastycznie spada, a jest to punkt wyjścia do poszukiwania \(expensionThreshold\)).
 Innym kierunkiem byłaby zmiana rozkładu prawdopodobieństwa wyboru ruchu podczas losowania, który bez zastosowania wiedzy eksperckiej jest jednostajny.
 
 \begin{thebibliography}{98}
 \addcontentsline{toc}{chapter}{Bibliografia}
 
-\bibitem[1]{anderson} Eike Anderson, \textit{Playing smart - artificial intelligence in computer games}, materiał na konferencję zfxCON03, 2003
+\bibitem[1]{anderson} Eike Anderson, \textit{Playing smart --- artificial intelligence in computer games}, materiał na konferencję zfxCON03, 2003
 \bibitem[2]{mertens} P.J.C Mertens, \textit{A Quoridor-playing Agent},\\https://project.dke.maastrichtuniversity.nl/games/files/bsc/Mertens\_BSc-paper.pdf, 2006
 \bibitem[3]{pawlewicz} Jakub Pawlewicz, \textit{Techniki sztucznej inteligencji
     w programach grających}, https://www.mimuw.edu.pl/\textasciitilde{}pan/gry.pdf, 2010
@@ -749,7 +749,7 @@ Innym kierunkiem byłaby zmiana rozkładu prawdopodobieństwa wyboru ruchu podcz
     Na dołączonej płycie znajdują się:
 \begin{itemize}
     \item \textit{praca.pdf} --- plik zawierający tekst tej pracy,
-    \item \textit{quoridor-gui.jar} --- plik ze zbudowaną aplikacją, wykonywalny przy pomocy środowiska uruchomieniowego Javy,
+    \item \textit{quoridor-gui.jar} --- plik ze zbudowaną aplikacją, wykonywalny za pomocą środowiska uruchomieniowego Javy,
     \item \textit{src} --- katalog z wytworzonym kodem źródłowym.
 \end{itemize}
 
@@ -763,7 +763,7 @@ Kod podzielony jest na:
 \end{itemize}
 
     Bezpośrednio w katalogu \textit{src} znajduje się plik \textit{README.md} z opisem projektu i wskazówkami dotyczącymi rozwijania.
-    W szczególności podaje sposób zbudowania pliku wykonywalnego aplikacji przy pomocy znajdującego się obok skryptu \textit{gradlew}.
+    W szczególności podaje sposób zbudowania pliku wykonywalnego aplikacji za pomocą znajdującego się obok skryptu \textit{gradlew}.
 
 \chapter{Pełne wyniki eksperymentów}
 
